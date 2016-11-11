@@ -1,4 +1,5 @@
 <head>    
-    
-    <title>it is a test cms</title>
+    <?php require "include.php";?>
+    <?php require "style.php";?>
+    <?php require "script.php";?>
 </head>    

@@ -24,4 +24,10 @@ class ViewController{
         ob_end_flush();
     }
 
+    private function assembleData(){
+    
+    }
+
+
+
 }

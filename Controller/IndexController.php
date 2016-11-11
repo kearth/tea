@@ -2,8 +2,18 @@
  class IndexController extends ViewController{
      
      public function Test(){
-        $this->view("html","3434");
-      //  header("Location:http://192.168.41.128/View/html.php");
+        $data = array(
+            'nav'=>array(
+                'logoName'=>'KunCMS',
+                'userStatus'=>'Logout',
+                'userSet'=>'Settings',
+                'userName'=>'Hi,eric'
+            ),
+            'content'=>array(
+                
+            )
+        );
+        $this->view("html",$data);
      }
 
 
