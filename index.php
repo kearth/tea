@@ -1,51 +1,31 @@
 <?php
-error_reporting(E_ALL);
-function autoLoad($class){
-    $file = __DIR__."/Controller/".$class.'.php';
-    if(is_file($file)){
-        require_once($file);
-    }
+/**
+ * 入口文件
+ * 1.定义常量
+ * 2.加载类库
+ * 3.初始运行
+ **/
+
+define('ROOT',realpath(__DIR__));
+define('CONTROLLER',ROOT.'/Controller');
+define('CORE',ROOT.'/Core');
+define('EXTENSION',ROOT.'/Extension');
+define('LIB',ROOT.'/Lib');
+define('MODEL',ROOT.'/Model');
+define('STORAGE',ROOT.'/Storage');
+define('TEST',ROOT.'/Test');
+define('VIEW',ROOT.'/View');
+define('CONFIG',ROOT.'/Config.php');
+define('DEBUG',true);
+
+if(DEBUG){
+    error_reporting(E_ALL);
+} else {
+    error_reporting(0);
 }
 
-spl_autoload_register('autoLoad');
+require(CORE."/Init.php");
 
-$uri = ltrim($_SERVER['REQUEST_URI'],'/');
-$inputData = explode('?',$uri);
-if(sizeof($inputData)>1){
-    $params = getAllParams($inputData[1]);
-}
-else{
-    $params = array();
-}
+spl_autoload_register('\core\Init::autoLoad');
 
-if(!empty($params)){
-    $controller = $params['Controller']."Controller";
-    $action = $params['Action'];
-    try{
-        $a = new $controller();
-        $a->$action();
-    }
-    catch(Exception $e){
-        echo $e->getMessage();
-    }
-}
-
-
-function getAllParams($paramsRaw){
-    $params = explode('&',$paramsRaw);
-    $paramsArray = array();
-    foreach($params as $value){
-        $everParam = explode('=',$value);
-        $paramsArray[ucfirst($everParam[0])] = ucfirst($everParam[1]);
-    }
-    return $paramsArray;
-}
-
-
-
-
-
-
-
-
-
+\core\Init::run();
