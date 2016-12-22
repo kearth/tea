@@ -3,8 +3,7 @@ namespace controller;
 
 class IndexController extends \core\BaseController{
 
-    public function Test(){
-        var_export($this->request);
+    public function Test($requset,$response){
         $data = array(
             'nav'=>array(
                 'logoName'=>'KunCMS',
@@ -16,11 +15,32 @@ class IndexController extends \core\BaseController{
 
             )
         );
-        $this->view("html",$data);
+        $response->setAttribute('view','index');
+        $response->setAttribute('data',$data);
+        $this->backToBrowser($response);   
     }
 
-    public function index(){
+    public function index($requset,$response){
         print_r("hello world");
+    }
+
+
+    public function login($requset,$response){
+        $data = array(
+            'nav'=>array(
+                'logoName'=>'KunCMS',
+                'userStatus'=>'Logout',
+                'userSet'=>'Settings',
+                'userName'=>'Hi,eric'
+            ),
+            'content'=>array(
+
+            )
+        );
+        $response->setAttribute('view','index');
+        $response->setAttribute('data',$data);
+        $this->backToBrowser($response);   
+        
     }
 
 }

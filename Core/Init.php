@@ -17,8 +17,11 @@ class Init{
         $request = new \core\Request();
         $response = new \core\Response();
         try{
-            $controller = new $controllerClass($request,$response);
-            $controller->$action();
+            $controller = new $controllerClass();
+            if(!method_exists($controller,$action)){
+                $action = 'index';
+            }
+            $controller->$action($request,$response);
         } catch(Exception $e){
             echo $e->getMessage();
         }
