@@ -54,7 +54,7 @@ body{
     padding-top:8%;
 }
 
-div .loginTable{
+div .loginForm{
     width:390px;
     height:410px;
     background:#FFF;

@@ -37,5 +37,4 @@ if(DEBUG){
 }
 
 
-
 \core\Init::run();
