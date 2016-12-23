@@ -18,14 +18,24 @@ define('VIEW',ROOT.'/View');
 define('CONFIG',ROOT.'/Config.php');
 define('DEBUG',true);
 
+
+require(CORE."/Init.php");
+require(ROOT."/vendor/autoload.php");
+
+spl_autoload_register('\core\Init::autoLoad');
+
+
 if(DEBUG){
     error_reporting(E_ALL);
+    $whoops = new \Whoops\Run();
+    $handler = new \Whoops\Handler\PrettyPageHandler();
+    $whoops->pushHandler($handler);
+    $whoops->register();
+
 } else {
     error_reporting(0);
 }
 
-require(CORE."/Init.php");
 
-spl_autoload_register('\core\Init::autoLoad');
 
 \core\Init::run();

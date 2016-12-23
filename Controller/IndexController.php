@@ -40,7 +40,6 @@ class IndexController extends \core\BaseController{
         $response->setAttribute('view','index');
         $response->setAttribute('data',$data);
         $this->backToBrowser($response);   
-        
     }
 
 }
