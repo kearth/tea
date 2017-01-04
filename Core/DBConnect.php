@@ -40,11 +40,18 @@ class DBConnect{
         $sql = "DROP DATABASE IF EXISTS $dbName;";
         return static::$_conn->exec($sql);
     }
+    
+    public function createTable(DBTable $table){
+        $sql = $table->getCreateSQL();
+        echo $sql;
+        return static::$_conn->exec($sql);
+    }
+
 
 
     public function testConn(){
         $sql = "select id from connect_test;";
-        $this->query($sql);
+        $res = $this->query($sql);
         foreach($res as $row){
             print_r($row['id']);
         }
