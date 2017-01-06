@@ -87,6 +87,13 @@ div .loginForm{
 
 
 </style>
+<script>
+$(document).ready(function(){
+        $("#verifyCodePng").click(function(){
+            $("#verifyCodePng").attr("src","verifyCode?"+Math.random())         
+            })
+        })
+</script>
 </head>
 <body>
     <div class="nav">
@@ -109,10 +116,12 @@ div .loginForm{
                 <div id="verifyCode">
                     <lable>验证码 : </lable>
                     <input type='text' style="width:100px">
-                    <img 
-                    src=""
-                    style="margin:0;width:80px;height:30px;border:1px solid
-                        #000"/>
+                    <img id="verifyCodePng" src="verifyCode" width="100" height="30"
+                    border="1">                
+                    <?php
+                        session_start();
+                        echo $_SESSION['code'];
+                    ?>
                 </div>
                 <div id="notePW">
                     <input type="checkbox" /> 记住密码 

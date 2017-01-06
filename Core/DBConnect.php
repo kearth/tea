@@ -31,6 +31,10 @@ class DBConnect{
         return static::$_conn->query($sql);
     }
 
+    public function insert($sql){
+        return static::$_conn->exec($sql);
+    }
+
     public function createDataBase($dbName){
         $sql = "CREATE DATABASE IF NOT EXISTS $dbName DEFAULT CHARSET utf8 COLLATE utf8_general_ci;";
         return static::$_conn->exec($sql);
@@ -46,7 +50,6 @@ class DBConnect{
         echo $sql;
         return static::$_conn->exec($sql);
     }
-
 
 
     public function testConn(){

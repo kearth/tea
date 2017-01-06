@@ -23,28 +23,35 @@ class PicVerificationCode{
         "gray","red","green","blue","yellow","orange","purple","pink","cyan","Magenta"
     );
 
+    const ttf = "/development/git/ksmCMS/Storage/锐字逼格锐线体简4.0.ttf";
+
     public static function create($width,$height){
         $codeLen = 4;//验证码长度
         header("Content-type:image/png");
         $img=imagecreatetruecolor($width,$height);
         $bgColor = self::getColor($img,'white');
         imagefill($img,0,0,$bgColor);
-        self::getCode($img,$codeLen);
+        self::getCode($img,$codeLen,$width,$height);
         imagepng($img);
         imagedestroy($img);
     }
 
-    private static function getCode($img,$length){
+    private static function getCode($img,$length,$width,$height){
+        session_start();
+        $session = "";
         $scope = strlen(self::charset);
         $colorScope = sizeof(self::colorset);
         $charsetArray = str_split(self::charset);
-        $x = 20;
-        $y = 15;
+        $x = $width/5;
+        $y = $height/2;
         for($i = 0;$i<$length;$i++){
             $char= $charsetArray[rand(0,$scope-1)];
+            $session .= $char; 
             $color = self::colorset[rand(0,$colorScope-1)];
-            imagechar($img,5,$x+10*$i,$y,$char,self::getColor($img,$color));
+            imagefttext($img,20,(8-rand(0,16))*10,$x*(1+$i),$y,self::getColor($img,$color),self::ttf,$char);
         }
+        $_SESSION['code'] = $session;
+
     }
 
     private static function getColor($img,$color){

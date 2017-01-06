@@ -25,20 +25,6 @@ class Init{
      * @return void
      */
     public static function run(){
-        //$u = new \model\User();
-        //var_dump($u);
-       // $n = new DBTable('user',
-       //     array(
-       //         'id'=>'INT UNIQUE',
-       //         'userName' =>'char(255)'
-       //     ),
-       //     array(
-       //         'index1' =>'id' ,
-       //         'index2' => 'userName',
-       //     )
-       // );
-       // $db = DBConnect::getInstance();
-       // $db->createTable($n);
         //路由
         $route = new \core\Route();
         $controllerClass = $route->controller;

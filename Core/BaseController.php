@@ -13,4 +13,6 @@ class BaseController{
         $view = new \core\View($response->getAttribute('view'),$response->getAttribute('data'));
         $view->show();
     }
+
+    
 }

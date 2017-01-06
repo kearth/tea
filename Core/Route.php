@@ -10,6 +10,7 @@ class Route{
 
     public function __construct(){
         if(isset($_SERVER['SCRIPT_NAME'])){
+            Log::Info($_SERVER['SCRIPT_NAME']);
             list($controller,$action) = $this->_getAction($_SERVER['SCRIPT_NAME']);
             $this->controller = "\controller".$controller."Controller";
             $this->action = $action;

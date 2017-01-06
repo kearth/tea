@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS User(
     password   varchar(64)     NOT NULL DEFAULT '',
     status     tinyint(3)      NOT NULL DEFAULT 0,
     nickname   varchar(64)     NOT NULL DEFAULT '',
-    telphone   int(11)         NOT NULL DEFAULT 0,
+    telphone   varchar(16)     NOT NULL DEFAULT '',
     email      varchar(128)    NOT NULL DEFAULT '',
     headimg    varchar(256)    NOT NULL DEFAULT '',
     tokens     varchar(512)    NOT NULL DEFAULT '',

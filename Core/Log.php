@@ -13,9 +13,9 @@ class Log{
         }
     }
 
-    public static function  Info(){
+    public static function Info($data){
         $log = new self();
-        $message = date('Y-m-d H:i:s');
-        return file_put_contents($log->path.$log->file.'.log',json_encode($message),FILE_APPEND);
+        $message = "[".date('Y-m-d H:i:s')."] ".$data."\n";
+        return file_put_contents($log->path.$log->file.'.log',$message,FILE_APPEND);
     }
 }
