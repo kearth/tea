@@ -47,17 +47,31 @@ class DBConnect{
     
     public function createTable(DBTable $table){
         $sql = $table->getCreateSQL();
-        echo $sql;
         return static::$_conn->exec($sql);
     }
-
-
-    public function testConn(){
-        $sql = "select id from connect_test;";
-        $res = $this->query($sql);
-        foreach($res as $row){
-            print_r($row['id']);
+    
+    public function where($condition){
+        $where = "where ";
+        if (is_array($condition)) {
+            foreach($condition as $k => $v){
+                $where .= " {$k} = '{$v}' and ";
+            }
+            $where .= " 1=1 ";
+        } else if(is_string($condition)) {
+            $where .= $condition;
+        } else {
+            $where .= " 1=1 ";
         }
-        return $res;
+        return $where;
+    }
+
+    public function cols($condition){
+        $cols = "";
+        if(is_string($condition)) {
+            $cols = $condition;
+        } else {
+            $cols = " * ";
+        }
+        return $cols;
     }
 }

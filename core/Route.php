@@ -16,7 +16,7 @@ class Route{
             $this->action = $action;
         } else {
             $this->controller = 'Index';
-            $this->action = 'Index';
+            $this->action = 'error';
         }
     }
     

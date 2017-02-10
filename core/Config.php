@@ -4,7 +4,7 @@ namespace core;
 class Config{
     public static $conf = array();
 
-    public static function getConfig($name,$file=ROOT."/conf.php"){
+    public static function getConfig($name,$file=CONFIG){
         if(is_file($file)){
             $conf = include $file;
             if(isset($conf[$name])){

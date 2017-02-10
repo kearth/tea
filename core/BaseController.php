@@ -14,5 +14,9 @@ class BaseController{
         $view->show();
     }
 
+    public function error(){
+        echo "404，老铁，根本就没有这个页面";
+    }
+
     
 }

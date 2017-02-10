@@ -3,10 +3,10 @@ namespace core;
 
 class Model{
 
-    protected $id;
-    protected $createTime;
-    protected $updateTime;
-    protected $exist;
+    public $id;
+    public $createTime;
+    public $updateTime;
+    public $exist;
     protected $tableName;
     protected $db;
 
@@ -34,10 +34,26 @@ class Model{
         return $this->db->insert($sql);
     }
     
-    protected function getObjById($id){
+    protected function find($id){
         $sql = "select * from $this->tableName where id = $id";
         $res = $this->db->query($sql);
         return $res->fetchObject(get_class($this));
     }
+    
+    protected function getObjByParam($params){
+        if(isset($params['columns']) && isset($params['conditions'])){
+            $cols = $this->db->cols($params['columns']);
+            $where = $this->db->where($params['conditions']);
+            $sql = "select {$cols} from $this->tableName $where ";
+            $res = $this->db->query($sql);
+            return $res->fetchObject(get_class($this));
+        }
+    }
 
+    public function isExist(){
+        if($this instanceof NullObject){
+            return false;
+        }
+        return true;
+    }
 }

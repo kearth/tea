@@ -11,16 +11,17 @@
 
 /**********************定义常量*************/
 define('ROOT',realpath(__DIR__));           //根目录
-define('CONTROLLER',ROOT.'/Controller');    //控制器目录
-define('CORE',ROOT.'/Core');                //核心目录
-define('EXTENSION',ROOT.'/Extension');      //扩展目录
-define('LIB',ROOT.'/Lib');                  //公共库目录
-define('MODEL',ROOT.'/Model');              //模型目录
-define('STORAGE',ROOT.'/Storage');          //资源目录
-define('TEST',ROOT.'/Test');                //测试目录
-define('VIEW',ROOT.'/View');                //视图目录
+define('CONTROLLER',ROOT.'/controller');    //控制器目录
+define('CORE',ROOT.'/core');                //核心目录
+define('EXTENSION',ROOT.'/extension');      //扩展目录
+define('LIB',ROOT.'/lib');                  //公共库目录
+define('MODEL',ROOT.'/model');              //模型目录
+define('STORAGE',ROOT.'/storage');          //资源目录
+define('TEST',ROOT.'/test');                //测试目录
+define('VIEW',ROOT.'/view');                //视图目录
 define('VENDOR',ROOT.'/vendor');            //Composer依赖目录
-define('CONFIG',ROOT.'/conf.php');          //配置文件
+define('CONFDIR',ROOT.'/config');           //配置目录
+define('CONFIG',CONFDIR.'/defaultConf.php');   //默认配置文件
 define('DEBUG',true);                       //调试模式：true开启，false关闭
 
 

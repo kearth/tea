@@ -30,7 +30,16 @@ class User extends \core\Model{
     }
     
     public function getUserById($id){
-        return parent::getObjById($id);
+        return $this->find($id);
     }
 
+    public function getUserBeforeLogin($account){
+        $params = array(
+            'columns' => '*',
+            'conditions' => array(
+                'account' => $account,
+            )
+        );
+        return $this->getObjByParam($params); 
+    }
 }

@@ -18,7 +18,7 @@ return array(
         ),
     ),
     'Log' => array(
-        'path' => ROOT."/Storage/",
+        'path' => ROOT."/storage/",
         'file' => 'error'
     )
 );
