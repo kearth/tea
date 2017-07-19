@@ -4,6 +4,7 @@ namespace controller;
 class IndexController extends \core\BaseController{
 
     public function isLogin(){
+        return true;//为了调试
         if(isset($_COOKIE['uid'])){
             $uid = $_COOKIE['uid'];
             session_start();

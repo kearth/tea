@@ -8,7 +8,6 @@
  * @author:jiakun<kunsama@163.com>
  * @version:1.0
  */
-
 /**********************定义常量*************/
 define('ROOT',realpath(__DIR__));           //根目录
 define('CONTROLLER',ROOT.'/controller');    //控制器目录
@@ -32,7 +31,6 @@ spl_autoload_register('\core\Init::autoLoad'); //自动加载类
 
 //模式判定
 if(DEBUG){
-    error_reporting(E_ALL);
     $whoops = new \Whoops\Run();
     $handler = new \Whoops\Handler\PrettyPageHandler();
     $whoops->pushHandler($handler);

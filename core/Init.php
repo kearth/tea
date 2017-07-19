@@ -51,7 +51,6 @@ class Init{
      * @return boolean
      */
     public static function autoLoad($class){
- //       error_log(print_r($class."\n",1),3,'./storage/error.log');
         $class = basename(str_replace('\\','/',$class));
         $classExist = false;
         if(array_key_exists($class,self::$classRegistered)){

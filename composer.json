@@ -2,12 +2,12 @@
     "name": "root/ksm-cms",
     "authors": [
         {
-            "name": "KunSAMA",
-            "email": "kunsama@163.com"
+            "name": "Kearth",
+            "email": "kearth@yeah.net"
         }
     ],
     "require": {
-        "filp/whoops":"*",
+        "filp/whoops":"*"
     },
     "repositories": {
         "packagist": {
