@@ -8,9 +8,9 @@ class Autoload
         spl_autoload_register(array($this,'loadClass'));
     }
 
-    public function loadClass(String $class)
+    public function loadClass($class)
     {
-        echo $class;
+        error_log(print_r($class,1));
     }
 }
 

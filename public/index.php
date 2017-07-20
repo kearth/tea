@@ -5,5 +5,8 @@ define('ROOT',realpath(__DIR__."/../"));
 
 include_once(ROOT."/bootstrap/bootstrap.php");
 
-Bootstrap::getInstance()->run();
+include_once(ROOT."/bootstrap/autoload.php");
+$bootstrap = Bootstrap::getInstance();
+$bootstrap->run();
+
 

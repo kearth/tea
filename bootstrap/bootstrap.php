@@ -2,12 +2,12 @@
 namespace Bootstrap;
 
 use Bootstrap\Autoload;
-include_once(ROOT."/bootstrap/autoload.php");
 
 class Bootstrap
 {
-    private static $instance;
+    private static $instance = null;
 
+    /** 私有构造方法 **/
     private function __construct()
     {
     }
@@ -17,11 +17,21 @@ class Bootstrap
     
     }
 
+    private function __sleep()
+    {
+    
+    }
+
+    private function __wakeup()
+    {
+    
+    }
+
     public static function getInstance()
     {
-        if (!(self::$instance instanceof Bootstrap)) {
-            self::$instance = new static();  
-        } 
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
         return self::$instance;
     }
 
