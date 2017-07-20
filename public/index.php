@@ -1,13 +1,13 @@
 <?php
-use Bootstrap\Bootstrap;
+use BaseStone\Bootstrap\Autoload;
 
-define('ROOT',realpath(__DIR__."/../"));
+define('ROOT_PATH',realpath(__DIR__."/../"));
 
-include_once(ROOT."/bootstrap/bootstrap.php");
+include_once(ROOT_PATH."/basestone/bootstrap/autoload.php");
 
-include_once(ROOT."/bootstrap/autoload.php");
+$autoload = new Autoload();
+$autoload->register();
 
-$bootstrap = Bootstrap::getInstance();
-$bootstrap->run();
-
+use BaseStone\Bootstrap\Bootstrap;
+Bootstrap::getInstance()->run();
 

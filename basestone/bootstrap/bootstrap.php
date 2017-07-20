@@ -1,7 +1,5 @@
 <?php
-namespace Bootstrap;
-
-use Bootstrap\Autoload;
+namespace BaseStone\Bootstrap;
 
 class Bootstrap
 {
@@ -45,8 +43,8 @@ class Bootstrap
 
     private function init()
     {
-        $autoload = new Autoload();
-        $autoload->register();
+        //$autoload = new Autoload();
+        //$autoload->register();
     }
     
     private function load()
