@@ -36,30 +36,36 @@ class Bootstrap
     public function run()
     {
         $this->init();
-        $this->load();
         $this->work();
         $this->over();   
     } 
 
+    /** 初始化 **/
     private function init()
     {
-        //$autoload = new Autoload();
-        //$autoload->register();
-    }
-    
-    private function load()
-    {
+        Config::getInstance()->load(CONFIG_PATH);
 
+        //日志系统
+        
+        //错误处理系统
     }
 
+    /** 内容分发处理 **/
     private function work()
     {
-    
+        //路由
+        //Route
+
+        //分发工作
+        //Dispath
     }
 
+    /** 结束 **/
     private function over()
     {
-    
+        //返回相应
+        //
+        //清理结果
     }
 }
 
