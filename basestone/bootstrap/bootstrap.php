@@ -54,7 +54,10 @@ class Bootstrap
     private function work()
     {
         //路由
-        //Route
+        $router = Router::getInstance();
+        $request = $router->getRequest();
+        var_export($request);
+
 
         //分发工作
         //Dispath
@@ -63,8 +66,8 @@ class Bootstrap
     /** 结束 **/
     private function over()
     {
-        //返回相应
-        //
+        //Response
+        
         //清理结果
     }
 }
