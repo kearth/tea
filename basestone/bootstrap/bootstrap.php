@@ -5,9 +5,9 @@ class Bootstrap
 {
     private static $instance = null;
 
-    /** 私有构造方法 **/
     private function __construct()
     {
+    
     }
 
     private function __clone()
@@ -15,12 +15,12 @@ class Bootstrap
     
     }
 
-    private function __sleep()
+    private function __wakeup()
     {
     
     }
 
-    private function __wakeup()
+    private function __sleep()
     {
     
     }
@@ -32,7 +32,6 @@ class Bootstrap
         }
         return self::$instance;
     }
-
     public function run()
     {
         $this->init();

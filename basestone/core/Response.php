@@ -1,7 +1,8 @@
 <?php
-namespace core;
+namespace BaseStone\Core;
 
-class Response{
+class Response
+{
 
     private $_view;
     private $_data;

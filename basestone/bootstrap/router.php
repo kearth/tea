@@ -1,14 +1,44 @@
 <?php
 namespace BaseStone\Bootstrap;
 
-use BaseStone\Core\Singleton;
+use BaseStone\Core\Request;
 
-class Router extends Singleton
+class Router
 {
+
     public $request_source_type;
     public $request_source_name;
     public $request_source_params;
     public $request_method;
+    private static $instance = null;
+
+    private function __construct()
+    {
+    
+    }
+
+    private function __clone()
+    {
+    
+    }
+
+    private function __wakeup()
+    {
+    
+    }
+
+    private function __sleep()
+    {
+    
+    }
+
+    public static function getInstance()
+    {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
     //public function __construct(){
         //if(isset($_SERVER['SCRIPT_NAME'])){
@@ -40,13 +70,7 @@ class Router extends Singleton
     
     public function getRequest()
     {
-        $this->request_method = $_SERVER['REQUEST_METHOD'];
-        $action  = $_REQUEST['action'];
-        $action_arr = explode('/',$action);
-        $this->request_source_type = $action_arr[0];
-        $this->request_source_name = $action_arr[1];
-        $this->request_source_params = $_REQUEST;
-        return self::getInstance();
+        return Request::getInstance()->getRequest();
     }
 
 
