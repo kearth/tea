@@ -34,40 +34,22 @@ class Bootstrap
     }
     public function run()
     {
-        $this->init();
-        $this->work();
-        $this->over();   
-    } 
-
-    /** 初始化 **/
-    private function init()
-    {
         Config::getInstance()->load(CONFIG_PATH);
 
         //日志系统
         
         //错误处理系统
-    }
-
-    /** 内容分发处理 **/
-    private function work()
-    {
+        
         //路由
         $router = Router::getInstance();
         $request = $router->getRequest();
-        var_export($request);
-
 
         //分发工作
-        //Dispath
-    }
-
-    /** 结束 **/
-    private function over()
-    {
-        //Response
+        $dispatcher = Dispatcher::getInstance();
+        $resp = $dispatcher->dispatch($request);
         
         //清理结果
+        exit;
     }
 }
 

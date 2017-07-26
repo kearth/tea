@@ -1,27 +1,52 @@
 <?php
 namespace BaseStone\Core;
 
-class Response
+class Response extends Core
 {
+    private static $instance = null;
+    private $content = [
+        'type'   => null,
+        'params' => null
+    ];
 
-    private $_view;
-    private $_data;
+    private function __construct()
+    {
 
-    public function __construct(){
     }
 
-    public function setAttribute($attr,$value){
-        $attrName = '_'.$attr;
-        $this->$attrName = $value;
+    private function __clone()
+    {
+    
     }
 
-    public function getAttribute($attr = 'all'){
-        if($attr === 'all'){
-            return $this;
-        } else {
-            $attrName = '_'.$attr;
-            return $this->$attrName;
+    private function __wakeup()
+    {
+    
+    }
+
+    private function __sleep()
+    {
+    
+    }
+
+    public static function getInstance()
+    {
+        if (null === self::$instance) {
+            self::$instance = new self();
         }
+        return self::$instance;
+    }
+
+    public function getResponse()
+    {
+        return $this->content;
+    }
+
+    public function setResponse(String $type, Array $params)
+    {
+        $this->content['type']   = $type;
+        $this->content['params'] = $params;
     }
 
 }
+

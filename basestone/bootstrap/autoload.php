@@ -4,6 +4,7 @@ namespace BaseStone\Bootstrap;
 class Autoload
 {
     private static $instance = null;
+    private $has_required_file = [];
 
     private function __construct()
     {
@@ -37,9 +38,15 @@ class Autoload
     public function loadClass($class)
     {
         $class_file = ROOT_PATH . DIRECTORY_SEPARATOR . str_replace('\\', '/', $class) . '.php';
+        
+        if (in_array($class_file,$this->has_required_file)) {
+            return;
+        }
 
+        //echo $class_file."<br/>";
         if (file_exists($class_file)) {
             require $class_file;
+            $this->has_required_file[] = $class_file;
         }
     }
     

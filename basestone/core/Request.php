@@ -1,7 +1,7 @@
 <?php
 namespace BaseStone\Core;
 
-class Request
+class Request extends Core
 {
     private static $instance = null;
     const DISPLAY_ARRAY = 0;
@@ -53,18 +53,6 @@ class Request
         $package['PARAMS']          = $_REQUEST;
         return $package;
     }
-
-    private function toObj($arr)
-    {
-        $obj = new \StdClass();
-
-        foreach ($arr as $key => $value) {
-            $obj->$key = $value;    
-        }      
-
-        return $obj;
-    }
-
 
     public function getRequest($back_type = self::DISPLAY_OBJECT)
     {
