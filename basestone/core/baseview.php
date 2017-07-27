@@ -1,7 +1,8 @@
 <?php
-namespace core;
+namespace BaseStone\Core;
 
-class View{
+class BaseView
+{
     private $_viewDir = VIEW."/public/";
     private $_view;
     private $_data;
@@ -28,3 +29,4 @@ class View{
 
 
 }
+

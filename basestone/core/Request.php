@@ -3,13 +3,24 @@ namespace BaseStone\Core;
 
 class Request extends Core
 {
+ 
     private static $instance = null;
-    const DISPLAY_ARRAY = 0;
-    const DISPLAY_OBJECT = 1;
 
     private function __construct()
     {
-
+        $this->http_user_agent = $_SERVER['HTTP_USER_AGENT'];
+        $this->server_protocal = $_SERVER['SERVER_PROTOCOL'];
+        $this->request_uri     = $_SERVER['REQUEST_URI'];
+        $this->request_method  = $_SERVER['REQUEST_METHOD'];
+        $this->content_length  = $_SERVER['CONTENT_LENGTH'];
+        $this->content_tyep    = $_SERVER['CONTENT_TYPE'];
+        $this->cookie          = $_COOKIE;
+        $this->get             = $_GET;
+        $this->post            = $_POST;
+        $this->env             = $_ENV;
+        $this->action          = $_REQUEST['rewrite'];
+        unset($_REQUEST['rewrite']);
+        $this->params          = $_REQUEST;
     }
 
     private function __clone()
@@ -33,34 +44,6 @@ class Request extends Core
             self::$instance = new self();
         }
         return self::$instance;
-    }
-
-    private function package() 
-    {
-        $package = [];
-        $package['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
-        $package['SERVER_PROTOCOL'] = $_SERVER['SERVER_PROTOCOL'];
-        $package['REQUEST_URI']     = $_SERVER['REQUEST_URI'];
-        $package['REQUEST_METHOD']  = $_SERVER['REQUEST_METHOD'];
-        $package['CONTENT_LENGTH']  = $_SERVER['CONTENT_LENGTH'];
-        $package['CONTENT_TYPE']    = $_SERVER['CONTENT_TYPE'];
-        $package['COOKIE']          = $_COOKIE;
-        $package['GET']             = $_GET;
-        $package['POST']            = $_POST;
-        $package['ENV']             = $_ENV;
-        $package['ACTION']          = $_REQUEST['rewrite'];
-        unset($_REQUEST['rewrite']);
-        $package['PARAMS']          = $_REQUEST;
-        return $package;
-    }
-
-    public function getRequest($back_type = self::DISPLAY_OBJECT)
-    {
-        if (self::DISPLAY_OBJECT === $back_type) {
-            return $this->toObj($this->package());    
-        } else {
-            return $this->package();
-        }
     }
        
 }

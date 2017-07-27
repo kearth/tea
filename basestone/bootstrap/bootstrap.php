@@ -1,6 +1,8 @@
 <?php
 namespace BaseStone\Bootstrap;
 
+use BaseStone\Core\Request;
+
 class Bootstrap
 {
     private static $instance = null;
@@ -41,12 +43,10 @@ class Bootstrap
         //错误处理系统
         
         //路由
-        $router = Router::getInstance();
-        $request = $router->getRequest();
+        Router::create()->route();
 
         //分发工作
-        $dispatcher = Dispatcher::getInstance();
-        $resp = $dispatcher->dispatch($request);
+        Dispatcher::create()->dispatch();
         
         //清理结果
         exit;

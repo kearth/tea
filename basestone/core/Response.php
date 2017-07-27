@@ -4,10 +4,7 @@ namespace BaseStone\Core;
 class Response extends Core
 {
     private static $instance = null;
-    private $content = [
-        'type'   => null,
-        'params' => null
-    ];
+    private $params = [];
 
     private function __construct()
     {
@@ -37,15 +34,14 @@ class Response extends Core
         return self::$instance;
     }
 
-    public function getResponse()
+    public function getParams(): array
     {
-        return $this->content;
+        return $this->params;
     }
 
-    public function setResponse(String $type, Array $params)
+    public function setParams(array $params)
     {
-        $this->content['type']   = $type;
-        $this->content['params'] = $params;
+        $this->params = $params;
     }
 
 }

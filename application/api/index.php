@@ -1,12 +1,12 @@
 <?php
 namespace Application\Api;
 
-use BaseStone\Core\BaseRequestType;
+use BaseStone\Core\BaseApi;
 
-class Index extends BaseRequestType
+class Index extends BaseApi
 {
     public function getAction()
     {
-        $this->response->setResponse('api',['abc']);
+        $this->response->setParams(['abc']);
     }
 }
