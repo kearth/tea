@@ -1,32 +1,27 @@
 <?php
 namespace BaseStone\Core;
 
-class BaseView
+class BaseView extends BaseRequestType
 {
-    private $_viewDir = VIEW."/public/";
-    private $_view;
-    private $_data;
-    private $_mode;
-    const TEMPLATE = 1;
-
-    public function __construct($view,$data){
-        $this->_mode = Config::getConfig('ViewMode',CONFDIR."/coreConf.php");
-        $this->_view = $this->_viewDir.$view.'.html';
-        $this->_data = $data;
+    
+    public function __construct()
+    {
+        $this->request  = Request::getInstance(); 
+        $this->response = Response::getInstance();
+        $this->type     = 'view';
     }
 
-    public function show(){
-        ob_start();
-        if($this->_mode == self::TEMPLATE){
-            $template = new Template($this->_view,$this->_data);
-            $template->template2html();
-        } else {
-            $data = $this->_data;
-            include($this->_view);
+    public function output()
+    {
+        $params = $this->response->getParams();
+        $view = ROOT_PATH."/public/".$params['view'].".html";
+        if (file_exists($view)) {
+            ob_start();
+            include($view);
+            $data = $params['data'];
+            ob_end_flush();
         }
-        ob_end_flush();
     }
-
 
 }
 

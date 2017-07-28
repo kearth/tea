@@ -11,10 +11,10 @@ class Dispatcher extends BaseSysCMPT
         if (class_exists($action)) {
             $method = new $action();
             $method->getAction();
+            $method->output();
         } else {
             echo "请求不存在";
         }
-        $method->output();
     }
 
 }

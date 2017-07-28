@@ -6,6 +6,7 @@ abstract class BaseRequestType
     protected $request;
     protected $response;
     protected $type;
+    protected $output;
 
     abstract public function __construct();
 
