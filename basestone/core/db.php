@@ -1,7 +1,8 @@
 <?php
-namespace core;
+namespace BaseStone\Core;
 
-class DBTable{
+class DB
+{
     public $tableName;
     public $column;
     public $index;

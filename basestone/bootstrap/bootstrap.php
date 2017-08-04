@@ -2,6 +2,7 @@
 namespace BaseStone\Bootstrap;
 
 use BaseStone\Core\Request;
+use BaseStone\Core\Log;
 
 class Bootstrap
 {
@@ -34,11 +35,15 @@ class Bootstrap
         }
         return self::$instance;
     }
+
+    /**
+     *  @name run 运行
+     */
     public function run()
     {
         Config::getInstance()->load(CONFIG_PATH);
 
-        //日志系统
+        Log::getInstance()->init();
         
         //错误处理系统
         

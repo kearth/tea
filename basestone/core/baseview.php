@@ -3,7 +3,6 @@ namespace BaseStone\Core;
 
 class BaseView extends BaseRequestType
 {
-    
     public function __construct()
     {
         $this->request  = Request::getInstance(); 
@@ -22,6 +21,5 @@ class BaseView extends BaseRequestType
             ob_end_flush();
         }
     }
-
 }
 

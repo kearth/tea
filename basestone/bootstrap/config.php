@@ -4,7 +4,7 @@ namespace BaseStone\Bootstrap;
 class Config
 {
     private static $instance = null;
-    private $all_conf = null;
+    private $allConfig = null;
 
     private function __construct()
     {
@@ -30,35 +30,35 @@ class Config
         return self::$instance;
     }
     
-    public function load($conf_file)
+    public function load($confFile)
     {
-        if (file_exists($conf_file)) {
-            $conf_info = parse_ini_file($conf_file,true);
-            if ($conf_info) {
-                $env = $conf_info['env']['akf_env'];
-                $cur_env_conf = $conf_info[$env];
-                if (isset($cur_env_conf['afk_constant'])) {
-                    $this->defineconstant($cur_env_conf['afk_constant']);
-                    unset($cur_env_conf['afk_constant']);
+        if (file_exists($confFile)) {
+            $confInfo = parse_ini_file($confFile,true);
+            if ($confInfo) {
+                $env = $confInfo['env']['akf_env'];
+                $curEnvConf = $confInfo[$env];
+                if (isset($curEnvConf['afk_constant'])) {
+                    $this->defineconstant($curEnvConf['afk_constant']);
+                    unset($curEnvConf['afk_constant']);
                 }
-                $this->all_conf = $cur_env_conf;
+                $this->allConfig = $curEnvConf;
             }
         }
     }
 
-    private function defineConstant($constant_arr)
+    private function defineConstant($constantArr)
     {
-        foreach($constant_arr as $key => $value) {
+        foreach($constantArr as $key => $value) {
             define($key,$value);
         }
     }
 
-    public function get($conf_name)
+    public function get($confName)
     {
         
     }
 
-    public function set($conf_name,$conf_value)
+    public function set($confName,$confValue)
     {
     
     }

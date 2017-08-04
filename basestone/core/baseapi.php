@@ -3,7 +3,6 @@ namespace BaseStone\Core;
 
 class BaseApi extends BaseRequestType
 {
-
     public function __construct()
     {
         $this->request  = Request::getInstance(); 
