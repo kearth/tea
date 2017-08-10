@@ -3,7 +3,7 @@ namespace BaseStone\Bootstrap;
 
 use BaseStone\Core\Base;
 
-class Over extends Base
+class Clear extends Base
 {
     
     public function run()
@@ -12,3 +12,4 @@ class Over extends Base
     }
 
 }
+

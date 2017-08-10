@@ -8,25 +8,13 @@ class Bootstrap
 {
     private static $instance = null;
 
-    private function __construct()
-    {
-    
-    }
+    private function __construct(){}
 
-    private function __clone()
-    {
-    
-    }
+    private function __clone(){}
 
-    private function __wakeup()
-    {
-    
-    }
+    private function __wakeup(){}
 
-    private function __sleep()
-    {
-    
-    }
+    private function __sleep(){}
 
     public static function getInstance()
     {
@@ -41,20 +29,20 @@ class Bootstrap
      */
     public function run()
     {
-        Config::getInstance()->load(CONFIG_PATH);
+        //配置初始化
+        Config::getInstance()->init(CONFIG_PATH);
 
+        //日志监控初始化
         Log::getInstance()->init();
         
-        //错误处理系统
-        
-        //路由
-        Router::create()->route();
+        //路由启动
+        Router::create()->run();
 
-        //分发工作
-        Dispatcher::create()->dispatch();
+        //分发启动
+        Dispatcher::create()->run();
         
-        //清理结果
-        exit;
+        //结束流程
+        Over::create()->run();
     }
 }
 

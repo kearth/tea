@@ -30,7 +30,7 @@ class Config
         return self::$instance;
     }
     
-    public function load($confFile)
+    public function init($confFile)
     {
         if (file_exists($confFile)) {
             $confInfo = parse_ini_file($confFile,true);
