@@ -8,12 +8,10 @@ use BaseStone\Core\Response;
 class Dispatcher extends Base
 {
     private $request;
-    private $response;
 
     public function __construct()
     {
         $this->request  = Request::getInstance();
-        $this->response = Response::getInstance();
     }
     
     public function run()
@@ -25,9 +23,9 @@ class Dispatcher extends Base
 
     public function dispatch()
     {
-        $action = "Application\\".str_replace('/','\\',$this->request->action);
-        if (class_exists($action)) {
-            $method = new $action();
+        $provider = $this->request->getProvider();
+        if (class_exists($provider)) {
+            $method = new $provider();
             $method->getAction();
             $method->output();
         } else {

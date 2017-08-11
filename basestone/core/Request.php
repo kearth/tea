@@ -5,19 +5,24 @@ class Request extends Core
 {
  
     private static $instance = null;
+    private $info;
+    private $provider;
+    private $action;
+    private $params;
+    private $userAgent;
+    private $protocal;
+    private $uri;
+    private $method;
+    private $cookie;
 
     private function __construct()
     {
-        $this->http_user_agent = $_SERVER['HTTP_USER_AGENT'];
-        $this->server_protocal = $_SERVER['SERVER_PROTOCOL'];
-        $this->request_uri     = $_SERVER['REQUEST_URI'];
-        $this->request_method  = $_SERVER['REQUEST_METHOD'];
-        $this->content_length  = $_SERVER['CONTENT_LENGTH'];
-        $this->content_tyep    = $_SERVER['CONTENT_TYPE'];
+        $this->info            = $_SERVER;
+        $this->userAgent       = $_SERVER['HTTP_USER_AGENT'];
+        $this->protocal        = $_SERVER['SERVER_PROTOCOL'];
+        $this->uri             = $_SERVER['REQUEST_URI'];
+        $this->method          = $_SERVER['REQUEST_METHOD'];
         $this->cookie          = $_COOKIE;
-        $this->get             = $_GET;
-        $this->post            = $_POST;
-        $this->env             = $_ENV;
         $this->action          = $_REQUEST['rewrite'];
         unset($_REQUEST['rewrite']);
         $this->params          = $_REQUEST;
@@ -36,6 +41,61 @@ class Request extends Core
     private function __sleep()
     {
     
+    }
+
+    public function getUserAgent()
+    {
+        return $this->userAgent;
+    }
+
+    public function getInfo()
+    {
+        return $this->info;
+    }
+
+    public function getProvider()
+    {
+        return $this->provider;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
+    }
+
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    public function getProtocal()
+    {
+        return $this->protocal;
+    }
+
+    public function getUri()
+    {
+        return $this->uri;
+    }
+
+    public function getMethod()
+    {
+        return $this->method;   
+    }
+
+    public function getCookie()
+    {
+        return $this->cookie;
+    }
+
+    public function setProvider(string $provider)
+    {
+        $this->provider = $provider;   
+    }
+
+    public function setAction(string $action)
+    {
+        $this->action = $action;
     }
 
     public static function getInstance()

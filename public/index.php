@@ -1,4 +1,6 @@
 <?php
+//开启严格模式
+declare(strict_types=1);
 use BaseStone\Bootstrap\Autoload;
 use BaseStone\Bootstrap\Bootstrap;
 

@@ -26,6 +26,8 @@ class Bootstrap
 
     /**
      *  @name run 运行
+     *  @access public
+     *  @return void
      */
     public function run()
     {
@@ -37,7 +39,7 @@ class Bootstrap
         
         //路由启动
         Router::create()->run();
-
+        
         //分发启动
         Dispatcher::create()->run();
         

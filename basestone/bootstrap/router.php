@@ -9,12 +9,11 @@ class Router extends Base
 {
 
     private $request;
-    private $response;
+    private static $route = [];
 
     public function __construct()
     {
         $this->request  = Request::getInstance();
-        $this->response = Response::getInstance();
     }
 
     public function run()
@@ -26,8 +25,19 @@ class Router extends Base
 
     public function router()
     {
+
+        self::get('views/ihehehe/get/5', function(){
+            return "hello world";       
+        });
+        if (array_key_exists($this->request->getAction(), self::$route)) {
+            $this->request->setProvider(self::$route[$this->request->getAction()]);
+        } else {
+            $provider = "Application\\".str_replace('/','\\',$this->request->getAction());
+            $this->request->setProvider($provider);
+        }
         return $this->request;
     }
+
 
     public function routerStartUp()
     {
@@ -35,6 +45,45 @@ class Router extends Base
     }
 
     public function routerShutDown()
+    {
+    
+    }
+    
+    public static function options()
+    {
+    
+    }
+
+    public static function head()
+    {
+    }
+
+    public static function get(string $name, callable $action)
+    {
+        if (is_callable($action)) {
+            self::$route[$name] = $action();   
+        }
+    }
+
+    public static function post()
+    {
+    
+    }
+
+    public static function put()
+    {
+    }
+
+    public static function delete()
+    {
+    
+    }
+
+    public static function trace()
+    {
+    }
+
+    public static function connect()
     {
     
     }
