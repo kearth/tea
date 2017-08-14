@@ -3,10 +3,9 @@ namespace BaseStone\Core;
 
 abstract class Base 
 {
- 
-    public static function create()
+    public static function getInstance($paramters = [])
     {
-        return new static();  
+        return new static($paramters);
     }
 
     public function __call($name, $arg)
@@ -30,10 +29,13 @@ abstract class Base
         //return error_log(print_r($properties,1));
     //}
 
-    public function test(string $test)
-    {
-        echo $test;
-    }
+    //protected function init()
+    //{
+        //foreach ($this->init as $method) {
+            //call_user_func($method_exists)
+        //}
+    //}
 
 }
+
 

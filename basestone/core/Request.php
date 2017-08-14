@@ -1,10 +1,9 @@
 <?php
 namespace BaseStone\Core;
 
-class Request extends Core
+class Request extends Singleton
 {
  
-    private static $instance = null;
     private $info;
     private $provider;
     private $action;
@@ -15,7 +14,7 @@ class Request extends Core
     private $method;
     private $cookie;
 
-    private function __construct()
+    protected function init()
     {
         $this->info            = $_SERVER;
         $this->userAgent       = $_SERVER['HTTP_USER_AGENT'];
@@ -24,24 +23,9 @@ class Request extends Core
         $this->method          = $_SERVER['REQUEST_METHOD'];
         $this->cookie          = $_COOKIE;
         $this->action          = $_REQUEST['rewrite'];
-        unset($_REQUEST['rewrite']);
         $this->params          = $_REQUEST;
     }
 
-    private function __clone()
-    {
-    
-    }
-
-    private function __wakeup()
-    {
-    
-    }
-
-    private function __sleep()
-    {
-    
-    }
 
     public function getUserAgent()
     {
@@ -53,10 +37,10 @@ class Request extends Core
         return $this->info;
     }
 
-    public function getProvider()
-    {
-        return $this->provider;
-    }
+    //public function getProvider()
+    //{
+        //return $this->provider;
+    //}
 
     public function getAction()
     {
@@ -88,23 +72,26 @@ class Request extends Core
         return $this->cookie;
     }
 
-    public function setProvider(string $provider)
-    {
-        $this->provider = $provider;   
-    }
+    //public function setProvider(string $provider)
+    //{
+        //$this->provider = $provider;   
+    //}
 
     public function setAction(string $action)
     {
         $this->action = $action;
     }
 
-    public static function getInstance()
+    public function __call(string $name, array $paramters)
     {
-        if (null === self::$instance) {
-            self::$instance = new self();
+        $type = substr($name, 0, 3);
+        $property = lcfirst(substr($name, 3));
+        if ('get' === $type && property_exists(get_class(), $property)) {
+            return $this->$property;
+        } elseif ('set' === $type && property_exists(get_class(), $property)) {
+            $this->$property = $paramters[0];          
         }
-        return self::$instance;
-    }
-       
+    }   
+
 }
 

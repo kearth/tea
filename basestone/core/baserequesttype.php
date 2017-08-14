@@ -8,6 +8,10 @@ abstract class BaseRequestType
     protected $type;
     protected $output;
 
+    const REQUEST_TYPE_API       = 'api';
+    const REQUEST_TYPE_VIEWS     = 'views';
+    const REQUEST_TYPE_RESOURCES = 'resources';
+
     abstract public function __construct();
 
     abstract protected function output();

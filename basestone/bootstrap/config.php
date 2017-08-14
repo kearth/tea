@@ -1,36 +1,13 @@
 <?php
 namespace BaseStone\Bootstrap;
 
-class Config
+use BaseStone\Core\Singleton;
+
+class Config extends Singleton
 {
-    private static $instance = null;
     private $allConfig = null;
 
-    private function __construct()
-    {
-    }
-    
-    private function __clone()
-    {
-    }
-
-    private function __sleep()
-    {
-    }
-
-    private function __wakeup()
-    {
-    }
-
-    public static function getInstance()
-    {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-    
-    public function init($confFile)
+    public function load($confFile)
     {
         if (file_exists($confFile)) {
             $confInfo = parse_ini_file($confFile,true);

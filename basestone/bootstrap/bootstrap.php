@@ -2,28 +2,11 @@
 namespace BaseStone\Bootstrap;
 
 use BaseStone\Core\Request;
+use BaseStone\Core\Singleton;
 use BaseStone\Core\Log;
 
-class Bootstrap
+class Bootstrap extends Singleton
 {
-    private static $instance = null;
-
-    private function __construct(){}
-
-    private function __clone(){}
-
-    private function __wakeup(){}
-
-    private function __sleep(){}
-
-    public static function getInstance()
-    {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     /**
      *  @name run 运行
      *  @access public
@@ -32,19 +15,16 @@ class Bootstrap
     public function run()
     {
         //配置初始化
-        Config::getInstance()->init(CONFIG_PATH);
-
-        //日志监控初始化
-        Log::getInstance()->init();
+        Config::getInstance()->load(CONFIG_PATH);
         
         //路由启动
-        Router::create()->run();
+        Router::getInstance()->run();
         
         //分发启动
-        Dispatcher::create()->run();
+        Dispatcher::getInstance()->run();
         
         //结束流程
-        Over::create()->run();
+        Over::getInstance()->run();
     }
 }
 

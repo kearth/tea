@@ -26,22 +26,23 @@ class Router extends Base
     public function router()
     {
 
-        self::get('views/ihehehe/get/5', function(){
-            return "hello world";       
-        });
-        if (array_key_exists($this->request->getAction(), self::$route)) {
-            $this->request->setProvider(self::$route[$this->request->getAction()]);
-        } else {
-            $provider = "Application\\".str_replace('/','\\',$this->request->getAction());
-            $this->request->setProvider($provider);
+        //self::get('views/ihehehe/get/5', function(){
+            //return "hello world";       
+        //});
+        if (!$this->hasRuledRouter()) {
+            $this->defaultRouter();
         }
-        return $this->request;
+    }
+
+    public function test(\Closure $function)
+    {
+        $method  = \Closure::bind($function, $this, get_class());
+        var_export($method());
     }
 
 
     public function routerStartUp()
     {
-
     }
 
     public function routerShutDown()
@@ -87,6 +88,24 @@ class Router extends Base
     {
     
     }
+
+    public function hasRuledRouter()
+    {
+        foreach (self::$route as $router => $rule) {
+            if (array_key_exists($this->request->getAction(), self::$route)) {
+                $this->request->setProvider(self::$route[$this->request->getAction()]);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function defaultRouter()
+    {
+        $provider = "Application\\".str_replace('/','\\',$this->request->getAction());
+        $this->request->setProvider($provider);
+    }
+
 
 }
 

@@ -1,9 +1,9 @@
 <?php
 namespace Application\Views;
 
-use BaseStone\Core\BaseView;
+use BaseStone\Core\BaseViews;
 
-class Index extends BaseView
+class Index extends BaseViews
 {
     public function getAction()
     {

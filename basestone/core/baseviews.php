@@ -1,7 +1,7 @@
 <?php
 namespace BaseStone\Core;
 
-class BaseView extends BaseRequestType
+class BaseViews extends BaseRequestType
 {
     public function __construct()
     {
