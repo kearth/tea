@@ -11,7 +11,6 @@ class Over extends Base
     {
         $this->response = Response::getInstance();
         $bac = $this->response->getParams();
-        var_export($bac);
     }
 
 }

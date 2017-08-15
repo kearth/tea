@@ -3,6 +3,7 @@ namespace BaseStone\Core;
 
 class Response extends Singleton
 {
+    private $output;
     private $params = [];
 
     public function getParams(): array
@@ -14,6 +15,7 @@ class Response extends Singleton
     {
         $this->params = $params;
     }
+
 
 }
 

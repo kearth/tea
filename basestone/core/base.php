@@ -19,6 +19,9 @@ abstract class Base
         return get_class($this);
     }
 
+    protected $container; 
+
+
     public function __invoke(string $name)
     {
         $this->test($name);
