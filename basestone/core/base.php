@@ -3,6 +3,8 @@ namespace BaseStone\Core;
 
 abstract class Base 
 {
+    protected $app;
+
     public static function getInstance($paramters = [])
     {
         return new static($paramters);
@@ -30,13 +32,6 @@ abstract class Base
     //public static function __set_state(array $properties)
     //{
         //return error_log(print_r($properties,1));
-    //}
-
-    //protected function init()
-    //{
-        //foreach ($this->init as $method) {
-            //call_user_func($method_exists)
-        //}
     //}
 
 }

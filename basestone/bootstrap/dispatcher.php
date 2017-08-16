@@ -25,9 +25,9 @@ class Dispatcher extends Base
     {
         $provider = $this->request->getProvider();
         if (class_exists($provider)) {
-            $method = new $provider();
+            $method = new $provider($this->request, Response::getInstance());
             $method->getAction();
-            $method->output();
+            //$method->output();
         } else {
             echo "请求不存在";
         }

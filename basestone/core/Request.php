@@ -26,57 +26,6 @@ class Request extends Singleton
         $this->params          = $_REQUEST;
     }
 
-
-    public function getUserAgent()
-    {
-        return $this->userAgent;
-    }
-
-    public function getInfo()
-    {
-        return $this->info;
-    }
-
-    //public function getProvider()
-    //{
-        //return $this->provider;
-    //}
-
-    public function getAction()
-    {
-        return $this->action;
-    }
-
-    public function getParams()
-    {
-        return $this->params;
-    }
-
-    public function getProtocal()
-    {
-        return $this->protocal;
-    }
-
-    public function getUri()
-    {
-        return $this->uri;
-    }
-
-    public function getMethod()
-    {
-        return $this->method;   
-    }
-
-    public function getCookie()
-    {
-        return $this->cookie;
-    }
-
-    //public function setProvider(string $provider)
-    //{
-        //$this->provider = $provider;   
-    //}
-
     public function setAction(string $action)
     {
         $this->action = $action;

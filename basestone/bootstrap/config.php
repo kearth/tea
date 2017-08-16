@@ -23,6 +23,11 @@ class Config extends Singleton
         }
     }
 
+    public function appload()
+    {
+        include ROOT_PATH."/config/app.php";
+    }
+
     private function defineConstant($constantArr)
     {
         foreach($constantArr as $key => $value) {

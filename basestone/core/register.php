@@ -3,20 +3,27 @@ namespace BaseStone\Core;
 
 class Register extends Singleton
 {
-    private $modules   = [];
-    private $instance  = [];
-    private $binds     = [];
-    private $alias     = [];
-    private $event     = [];
+    private $singleton  = [];
+    private $instance   = [];
 
-    public function bind($abstract, $concrete, $shared)
+    protected function binds($abstract, $concrete, $shared = false)
     {
-        if ($concrete instanceof \Closure) {
-            $this->binds[$abstract] = $concrete;
-        }
-        
-        if (is_object($concrete)) {
-            $this->instance[$abstract] = $concrete;
+        if ($shared) {
+            if ($concrete instanceof \Closure) {
+                $this->singleton[$abstract] = $concrete;
+            } else {
+                $this->singleton[$abstract] = function($paramters){
+                    return $concrete;
+                };
+            }
+        } else {
+            if ($concrete instanceof \Closure) {
+                $this->instance[$abstract] = $concrete;
+            } else {
+                $this->instance[$abstract] = function($paramters){
+                    return $concrete;
+                };
+            }
         }
     }
 
@@ -37,8 +44,13 @@ class Register extends Singleton
 
     public function make($abstract, $paramters = [])
     {
-        
+        if (array_key_exists($abstract, $this->singleton)) {
+            return $this->singleton[$abstract]($paramters);       
+        } elseif (array_key_exists($abstract, $this->instance)) {
+            return $this->instance[$abstract]($paramters);
+        } else {
+            throw new \Exception();
+        }
     }
-
 }
 
