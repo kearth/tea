@@ -1,9 +1,5 @@
 <?php
-namespace BaseStone\Bootstrap;
-
-use BaseStone\Core\Base;
-use BaseStone\Core\Request;
-use BaseStone\Core\Response;
+namespace Akf\Core;
 
 class Router extends Base
 {
@@ -16,19 +12,16 @@ class Router extends Base
         $this->request  = Request::getInstance();
     }
 
-    public function run()
+    public static function run()
     {
-        $this->routerStartUp();
-        $this->router();
-        $this->routerShutDown();   
+        $self = self::getInstance();
+        $self->routerStartUp();
+        $self->router();
+        $self->routerShutDown();   
     }
 
     public function router()
     {
-
-        //self::get('views/ihehehe/get/5', function(){
-            //return "hello world";       
-        //});
         if (!$this->hasRuledRouter()) {
             $this->defaultRouter();
         }
@@ -102,7 +95,7 @@ class Router extends Base
 
     public function defaultRouter()
     {
-        $provider = "Application\\".str_replace('/','\\',$this->request->getAction());
+        $provider = "Akf\\Application\\".str_replace('/','\\',$this->request->getAction());
         $this->request->setProvider($provider);
     }
 

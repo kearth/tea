@@ -1,5 +1,5 @@
 <?php
-namespace BaseStone\Core;
+namespace Akf\Core;
 
 class Request extends Singleton
 {

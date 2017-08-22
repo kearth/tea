@@ -1,5 +1,5 @@
 <?php
-namespace BaseStone\Bootstrap;
+namespace Akf\Core;
 
 class Autoload
 {
@@ -37,7 +37,7 @@ class Autoload
 
     public function loadClass($class)
     {
-        $class_file = ROOT_PATH . DIRECTORY_SEPARATOR . str_replace('\\', '/', $class) . '.php';
+        $class_file = ROOT_PATH . DIRECTORY_SEPARATOR . substr(str_replace('\\', '/', $class),3) . '.php';
         
         if (in_array($class_file,$this->has_required_file)) {
             return;

@@ -1,9 +1,5 @@
 <?php
-namespace BaseStone\Bootstrap;
-
-use BaseStone\Core\Base;
-use BaseStone\Core\Request;
-use BaseStone\Core\Response;
+namespace Akf\Core;
 
 class Dispatcher extends Base
 {
@@ -11,14 +7,15 @@ class Dispatcher extends Base
 
     public function __construct()
     {
-        $this->request  = Request::getInstance();
+        $this->request  = Request::getInstance();;
     }
     
-    public function run()
+    public static function run()
     {
-        $this->preDispatch();
-        $this->dispatch();
-        $this->postDispatch();   
+        $self = self::getInstance();
+        $self->preDispatch();
+        $self->dispatch();
+        $self->postDispatch();   
     }
 
     public function dispatch()

@@ -1,7 +1,7 @@
 <?php
-namespace Application\Views;
+namespace Akf\Application\Views;
 
-use BaseStone\Core\Application;
+use Akf\Core\Application;
 
 class Index extends Application
 {

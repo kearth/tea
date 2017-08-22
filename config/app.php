@@ -1,5 +1,5 @@
 <?php
-use BaseStone\Core\Container;
+use Akf\Core\Container;
 
 $container = new Container();
 $container->singleton("outputviews", function($paramters){

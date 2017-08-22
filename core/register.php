@@ -1,5 +1,5 @@
 <?php
-namespace BaseStone\Core;
+namespace Akf\Core;
 
 class Register extends Singleton
 {
@@ -25,11 +25,6 @@ class Register extends Singleton
                 };
             }
         }
-    }
-
-    public function modules($abstract, $concrete, $orderby)
-    {
-        
     }
 
     public function singleton($abstract, $concrete)
