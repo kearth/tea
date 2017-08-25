@@ -26,10 +26,11 @@ abstract class Application extends Base
     
     }
 
-    public function __construct(Request $request, Response $response)
+    public function __construct()
     {
-        $this->request  = $request; 
-        $this->response = $response;
+        parent::__construct();
+        $this->request  = Request::getInstance(); 
+        $this->response = Response::getInstance();
     }
 
     public function run()

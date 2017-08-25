@@ -5,15 +5,14 @@ class Over extends Base
 {
     public function __construct()
     {
-        $this->app = new Container();
+        parent::__construct();
         $this->response = Response::getInstance();
-    }   
+    }
 
-    public static function run()
+    public function run()
     {
-        $self = self::getInstance();
-        $self->response->setOutput('outputviews');
-        $self->app->make($self->response->getOutput(), $self->response->getParams());
+        $this->response->setOutput('outputviews');
+        $this->app->make($this->response->getOutput(), $this->response->getParams());
     }
 }
 

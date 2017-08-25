@@ -1,19 +1,82 @@
 <?php
 namespace Akf\Core;
 
-class Container
+class Container extends Singleton
 {
-    private $register;
+    //存储singleton实例
+    private $instance = [];
+    //存储bind方法
+    private $bind     = [];
 
-    public function __construct()
+    public function bind($abstract, $concrete = null, $shared = false)
     {
-        $this->register = Register::getInstance();    
+        $concrete = $this->getClosure($abstract, $concrete);
+        $this->bind[$abstract] = compact("concrete", "shared");
     }
 
-    public function __call($name, $paramters)
+    public function getClosure($abstract, $concrete)
     {
-        return call_user_func_array([$this->register,$name], $paramters); 
+        //if (is_null($concrete)) {
+               
+        //}
+
+        if ($concrete instanceof \Closure) {
+            return $concrete;
+        } 
+
+        if (is_object($concrete)) {
+            return function ($paramters) {
+                return $concrete;
+            };
+        }
+
+        if (is_string($concrete)) {
+            if (class_exists($concrete)) {
+                return function ($paramters) {
+                    return new $concrete();
+                };
+            }   
+            throw new \Exception("没有这个类");
+        }
     }
-       
+
+
+    /**
+     * @name singleton 绑定容器为单例
+     * @param $abstract 类名
+     * @param $concrete 绑定方法
+     * @return void
+     */   
+    public function singleton($abstract, $concrete)
+    {
+        $this->bind($abstract, $concrete, true);
+    }
+
+    /**
+     *  @name instance 绑定实例到容器
+     *  @param $abstract 类名
+     *  @param $concrete 绑定方法
+     *  @return void
+     */
+    public function instance($abstract, $concrete)
+    {
+        $this->bind($abstract, $concrete);   
+    }
+
+    public function make($abstract, $paramters = [])
+    {
+        if (array_key_exists($abstract, $this->bind)) {
+            if (true == $this->bind[$abstract]['shared']) {
+                if (isset($this->instance[$abstract])) {
+                    return $this->instance[$abstract];
+                }
+                $concrete = $this->bind[$abstract]['concrete'];
+                $this->instance[$abstract] = $concrete($paramters);
+                return $this->instance[$abstract];
+            } 
+            $concrete = $this->bind[$abstract]['concrete'];
+            return $concrete($paramters);
+        }
+    }
 }
 

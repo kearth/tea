@@ -10,12 +10,11 @@ class Dispatcher extends Base
         $this->request  = Request::getInstance();;
     }
     
-    public static function run()
+    public function run()
     {
-        $self = self::getInstance();
-        $self->preDispatch();
-        $self->dispatch();
-        $self->postDispatch();   
+        $this->preDispatch();
+        $this->dispatch();
+        $this->postDispatch();   
     }
 
     public function dispatch()
@@ -24,7 +23,6 @@ class Dispatcher extends Base
         if (class_exists($provider)) {
             $method = new $provider($this->request, Response::getInstance());
             $method->getAction();
-            //$method->output();
         } else {
             echo "请求不存在";
         }

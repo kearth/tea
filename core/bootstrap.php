@@ -11,9 +11,10 @@ class Bootstrap extends Singleton
     public function run()
     {
         $modules = Config::getInstance()->getModules();
+
         foreach ($modules as $module) {
             if (class_exists($module)) {
-                $module::run();
+                $module::getInstance()->run();
             } 
         }
     }

@@ -4,6 +4,12 @@ namespace Akf\Core;
 abstract class Base 
 {
     protected $app;
+    protected $container; 
+
+    public function __construct()
+    {
+        $this->app = Container::getInstance();
+    }
 
     public static function getInstance($paramters = [])
     {
@@ -21,18 +27,12 @@ abstract class Base
         return get_class($this);
     }
 
-    protected $container; 
 
 
     public function __invoke(string $name)
     {
         $this->test($name);
     }
-
-    //public static function __set_state(array $properties)
-    //{
-        //return error_log(print_r($properties,1));
-    //}
 
 }
 

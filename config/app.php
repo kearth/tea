@@ -1,7 +1,6 @@
 <?php
 use Akf\Core\Container;
-
-$container = new Container();
+$container = Container::getInstance();
 $container->singleton("outputviews", function($paramters){
     $view = ROOT_PATH."/public/".$paramters['view'].".html";
     if (file_exists($view)) {

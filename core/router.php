@@ -1,8 +1,13 @@
 <?php
 namespace Akf\Core;
 
-class Router extends Base
+class Router extends Provider
 {
+
+    public function register()
+    {
+        
+    }
 
     private $request;
     private static $route = [];
@@ -12,12 +17,11 @@ class Router extends Base
         $this->request  = Request::getInstance();
     }
 
-    public static function run()
+    public function run()
     {
-        $self = self::getInstance();
-        $self->routerStartUp();
-        $self->router();
-        $self->routerShutDown();   
+        $this->routerStartUp();
+        $this->router();
+        $this->routerShutDown();   
     }
 
     public function router()
@@ -26,13 +30,6 @@ class Router extends Base
             $this->defaultRouter();
         }
     }
-
-    public function test(\Closure $function)
-    {
-        $method  = \Closure::bind($function, $this, get_class());
-        var_export($method());
-    }
-
 
     public function routerStartUp()
     {
