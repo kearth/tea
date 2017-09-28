@@ -20,6 +20,7 @@ class Dispatcher extends Base
     public function dispatch()
     {
         $provider = $this->request->getProvider();
+        var_export($provider);
         if (class_exists($provider)) {
             $method = new $provider($this->request, Response::getInstance());
             $method->getAction();

@@ -38,29 +38,13 @@ API 那一堆，如 OAuth、版本管理等。
 15. 正则表达式:http://php.net/manual/en/book.pcre.php;
 
 
+index.php 入口
+bootstrap 引导
+config
+service
+component
+module
 
-1. 常见的设计模式：工厂、单例，外观、观察者等;
-2. 迭代器等预定义接口：
-PHP: 预定义接口；
-3. 数据库拓展：PHP: 数据库扩展;
-4. 国际化与字符编码支持
-PHP: 国际化与字符编码支持;
-5. 常用的缓存，Redis, Memcache,Apc等;
-6. 队列服
-务如ActiveMQ,Beanstalkd等;
-7. 多数据库支持如Mongo；
-8. 事件与钩子；
-
-
-
-配置文件
-控制器
-核心内容
-库函数
-模型层
-对外视图层
-测试文件层
-composer
 
 
 
