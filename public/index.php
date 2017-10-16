@@ -11,13 +11,14 @@ use Akf\Core\Bootstrap;
 
 define('ROOT_PATH', realpath(__DIR__."/../"));
 define('CONFIG_PATH_ROOT', ROOT_PATH . '/config/');
-define('CONFIG_DEFAULT', CONFIG_PATH_ROOT . 'default.ini');
+define('CONFIG_DEFAULT', CONFIG_PATH_ROOT . 'default.php');
 
 include_once(ROOT_PATH."/core/autoload.php");
-echo DIRECTORY_SEPARATOR;
 
-Autoload::getInstance()->register();
-Config::getInstance()->load();
-Config::getInstance()->appload();
-Bootstrap::getInstance()->run();
+
+Autoload::register();
+
+Config::load(CONFIG_DEFAULT);
+
+Bootstrap::run();
 

@@ -8,31 +8,18 @@ class Autoload
     const LOAD_CONF_STRATEGY_SELF_DESIGN = 1;   //自定义
     const LOAD_CONF_STRATEGY_MULTIPLE    = 2;   //多重混合
 
-    private static $instance = null;
 
     private $has_required_file = [];
 
-    private function __construct()
+    public static function register()
     {
-    }
-
-    public static function getInstance()
-    {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    public function register()
-    {
-        spl_autoload_register(array($this,'loadClass'));
+        spl_autoload_register(array(new static(),'loadClass'));
     }
 
     public function loadClass($class)
     {
-        $class_file = ROOT_PATH . DIRECTORY_SEPARATOR . substr(str_replace('\\', '/', $class),3) . '.php';
-        
+        $class_file = ROOT_PATH . DIRECTORY_SEPARATOR . substr(str_replace('\\', '/', $class), 4) . '.php';
+    
         if (in_array($class_file,$this->has_required_file)) {
             return;
         }

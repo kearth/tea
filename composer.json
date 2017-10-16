@@ -1,5 +1,5 @@
 {
-    "name": "root/ksm-cms",
+    "name": "Akf",
     "authors": [
         {
             "name": "Kearth",
@@ -7,7 +7,8 @@
         }
     ],
     "require": {
-        "filp/whoops":"*"
+        "filp/whoops":"*",
+        "catfan/Medoo": "^1.4"
     },
     "repositories": {
         "packagist": {
