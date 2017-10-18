@@ -24,14 +24,12 @@ class Config
         return self::get('components');
     }
 
-    public static function getComponentCfg(string $cfg) : \closure
+    public static function getComponentCfg(string $cfg) : array
     {
         if (file_exists($cfg)) {
-            return function() {
-                return function(){ return include $cfg; };
-            };
+            return include $cfg;
         }
-        return function(){};
+        return [];
     }
 
 

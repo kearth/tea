@@ -5,7 +5,7 @@ abstract class Component
 {
     abstract public function run(Stream $stream) : Stream;
 
-    public function __construct(\closure $cfg)
+    public function __construct(array $cfg)
     {
     
     }

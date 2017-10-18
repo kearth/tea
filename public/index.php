@@ -15,10 +15,12 @@ define('CONFIG_DEFAULT', CONFIG_PATH_ROOT . 'default.php');
 
 include_once(ROOT_PATH."/core/autoload.php");
 
-
+//自动加载注册
 Autoload::register();
 
+//加载配置文件
 Config::load(CONFIG_DEFAULT);
 
+//引导程序
 Bootstrap::run();
 

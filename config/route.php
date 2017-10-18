@@ -1,4 +1,7 @@
 <?php
-return function() {
-    echo 1;
-};
+return [
+    '/post/{post}' => function($uri) {
+        return $uri;
+    },
+
+];
