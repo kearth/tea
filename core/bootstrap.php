@@ -21,13 +21,13 @@ abstract class Bootstrap
             }
         }
 
-        $stream = new Stream();
+        $stream = new Stream($_REQUEST);
 
         foreach (self::$components as $component) {
             $stream = $component->run($stream);
         }
 
-        echo "hello world";
+ //       echo "hello world";
         //$modules = Config::getInstance()->getModules();
 
         //foreach ($modules as $module) {
