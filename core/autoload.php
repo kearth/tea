@@ -18,8 +18,14 @@ class Autoload
 
     public function loadClass($class)
     {
-        $class_file = ROOT_PATH . DIRECTORY_SEPARATOR . substr(str_replace('\\', '/', $class), 4) . '.php';
+        preg_match('/(\w+?Controller)/', $class, $matches);
+        if (count($matches) === 2) {
+            $class_file = ROOT_PATH . DIRECTORY_SEPARATOR . 'Application/Controller/' . $class . '.php' ;     
+        } else {
+            $class_file = ROOT_PATH . DIRECTORY_SEPARATOR . substr(str_replace('\\', '/', $class), 4) . '.php';
+        }
     
+
         if (in_array($class_file,$this->has_required_file)) {
             return;
         }

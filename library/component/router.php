@@ -1,6 +1,6 @@
 <?php
 
-namespace Akf\Library;
+namespace Akf\Library\Component;
 
 use Akf\Core\Component;
 use Akf\Core\Stream;
@@ -10,6 +10,9 @@ use Akf\Core\Stream;
  */
 class Router extends Component
 {
+    /**
+     *  路由规则
+     */
     private static $routeRule = [];
 
     /**

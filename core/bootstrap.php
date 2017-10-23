@@ -6,8 +6,8 @@ abstract class Bootstrap
     private static $components = [];
 
     /**
-     *  @name run 运行
-     *  @access public
+     *  运行引导 run
+     *
      *  @return void
      */
     public static function run()
@@ -26,16 +26,8 @@ abstract class Bootstrap
         foreach (self::$components as $component) {
             $stream = $component->run($stream);
         }
-
- //       echo "hello world";
-        //$modules = Config::getInstance()->getModules();
-
-        //foreach ($modules as $module) {
-            //if (class_exists($module)) {
-                //$module::getInstance()->run();
-            //} 
-        //}
+        
+        $stream->flowAway();
     }
-
 }
 

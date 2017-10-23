@@ -19,13 +19,17 @@ define('HTTP_OK', 200);
 return [
     'env' => 'dev',
     'components' => [
-        'Akf\Library\Router'     => [
+        'Akf\Library\Component\Router'     => [
             'level' => 1,
             'cfg'   => CONFIG_PATH_ROOT . 'route.php'
         ],
-        'Akf\Library\Dispatcher' => [
+        'Akf\Library\Component\Dispatcher' => [
             'level' => 2
+        ],
+        'Akf\Library\Component\Back'       => [
+            'level' => 3
         ]
+
     ],
 
 ];

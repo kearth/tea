@@ -1,7 +1,8 @@
 <?php
-namespace BaseStone\Core;
 
-class Error extends Singleton
+namespace Akf\Core;
+
+class Error 
 {
 
     public function init()

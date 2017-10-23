@@ -3,7 +3,14 @@ namespace Akf\Core;
 
 class Stream 
 {
+    /**
+     *  请求
+     */
     private static $request  = [];
+
+    /**
+     *  响应
+     */
     private static $response = [];
 
     public function __construct(array $content)
@@ -28,6 +35,20 @@ class Stream
 
     public function getResponse($name = '')
     {
-    
+        if ('' !== $name) {
+            return self::$response[$name];
+        }  else {
+            return self::$response;
+        }
+    }
+
+    public function setResponse(string $name, $value) 
+    {
+        self::$response[$name] = $value;
+    }
+
+    public function flowAway()
+    {
+        exit;
     }
 }
