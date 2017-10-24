@@ -17,7 +17,9 @@ define('HTTP_OK', 200);
 
 //系统配置
 return [
-    'env' => 'dev',
+    'env'  => 'dev',
+    'bind' => CONFIG_PATH_ROOT . 'bind.php', 
+    'alias' => CONFIG_PATH_ROOT . 'alias.php',
     'components' => [
         'Akf\Library\Component\Router'     => [
             'level' => 1,

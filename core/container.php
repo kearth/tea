@@ -11,10 +11,13 @@ class Container
         self::$instance[$class] = $closure;
     }
 
-    public function make(string $class, $paramters = [])
+    public static function make(string $class, $paramters = [])
     {
-        $closure = self::$instance[$class];
-        return $closure($paramters);
+        if (array_key_exists($class, self::$instance)) {
+            $closure = self::$instance[$class];
+            return $closure($paramters);
+        }
+        throw new \Exception('no this class :' . $class);
     }
 }
 

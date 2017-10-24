@@ -4,14 +4,30 @@ namespace Akf\Core;
 class Config
 {
     private static $config = [];
-    
-    public static function load($configPath) : bool
+
+    /**
+     *  加载配置文件 load
+     *
+     *  @param $configPath 配置文件路径
+     *  @return bool
+     */   
+    public static function load(string $configPath) : bool
     {
         if (file_exists($configPath)) {
             self::$config = include $configPath;
             return true;
         }
         return false;
+    }
+    
+    public static function getAliasCfg()
+    {
+        return include self::get('alias');
+    }
+
+    public static function getBindCfg()
+    {
+        include self::get('bind');
     }
 
     public static function getEnv()
@@ -24,6 +40,12 @@ class Config
         return self::get('components');
     }
 
+    /**
+     *  获取组件配置 getComponents
+     *
+     *  @param $cfg 配置文件路径
+     *  @return array
+     */
     public static function getComponentCfg(string $cfg) : array
     {
         if (file_exists($cfg)) {

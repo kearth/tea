@@ -38,13 +38,6 @@ API 那一堆，如 OAuth、版本管理等。
 15. 正则表达式:http://php.net/manual/en/book.pcre.php;
 
 
-index.php 入口
-bootstrap 引导
-config
-service
-component
-module
-
 
 
 

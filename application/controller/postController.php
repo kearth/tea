@@ -4,6 +4,14 @@ class PostController
 {
     public function indexAction()
     {
-        $this->response = 'Hello world';
+        //$userModel = Container::make('UserModel');
+        //echo $userModel->get('id');
+       //exit;
+        $this->response = [
+            'type' => 'View',
+            'code' => 1,
+            'msg'  => 2,
+            'data' => [22332]
+        ];
     }
 }

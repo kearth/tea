@@ -1,8 +1,12 @@
 <?php
+
 namespace Akf\Core;
 
 abstract class Bootstrap
 {
+    /**
+     *  组件
+     */
     private static $components = [];
 
     /**
@@ -12,6 +16,11 @@ abstract class Bootstrap
      */
     public static function run()
     {
+        $aliasCfg = Config::getAliasCfg();
+        Alias::load($aliasCfg);
+
+        Config::getBindCfg();
+
         $components = Config::getComponents();       
 
         foreach ($components as $componentClass => $component) {
@@ -21,7 +30,7 @@ abstract class Bootstrap
             }
         }
 
-        $stream = new Stream($_REQUEST);
+        $stream = Container::make('Stream', $_REQUEST);
 
         foreach (self::$components as $component) {
             $stream = $component->run($stream);

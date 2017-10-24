@@ -7,12 +7,12 @@ abstract class ReturnValue
     protected $type;
     protected $content;
 
-    public function __construct(\Closure $cfg)
+    public function __construct()
     {
-        $this->type    = get_class($this);
-        $this->content = $cfg;
+        $this->type = get_class($this);
     }
 
-    abstract public function show();
+    abstract public function get() : \Closure;
+    abstract public function set(array $value);
 }
 
