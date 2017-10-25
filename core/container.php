@@ -17,7 +17,7 @@ class Container
             $closure = self::$instance[$class];
             return $closure($paramters);
         }
-        throw new \Exception('no this class :' . $class);
+        throw new BaseException('no this class :' . $class);
     }
 }
 

@@ -1,8 +1,6 @@
 <?php
 
-namespace Akf\Library\Component;
-
-use Akf\Core\{Component, Stream, ReturnValue};
+namespace Akf\Core;
 
 class Back extends Component
 {

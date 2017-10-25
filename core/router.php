@@ -1,9 +1,6 @@
 <?php
 
-namespace Akf\Library\Component;
-
-use Akf\Core\Component;
-use Akf\Core\Stream;
+namespace Akf\Core;
 
 /**
  *  路由组件 Router

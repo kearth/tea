@@ -18,7 +18,7 @@ class Controller
             $returnValue->set($ctr->response);
             return $returnValue;
         }
-        throw new \Exception('response is invailed');
+        throw new \BaseException('response is invailed');
     }
 }
 

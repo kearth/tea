@@ -1,10 +1,6 @@
 <?php
 
-namespace Akf\Library\Component;
-
-use Akf\Core\Component;
-use Akf\Core\Stream;
-use Akf\Core\Controller;
+namespace Akf\Core;
 
 class Dispatcher extends Component
 {

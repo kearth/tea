@@ -20,22 +20,13 @@ abstract class Bootstrap
         Alias::load($aliasCfg);
 
         Config::getBindCfg();
-
-        $components = Config::getComponents();       
-
-        foreach ($components as $componentClass => $component) {
-            if (class_exists($componentClass)) {
-                $cfg = Config::getComponentCfg($component['cfg'] ?? '');
-                self::$components[$component['level']] =  new $componentClass($cfg);
-            }
-        }
-
         $stream = Container::make('Stream', $_REQUEST);
-
-        foreach (self::$components as $component) {
-            $stream = $component->run($stream);
-        }
-        
+        $router = Container::make('Router', Config::getComponentCfg(CONFIG_PATH_ROOT . 'route.php'));       
+        $stream = $router->run($stream);
+        $dispatcher = Container::make('Dispatcher');
+        $stream = $dispatcher->run($stream);
+        $back = Container::make('Back');
+        $stream = $back->run($stream);
         $stream->flowAway();
     }
 }

@@ -20,3 +20,14 @@ Container::bind('PostController', function () {
     return new PostController();
 });
 
+Container::bind('Router', function($cfg) {
+    return new Router($cfg);
+});
+
+Container::bind('Dispatcher', function($cfg) {
+    return new Dispatcher([]);
+});
+
+Container::bind('Back', function($cfg) {
+    return new Back([]);
+});
