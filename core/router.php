@@ -5,7 +5,7 @@ namespace Akf\Core;
 /**
  *  路由组件 Router
  */
-class Router extends Component
+class Router extends BaseComponent
 {
     /**
      *  路由规则

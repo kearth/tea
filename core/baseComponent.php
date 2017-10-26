@@ -2,7 +2,7 @@
 
 namespace Akf\Core;
 
-abstract class Component
+abstract class BaseComponent
 {
     abstract public function run(Stream $stream) : Stream;
 

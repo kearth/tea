@@ -1,10 +1,8 @@
 <?php
 
-namespace Akf\Library\Atom;
+namespace Akf\Library\Source;
 
-use Akf\Core\ReturnValue;
-
-class Api extends ReturnValue
+class Api extends \Response
 {
     public function set(array $value)
     {

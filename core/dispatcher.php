@@ -2,12 +2,12 @@
 
 namespace Akf\Core;
 
-class Dispatcher extends Component
+class Dispatcher extends BaseComponent
 {
     
     public function run(Stream $stream) : Stream
     {
-        $stream->setResponse('back', $this->dispatcher($stream->getRequest('uri')));
+        $stream->setResponse($this->dispatcher($stream->getRequest('uri')));
         return $stream;
     }
 
@@ -15,15 +15,15 @@ class Dispatcher extends Component
     {
         preg_match('/^(\w*?Controller)\/(\w*?Action)$/', $uri, $matches);
         if (3 === count($matches) && class_exists('\\' . $matches[1]) && method_exists('\\' . $matches[1], $matches[2])) {
-            $controller = $matches[1];
-            $action     = $matches[2];
+            $toController = $matches[1];
+            $action       = $matches[2];
         } else {
-            $controller = 'IndexController';
-            $action     = 'indexAction';
+            $toController = 'IndexController';
+            $action       = 'indexAction';
         }
-        $ctr = new Controller;
-        $paramters = [1];
-        return $ctr($controller, $action, $paramters);
+        $controller = Container::make('Controller');
+        $paramters  = [1];
+        return $controller($toController, $action, $paramters);
     }
 }
 

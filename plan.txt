@@ -20,24 +20,15 @@
 API 那一堆，如 OAuth、版本管理等。
 
 
-
-3. 错误处理：
-4. PHP标准库 
-5. 输出缓冲控制: PHP: 输出控制;
-6. PHP 选项/信息：PHP:PHP 选项/信
-息;
-7. 数据库抽象层：PHP: 数据库抽象层;
-8. session拓展：PHP: Session 扩展
-9. 反射
-10. 类和对象：
-11. 图像处理和 GD：PHP: GD - Manual;
-12. 邮件相关的SMTP;
-13.文件系统：PHP: Filesystem;
-14. 预定义变量：PHP: 预定义变量;
-15. 字符串处理PHP: 字符串 - Manual;
-15. 正则表达式:http://php.net/manual/en/book.pcre.php;
-
-
-
+application/
+config/
+core/
+-baseabstract
+-basecompontent
+-basesource
+-basetool
+-baseinterface
+-basevendor
+library/
 
 

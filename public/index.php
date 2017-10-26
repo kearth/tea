@@ -5,9 +5,10 @@
 //开启严格模式
 declare(strict_types=1);
 
-use Akf\Core\Autoload;
-use Akf\Core\Config;
-use Akf\Core\Bootstrap;
+use Akf\Core\{
+    Autoload,
+    Config
+};
 
 
 define('ROOT_PATH', realpath(__DIR__."/../"));
@@ -21,15 +22,18 @@ define('ENV_PRODUCT', 'product');
 define('ENV_TEST', 'test');
 define('ENV_DEV', 'dev');
 
-
-include_once(ROOT_PATH."/core/autoload.php");
 include_once(ROOT_PATH . "/core/config.php");
+include_once(ROOT_PATH . "/core/autoload.php");
 
 
 //加载配置文件
-Config::load(CONFIG_DEFAULT);
+Config::loadDefaultCfg(CONFIG_DEFAULT);
 
-define('ENV', Config::getEnv());
+//自动加载注册
+Autoload::register(Config::get('alias'));
+
+//容器绑定初始化
+Container::init(Config::get('bind'));
 
 if (ENV === ENV_PRODUCT) {
     error_reporting(0);
@@ -39,11 +43,5 @@ if (ENV === ENV_PRODUCT) {
     error_reporting(E_ALL ^ E_NOTICE);
 }
 
-//自动加载注册
-Autoload::register();
-
 //引导程序
 Bootstrap::run();
-
-
-

@@ -1,7 +1,8 @@
 <?php
+
 namespace Akf\Core;
 
-class Stream 
+class Stream extends BaseSource
 {
     /**
      *  请求
@@ -11,11 +12,13 @@ class Stream
     /**
      *  响应
      */
-    private static $response = [];
+    private static $response;
 
     public function __construct(array $content)
     {
-        self::$request['uri'] = $content['rewrite'];
+        self::$request['uri']   = $content['rewrite'];
+        unset($content['rewrite']);
+        self::$request['param'] = $content;
     }
 
     public function getRequest($name = '')
@@ -33,22 +36,19 @@ class Stream
     }
 
 
-    public function getResponse($name = '')
+    public function getResponse()
     {
-        if ('' !== $name) {
-            return self::$response[$name];
-        }  else {
-            return self::$response;
-        }
+        return self::$response;
     }
 
-    public function setResponse(string $name, $value) 
+    public function setResponse(Response $value) 
     {
-        self::$response[$name] = $value;
+        self::$response = $value;
     }
 
-    public function flowAway()
+    public function out()
     {
         exit;
     }
 }
+

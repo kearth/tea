@@ -2,7 +2,7 @@
 
 namespace Akf\Core;
 
-abstract class ReturnValue
+abstract class Response
 {
     protected $type;
     protected $content;

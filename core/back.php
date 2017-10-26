@@ -2,18 +2,13 @@
 
 namespace Akf\Core;
 
-class Back extends Component
+class Back extends BaseComponent
 {
     public function run(Stream $stream) : Stream
     {
-        $this->back($stream->getResponse('back'));
-        return $stream;
-    }
-
-    private function back(ReturnValue $returnValue)
-    {
-        $closure = $returnValue->get();
+        $closure = $stream->getResponse()->get();
         $closure();
+        return $stream;
     }
 
 }

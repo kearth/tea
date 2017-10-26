@@ -17,10 +17,33 @@ define('HTTP_OK', 200);
 
 //系统配置
 return [
-    'env'  => 'test',
-    'bind' => CONFIG_PATH_ROOT . 'bind.php', 
-    'alias' => CONFIG_PATH_ROOT . 'alias.php',
+    'env'    => 'test',
+    'bind'   => [
+        'Api' => function () {
+            return new Api();
+        },
+        'abc' => function ($request) {
+            return new Stream($request);
+        }
+    ],
+    'alias'  => [
+        'Akf\Core\Container'   => 'Container',
+        'Akf\Core\Stream'      => 'Stream',
+        'Akf\Core\Model'       => 'Model',
+        'Akf\Core\Response' => 'Response',
+        'Akf\Core\BaseException' => 'BaseException',
+        'Akf\Core\Bootstrap' => 'Bootstrap',
+        'Akf\Core\Controller' => 'Controller',
+        'Akf\Core\Router' => 'Router',
+        'Akf\Core\Dispatcher' => 'Dispatcher',
+        'Akf\Core\Back' => 'Back',
+        'Akf\Library\Source\Api' => 'Api',
+        'Akf\Library\Source\View'=> 'View',
+    ],
+    'route'  => CONFIG_PATH_ROOT . 'route.php',
     'components' => [
+        
+
     ],
 
 ];
