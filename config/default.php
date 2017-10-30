@@ -24,6 +24,9 @@ return [
         },
         'abc' => function ($request) {
             return new Stream($request);
+        },
+        'Router' => function ($config) {
+            return new Router($config);
         }
     ],
     'alias'  => [
@@ -40,10 +43,10 @@ return [
         'Akf\Library\Source\Api' => 'Api',
         'Akf\Library\Source\View'=> 'View',
     ],
-    'route'  => CONFIG_PATH_ROOT . 'route.php',
     'components' => [
-        
-
+        'Router'     => CONFIG_PATH_ROOT . 'route.php',
+        'Dispatcher' => '',
+        'Back'       => ''
     ],
 
 ];

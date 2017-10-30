@@ -2,7 +2,7 @@
 
 namespace Akf\Core;
 
-class Stream extends BaseSource
+final class Stream extends BaseSource
 {
     /**
      *  请求

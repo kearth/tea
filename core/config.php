@@ -41,5 +41,17 @@ class Config
             }
         }
     }
+
+    public static function getConfig($configContent) : array
+    {
+        if (is_string($configContent) && file_exists($configContent)) {
+            $config = include $configContent;
+        } elseif (is_array($configContent)) {
+            $config = $configContent;
+        } else {
+            $config = [];
+        }
+        return $config;
+    }
 }
 
