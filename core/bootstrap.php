@@ -9,10 +9,13 @@ abstract class Bootstrap
      */
     public static function run()
     {
+        $a = new Request();
+
         $stream = Container::make('Stream', $_REQUEST);
         $stream = self::loadComponents(Config::getComponents(), $stream);
         $stream->out();
     }
+
 
     private static function loadComponents(array $components, Stream $stream) : Stream
     {
