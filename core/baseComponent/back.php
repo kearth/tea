@@ -1,13 +1,14 @@
 <?php
 
-namespace Akf\Core;
+namespace Akf\Core\BaseComponent;
+
+use Akf\Core\BaseSource\Stream;
 
 class Back extends BaseComponent
 {
     public function run(Stream $stream) : Stream
     {
-        $closure = $stream->getResponse()->get();
-        $closure();
+        $stream->getResponse()->run();
         return $stream;
     }
 

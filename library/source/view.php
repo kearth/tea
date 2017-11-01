@@ -2,22 +2,25 @@
 
 namespace Akf\Library\Source;
 
+use Akf\Core\BaseSource\Response;
 
-class View extends \Response
+class View extends Response
 {
     private $viewPath;
     private $param;
-
     
-
-
-    public function get() : \Closure
+    public function run()
     {
-        return function () {
-            ob_start();
-            include $this->viewPath;
-            ob_end_flush();
-        };   
+        ob_start();
+        include $this->viewPath;
+        ob_end_flush();
+    }
+
+    public function defaultRule()
+    {
+        //$this->rule = function () use ($this){
+            //$this->viewPath = ROOT_PATH . '/application/view' . '/';
+        //}; 
     }
 
     public function set(array $value)
@@ -26,8 +29,6 @@ class View extends \Response
         $this->param = $value;     
     }
 
-    public function path()
-    {
     
-    }
+
 }

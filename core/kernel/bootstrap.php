@@ -1,6 +1,8 @@
 <?php
 
-namespace Akf\Core;
+namespace Akf\Core\Kernel;
+
+use Akf\Core\BaseSource\Stream;
 
 abstract class Bootstrap
 {
@@ -9,9 +11,8 @@ abstract class Bootstrap
      */
     public static function run()
     {
-        $a = new Request();
-
-        $stream = Container::make('Stream', $_REQUEST);
+        $request  = Container::make('Request');
+        $stream = Container::singleton('Stream', $request);
         $stream = self::loadComponents(Config::getComponents(), $stream);
         $stream->out();
     }

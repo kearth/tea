@@ -26,9 +26,9 @@ core/
 -baseabstract
 -basecompontent
 -basesource
--basetool
+-baseExtend/tool
+        /vendor
 -baseinterface
--basevendor
 library/
 
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Akf\Core;
+namespace Akf\Core\Kernel;
 
 /**
  *  基础异常

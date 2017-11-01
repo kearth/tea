@@ -1,6 +1,8 @@
 <?php
 
-namespace Akf\Core;
+namespace Akf\Core\BaseComponent;
+
+use Akf\Core\BaseSource\Stream;
 
 abstract class BaseComponent
 {

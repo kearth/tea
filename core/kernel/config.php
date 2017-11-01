@@ -1,5 +1,6 @@
 <?php
-namespace Akf\Core;
+
+namespace Akf\Core\Kernel;
 
 class Config
 {

@@ -1,6 +1,8 @@
 <?php
 
-namespace Akf\Core;
+namespace Akf\Core\BaseComponent;
+
+use Akf\Core\BaseSource\Stream;
 
 /**
  *  路由组件 Router
@@ -88,7 +90,7 @@ class Router extends BaseComponent
      */
     public function run(Stream $stream) : Stream
     {
-        $stream->setRequest('uri', $this->route($stream->getRequest('uri')));
+        $stream->setUri($this->route($stream->getUri()));
         return $stream;
     }
 

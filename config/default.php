@@ -22,24 +22,27 @@ return [
         'Api' => function () {
             return new Api();
         },
-        'abc' => function ($request) {
-            return new Stream($request);
-        },
         'Router' => function ($config) {
             return new Router($config);
+        },
+    ],
+    'bindSingle' => [
+        'Stream' => function ($request) {
+            return new Stream($request);
         }
     ],
     'alias'  => [
-        'Akf\Core\Container'   => 'Container',
-        'Akf\Core\Stream'      => 'Stream',
+        'Akf\Core\Kernel\Container'   => 'Container',
+        'Akf\Core\BaseSource\Stream'      => 'Stream',
         'Akf\Core\Model'       => 'Model',
-        'Akf\Core\Response' => 'Response',
+        'Akf\Core\BaseSource\Response' => 'Response',
+        'Akf\Core\BaseSource\Request'  => 'Request',
         'Akf\Core\BaseException' => 'BaseException',
-        'Akf\Core\Bootstrap' => 'Bootstrap',
-        'Akf\Core\Controller' => 'Controller',
-        'Akf\Core\Router' => 'Router',
-        'Akf\Core\Dispatcher' => 'Dispatcher',
-        'Akf\Core\Back' => 'Back',
+        'Akf\Core\Kernel\Bootstrap' => 'Bootstrap',
+        'Akf\Core\BaseSource\Controller' => 'Controller',
+        'Akf\Core\BaseComponent\Router' => 'Router',
+        'Akf\Core\BaseComponent\Dispatcher' => 'Dispatcher',
+        'Akf\Core\BaseComponent\Back' => 'Back',
         'Akf\Library\Source\Api' => 'Api',
         'Akf\Library\Source\View'=> 'View',
     ],

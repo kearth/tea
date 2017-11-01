@@ -1,6 +1,6 @@
 <?php
 
-namespace Akf\Core;
+namespace Akf\Core\BaseSource;
 
 final class Request
 {
@@ -10,14 +10,16 @@ final class Request
     private $httpAccept    = '';
     private $httpUserAgent = '';
     private $requestMethod = '';
-    private $request       = [];
+    private $uri           = '';
+    private $param         = [];
 
     public function __construct()
     {
         $this->httpAccept    = $_SERVER['HTTP_ACCEPT'];
         $this->httpUserAgent = $_SERVER['HTTP_USER_AGENT'];
         $this->requestMethod = $_SERVER['REQUEST_METHOD'];
-        $this->request       = $_REQUEST;
+        $this->uri           = $_REQUEST['rewrite'];
+        $this->param         = array_diff_key($_REQUEST, ['rewrite' => []]); 
         $this->check();
     }
 
@@ -27,7 +29,7 @@ final class Request
             empty($this->httpAccept)    || 
             empty($this->httpUserAgent) ||
             empty($this->requestMethod) ||
-            empty($this->request)     
+            empty($this->uri)     
         ) {
             throw \Exception('Request init failed');
         }
@@ -35,12 +37,12 @@ final class Request
 
     public function getAccept()
     {
-    
+        return $this->httpAccept;  
     }
 
     public function getUserAgent()
     {
-    
+        return $this->httpUserAgent;
     }
 
     public function getRequestMethod() : string
@@ -48,8 +50,13 @@ final class Request
         return (self::HTTP_METHOD_GET === $this->requestMethod) ? self::HTTP_METHOD_GET : self::HTTP_METHOD_POST;
     }
 
-    public function getRequest()
+    public function getUri()
     {
-    
+        return $this->uri;
+    }
+
+    public function getParam()
+    {
+        return $this->param;
     }
 }
