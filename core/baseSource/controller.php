@@ -5,10 +5,12 @@ use Akf\Core\Kernel\Container;
 
 class Controller
 {
-    public function __invoke(string $controller, string $action, array $paramters)
+    public function __invoke(Stream $stream)
     {
+        $controller = $stream->getController() . 'Controller';
+        $action     = $stream->getAction() . 'Action';
         $ctr = Container::make($controller);
-        $ctr->request   = $paramters;
+        $ctr->request   = $stream->getParam();
         $ctr->$action();
         if (isset($ctr->response['type'])) {
             $returnValue = Container::make($ctr->response['type']);
