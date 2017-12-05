@@ -1,23 +1,13 @@
 <?php
-class A 
+
+interface A
 {
-
-    public function __construct($a)
-    {
-        echo $a."\n";
-    }
-
-    public function __construct1($a,$b)
-    {
-        echo $a.$b."\n";
-    }
-
-    public function __construct2($a,$b,$c)
-    {
-        echo $a.$b.$c."\n";
-    }
+    public function Test(array $input);
 }
 
-new A("1");
-new A("2","33");
-new A("33","2","1");
+class B implements A
+{
+    public function Test($input) {}
+}
+
+
