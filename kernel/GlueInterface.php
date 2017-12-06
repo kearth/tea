@@ -1,7 +1,7 @@
 <?php
 namespace Akf\Kernel;
 
-class Bootstrap
+interface Glue
 {
 
 }

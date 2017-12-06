@@ -9,4 +9,12 @@ abstract class Block
 
     abstract protected function init();
 
+    abstract protected function in(Glue $glue);
+
+    abstract protected function out() : Glue;
+
+    public function create()
+    {
+    
+    }
 }
