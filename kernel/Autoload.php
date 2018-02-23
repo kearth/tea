@@ -1,33 +1,38 @@
 <?php
-namespace Akf\Kernel;
+
+namespace Tea\Kernel;
+
 
 class Autoload
 {
-    public static $nsHead      = "Akf";
     public static $hasRegister = [];
-    public static function register(string $root) : void
+
+    public static function initAlias() : void
     {
-        spl_autoload_register(function($class) use ($root){
+        $alias = Config::get(CONFIG_KEY_AUTOLOAD, AUTOLOAD_ALIAS);
+        if (!empty($alias)) {
+            var_export($alias);
+            foreach ($alias as $class => $name) {
+                class_alias($class, $name, true);
+            }
+        }
+    }
+
+    public static function register() : void
+    {
+        spl_autoload_register(function($class) {
             if (isset(self::$hasRegister[$class])) return;
             $classArr = explode("\\", $class);
             if (!empty($classArr)) {
-                if ($classArr[0] === self::$nsHead) {
+                if ($classArr[0] === Config::get(CONFIG_KEY_AUTOLOAD, FRAMEWORK_NAME)) {
                     array_shift($classArr);
                     $classPathRoot      = $root . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $classArr);
                     $classPath          = $classPathRoot . ".php";
-                    $classPathAbstract  = $classPathRoot . "Abstract.php";
-                    $classPathInterface = $classPathRoot . "Interface.php";
 
-                    if (file_exists($classPath)) {
-                        require $classPath;
+                    if (is_file($classPath)) {
+                        require($classPath);
                         self::$hasRegister[$class] = $classPath;
-                    } else if (file_exists($classPathAbstract)) {
-                        require $classPathAbstract;
-                        self::$hasRegister[$class] = $classPathAbstract;
-                    } else if (file_exists($classPathInterface)) {
-                        require $classPathInterface;
-                        self::$hasRegister[$class] = $classPathInterface;
-                    }   
+                    }
 
                 } else {
                     //TODO 外部类
@@ -36,4 +41,3 @@ class Autoload
         });
     }
 }
-

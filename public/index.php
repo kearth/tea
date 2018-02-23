@@ -1,48 +1,40 @@
 <?php
 /**
- *  入口文件
+ * Tea Framework
+ * Version 1.0.0
+ *
+ * Copyright 2018, Kearth
  */
-//开启严格模式
+
+//默认开启严格模式
 declare(strict_types=1);
 
-use Akf\Core\Kernel\{
-    Autoload,
-    Config
-};
+//入口文件 -> 懒加载配置文件 -> 自动加载文件 -> 引导程序 -> 路由 -> 启动应用处理 -> 处理结束结束请求
 
+use Tea\Kernel\Config;
+use Tea\Kernel\Autoload;
 
+//基础常量
 define('ROOT_PATH', realpath(__DIR__."/../"));
-define('CONFIG_PATH_ROOT', ROOT_PATH . '/config/');
-define('CONFIG_DEFAULT', CONFIG_PATH_ROOT . 'default.php');
-define('APPLICATION', ROOT_PATH . '/application/');
-define('CONTROLLER', APPLICATION . 'controller/');
-define('MODEL', APPLICATION . 'model/');
-define('VIEW', APPLICATION . 'view/');
-define('ENV_PRODUCT', 'product');
-define('ENV_TEST', 'test');
-define('ENV_DEV', 'dev');
+define('INIT_CONFIG_PATH', ROOT_PATH . "/config/init.php");
 
-include_once(ROOT_PATH . "/core/kernel/config.php");
-include_once(ROOT_PATH . "/core/kernel/autoload.php");
-
+include_once(ROOT_PATH . "/kernel/Config.php");
+include_once(ROOT_PATH . "/kernel/Autoload.php");
 
 //加载配置文件
-Config::loadDefaultCfg(CONFIG_DEFAULT);
+
+Config::initLoad(INIT_CONFIG_PATH);
 
 //自动加载注册
-Autoload::register(Config::get('alias'));
+Autoload::register();
 
 //容器绑定初始化
+new Container();
+exit;
 Container::init(Config::get('bind'));
 Container::initSingleton(Config::get('bindSingle'));
 
-if (ENV === ENV_PRODUCT) {
-    error_reporting(0);
-} elseif (ENV === ENV_TEST) {
-    error_reporting(E_ALL);
-} else {
-    error_reporting(E_ALL ^ E_NOTICE);
-}
+
 
 //引导程序
 Bootstrap::run();

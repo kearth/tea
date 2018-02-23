@@ -46,10 +46,5 @@ return [
         'Akf\Library\Source\Api' => 'Api',
         'Akf\Library\Source\View'=> 'View',
     ],
-    'components' => [
-        'Router'     => CONFIG_PATH_ROOT . 'route.php',
-        'Dispatcher' => '',
-        'Back'       => ''
-    ],
 
 ];
