@@ -13,10 +13,8 @@ class Container
     //对象定义列表
     private static $objList = [];
 
-    function __construct(argument)
+    function __construct()
     {
 
     }
-
-    
 }

@@ -2,42 +2,50 @@
 
 namespace Tea\Kernel;
 
+/**
+ * PSR-4
+ */
 
 class Autoload
 {
-    public static $hasRegister = [];
 
-    public static function initAlias() : void
+    protected static $prefixes = [];
+
+    public static function addNamespace(string $prefix, string $baseDir) : void
     {
-        $alias = Config::get(CONFIG_KEY_AUTOLOAD, AUTOLOAD_ALIAS);
-        if (!empty($alias)) {
-            var_export($alias);
-            foreach ($alias as $class => $name) {
-                class_alias($class, $name, true);
-            }
+        if (isset(self::$prefixes[$prefix]) === false) {
+            self::$prefixes[$prefix] = $baseDir;
         }
     }
 
-    public static function register() : void
+    public static function register()
     {
-        spl_autoload_register(function($class) {
-            if (isset(self::$hasRegister[$class])) return;
-            $classArr = explode("\\", $class);
-            if (!empty($classArr)) {
-                if ($classArr[0] === Config::get(CONFIG_KEY_AUTOLOAD, FRAMEWORK_NAME)) {
-                    array_shift($classArr);
-                    $classPathRoot      = $root . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $classArr);
-                    $classPath          = $classPathRoot . ".php";
+        spl_autoload_register([__CLASS__, 'loadClass']);
+    }
 
-                    if (is_file($classPath)) {
-                        require($classPath);
-                        self::$hasRegister[$class] = $classPath;
-                    }
+    protected static function loadMappedFile($prefix, $class)
+    {
 
-                } else {
-                    //TODO 外部类
-                }
+    }
+
+    protected static function requireFile(string $file) : bool
+    {
+        if (is_file($file)) {
+            require($file);
+            return true;
+        }
+        return false;
+    }
+
+    protected static function loadClass(string $class) : void
+    {
+        if (false !== $pos = strpos($class, "\\")) {
+            $prefix = substr($class, 0, $pos);
+            if (isset(self::$prefixes[$prefix])) {
+                $baseDir = self::$prefixes[$prefix];
             }
-        });
+        }
+        exit;
+
     }
 }

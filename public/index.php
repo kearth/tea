@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 use Tea\Kernel\Config;
 use Tea\Kernel\Autoload;
+use Tea\Kernel\Container;
 
 //基础常量
 define('ROOT_PATH', realpath(__DIR__."/../"));
@@ -29,7 +30,10 @@ Config::initLoad(INIT_CONFIG_PATH);
 Autoload::register();
 
 //容器绑定初始化
+
 new Container();
+
+
 exit;
 Container::init(Config::get('bind'));
 Container::initSingleton(Config::get('bindSingle'));

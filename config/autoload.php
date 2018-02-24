@@ -2,7 +2,6 @@
 
 define("AUTOLOAD_ALIAS", "alias");
 define("FRAMEWORK_NAME", "framework_name");
-define("NAMESPACE_ROUTE", "namespace_route");
 
 return [
      AUTOLOAD_ALIAS => [
@@ -10,7 +9,4 @@ return [
 
      ],
      FRAMEWORK_NAME => "Tea",
-     NAMESPACE_ROUTE => [
-
-     ]
 ];
