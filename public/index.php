@@ -31,10 +31,9 @@ Autoload::register();
 
 //容器绑定初始化
 
-new Container();
+Autoload::addNamespace("Tea", ROOT_PATH);
 
 
-exit;
 Container::init(Config::get('bind'));
 Container::initSingleton(Config::get('bindSingle'));
 

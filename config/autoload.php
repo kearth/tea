@@ -1,12 +1,14 @@
 <?php
 
 define("AUTOLOAD_ALIAS", "alias");
-define("FRAMEWORK_NAME", "framework_name");
+define("AUTOLOAD_NAMESPACE", "namespace");
 
 return [
      AUTOLOAD_ALIAS => [
          "Tea/kernel/Container" => "Container"
 
      ],
-     FRAMEWORK_NAME => "Tea",
+     AUTOLOAD_NAMESPACE => [
+         "Tea" => ROOT_PATH . "/"
+     ],
 ];

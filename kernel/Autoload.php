@@ -3,7 +3,7 @@
 namespace Tea\Kernel;
 
 /**
- * PSR-4
+ *
  */
 
 class Autoload
@@ -23,9 +23,10 @@ class Autoload
         spl_autoload_register([__CLASS__, 'loadClass']);
     }
 
-    protected static function loadMappedFile($prefix, $class)
+    protected static function loadMappedFile($prefix, $baseDir, $class)
     {
-
+        $path = $baseDir . "/" .  str_replace("\\", "/", $class) . ".php";
+        self::requireFile($path);
     }
 
     protected static function requireFile(string $file) : bool
@@ -41,11 +42,12 @@ class Autoload
     {
         if (false !== $pos = strpos($class, "\\")) {
             $prefix = substr($class, 0, $pos);
+            $clazz = substr($class, $pos + 1);
             if (isset(self::$prefixes[$prefix])) {
                 $baseDir = self::$prefixes[$prefix];
+                self::loadMappedFile($prefix, $baseDir, $clazz);
             }
-        }
-        exit;
 
+        }
     }
 }
