@@ -14,24 +14,28 @@ declare(strict_types=1);
 use Tea\Kernel\Config;
 use Tea\Kernel\Autoload;
 use Tea\Kernel\Container;
+use Tea\Kernel\Env;
 
 //基础常量
 define('ROOT_PATH', realpath(__DIR__."/../"));
 define('INIT_CONFIG_PATH', ROOT_PATH . "/config/init.php");
 
-include_once(ROOT_PATH . "/kernel/Config.php");
-include_once(ROOT_PATH . "/kernel/Autoload.php");
+include(ROOT_PATH . "/kernel/Config.php");
+include(ROOT_PATH . "/vendor/autoload.php");
 
 //加载配置文件
 
 Config::initLoad(INIT_CONFIG_PATH);
 
+$a = new \Tea\Kernel\Container();
+var_export($a);
 //自动加载注册
-Autoload::register();
+//Autoload::register();
 
 //容器绑定初始化
-
-Autoload::addNamespace("Tea", ROOT_PATH);
+//
+//Autoload::addNamespace("Tea", ROOT_PATH);
+exit;
 
 
 Container::init(Config::get('bind'));

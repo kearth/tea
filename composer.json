@@ -6,9 +6,15 @@
             "email": "kearth@yeah.net"
         }
     ],
+    "autoload" : {
+        "psr-4" : {
+            "Tea\\":""
+        }
+    },
     "require": {
         "filp/whoops":"*",
-        "catfan/Medoo": "^1.4"
+        "catfan/Medoo": "^1.4",
+        "monolog/monolog": "^1.23"
     },
     "repositories": {
         "packagist": {
