@@ -20,5 +20,6 @@ return [
     CONFIG_KEY_CACHE => "",
     CONFIG_KEY_ROUTE => "",
     CONFIG_KEY_ERROR => "",
-    CONFIG_KEY_AUTOLOAD => CONFIG_PATH . "/autoload.php"
+    CONFIG_KEY_AUTOLOAD => CONFIG_PATH . "/autoload.php",
+    "env" => ""
 ];
