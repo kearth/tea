@@ -4,9 +4,17 @@ namespace Tea\Kernel;
 
 class Env
 {
+    private static $envList = [];
 
-    public function __invoke($x)
+    public function __construct(array $envList)
     {
-        echo $x;
+        self::$envList = $envList;
+    }
+
+    public staitc function get(string $envName)
+    {
+        if (isset(self::$envList[$envName])) {
+            return self::$envList[$envName];
+        }
     }
 }

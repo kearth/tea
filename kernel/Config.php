@@ -12,23 +12,21 @@ class Config
      * 初始化配置加载
      * @param string $fileName 文件路径
      */
-    public static function initLoad(string $fileName) : void
+    public static function init(string $initPath) : void
     {
-        $initConfig = self::load($fileName);
-        foreach ($initConfig as $rootKey => $value) {
-
-            if (is_string($value) && is_file($value)) {
-                $value = self::load($value);
-            }
-
-            if(is_array($value)){
-                self::$configList[$rootKey] = $value;
-                self::$keyList[] = $rootKey;
-            }
+        $initConfig = self::load($initPath);
+        foreach ($initConfig as $key => $value) {
+            self::$configList[$key] = $value;
         }
     }
-
-    private static function load(string $fileName) : array
+/*
+            if (is_string($value) && is_file($value)) {
+                $config = self::load($value);
+                self::$configList[$key] = $config;
+            } else {
+            }
+*/
+    private static function load(string $fileName)
     {
         if (is_file($fileName)) {
             return require($fileName);
@@ -89,11 +87,5 @@ class Config
             }
             return self::$configList[$rootKey];
         }
-    }
-
-    private static function getFileType(string $fileName) : string
-    {
-        $fileInfo = pathinfo($fileName);
-        return $fileInfo["extension"];
     }
 }
