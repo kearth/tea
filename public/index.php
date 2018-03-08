@@ -16,4 +16,4 @@ define('ROOT_PATH', dirname(__DIR__));
 include(ROOT_PATH . "/vendor/autoload.php");
 
 //引导程序
-\Tea\Kernel\Bootstrap::run();
+\Tea\Core\Bootstrap::run();

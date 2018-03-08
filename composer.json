@@ -1,5 +1,5 @@
 {
-    "name": "Akf",
+    "name": "Tea",
     "authors": [
         {
             "name": "Kearth",
@@ -8,7 +8,7 @@
     ],
     "autoload" : {
         "psr-4" : {
-            "Tea\\":""
+            "Tea\\Core\\":"core/"
         }
     },
     "require": {

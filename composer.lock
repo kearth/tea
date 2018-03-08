@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "39314ab6ffc0c743db58c506632ca61a",
+    "content-hash": "d83b3faf15f53cab0d619c51353f3e00",
     "packages": [
         {
             "name": "catfan/medoo",
-            "version": "v1.5.4",
+            "version": "v1.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/catfan/Medoo.git",
-                "reference": "a6b7b05b18fa7c8f955e259d491344b1db9a51bf"
+                "reference": "4e51f7483b01ed1195565bb64e85ea8bd17b63cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/catfan/Medoo/a6b7b05b18fa7c8f955e259d491344b1db9a51bf.zip",
-                "reference": "a6b7b05b18fa7c8f955e259d491344b1db9a51bf",
+                "url": "https://files.phpcomposer.com/files/catfan/Medoo/4e51f7483b01ed1195565bb64e85ea8bd17b63cb.zip",
+                "reference": "4e51f7483b01ed1195565bb64e85ea8bd17b63cb",
                 "shasum": ""
             },
             "require": {
@@ -63,7 +63,7 @@
                 "sql",
                 "sqlite"
             ],
-            "time": "2018-01-08T20:01:12+00:00"
+            "time": "2018-03-07T09:42:23+00:00"
         },
         {
             "name": "filp/whoops",
