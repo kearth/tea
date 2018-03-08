@@ -6,7 +6,8 @@ class Bootstrap
 {
     public static function run() : void
     {
-        Config::init(ROOT_PATH . "/config/init.php");
+        echo 111;
+        //Config::init(ROOT_PATH . "/config/init.php");
         //INIT
         //ENV
         //
