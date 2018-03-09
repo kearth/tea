@@ -14,7 +14,8 @@
     "require": {
         "filp/whoops":"*",
         "catfan/Medoo": "^1.4",
-        "monolog/monolog": "^1.23"
+        "monolog/monolog": "^1.23",
+        "vlucas/phpdotenv": "^2.4"
     },
     "repositories": {
         "packagist": {

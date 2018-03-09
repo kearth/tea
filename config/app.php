@@ -1,14 +1,17 @@
 <?php
 
 return [
+    //环境配置
     "env"  => [
         "ENV"      => "dev",
         "APP_NAME" => "Tea"  
     ],
+    //加载组件
     "component" => [
         
     ],
-    "map" => [
+    //类映射
+    "classMap" => [
     
     ]
 ];

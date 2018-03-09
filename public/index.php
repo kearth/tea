@@ -9,11 +9,13 @@
 //默认开启严格模式
 declare(strict_types=1);
 
+//声明命名空间
+namespace Tea;
+
 //基础常量
 define('ROOT_PATH', dirname(__DIR__));
 
 //自动加载
 include(ROOT_PATH . "/vendor/autoload.php");
-
 //引导程序
-\Tea\Core\Bootstrap::run();
+Core\Bootstrap::run();
