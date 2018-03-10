@@ -4,27 +4,17 @@ namespace Tea\Core;
 
 class Env
 {
-    private static $envList = [];
 
-    public static function init(array $envList)
+    use TeaTrait\Init;
+
+    public static function get(string $envName) : string
     {
-        foreach ($envList as $name => $value) {
-            self::set($name, $value);
-        }
+        return getenv($envName);   
     }
 
-    public static function get(string $envName)
-    {   
-        if (isset(self::$envList[$envName])) {
-            return self::$envList[$envName];
-        }
-    }
-
-    public static function set(string $envName, $value)
+    public static function set(string $envName, string $value)
     {
-        if (!defined($envName)) {
-            define($envName, $value);
-            self::$envList[$envName] = $value;
-        }
+        putenv($envName . "=" . $value);
     }
 }
+
