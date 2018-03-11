@@ -1,12 +1,13 @@
 <?php
 
-namespace Tea\Log;
+namespace Tea\Core;
 
-class Log
+use Tea\Core\TeaInterface\LoggerInterface;
+
+class Log implements LoggerInterface
 {
     public function __construct()
     {
-        echo 555;
     }
 
 }

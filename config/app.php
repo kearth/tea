@@ -29,9 +29,11 @@ Config::init(new Seed(function($configFileList){
 ));
 
 
-Container::bind("request", function($user){
-    echo "Hello $user";
-});
 
-$app = Container::get("request", ["world"]);
+
+Container::bind("\Tea\Core\TeaInterface\LoggerInterface", "\Tea\Core\Log");
+
+new Tea\Core\Request(Container::get("\Tea\Core\TeaInterface\LoggerInterface"));
+
+
 

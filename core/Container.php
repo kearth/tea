@@ -24,7 +24,9 @@ class Container
                 $bind = self::$bindList[$key];
                 $type = ucfirst($bind[0]);
                 $value = $bind[1];
-                self::$bindList[$key][2] = call_user_func("get" . $type, $value, []);
+                if (!isset($bind[2])) {
+                    self::$bindList[$key][2] = call_user_func([__CLASS__, "get" . $type], $value, []);
+                }
                 return self::$bindList[$key][2];
             }
         }
@@ -35,32 +37,34 @@ class Container
                 $bind = self::$bindList[$key];
                 $type = ucfirst($bind[0]);
                 $value = $bind[1];
-                self::$bindList[$key][2] = call_user_func("get" . $type, $value, $args);            
+                if (!isset($bind[2]) || $args[0] === true) {
+                    $args[0] = is_array($args[0]) ? $args[0] : [];
+                    self::$bindList[$key][2] = call_user_func([__CLASS__, "get" . $type], $value, $args[0]);            
+                }
                 return self::$bindList[$key][2];
             }
         }
 
-        throw new \Exception("");
+        throw new \Exception("error");
     }
 
-    private static function getClass(string $class, array $arr)
+    private static function getClass(string $className, array $arr)
     {
-        
+        $class = new \ReflectionClass($className);
+        return $class->newInstanceArgs($arr);
     }
 
     private static function getClosure(\Closure $closure, array $arr)
     {
-        
+        if (!empty($arr)) {
+            return call_user_func_array($closure, $arr);
+        }
     }
 
-    private static function getInstance()
+    private static function getInstance(string $value, array $arr)
     {
-    
+        return $value;
     }
-
-
-
-
 
     public static function bind()
     {
@@ -89,11 +93,12 @@ class Container
                         self::bindInstance($key, $args[0]);
                         break;
                     }
-                        
+
                     if (class_exists($args[0])) {
                         self::bindClass($key, $args[0]);
                         break;
                     }
+    
                 }
                 throw new \Exception("没绑定上");
             default :
@@ -125,8 +130,4 @@ class Container
         ];
     }
 
-    private static function bindInterface(string $interface, string $class)
-    {
-        
-    }
 }
