@@ -1,5 +1,11 @@
 <?php
 
+return [
+    "hello" => 555
+];
+
+
+/**
 use Tea\Core\{
     Env,Seed,Debug,Config,Container
 };
@@ -35,5 +41,5 @@ Container::bind("\Tea\Core\TeaInterface\LoggerInterface", "\Tea\Core\Log");
 
 new Tea\Core\Request(Container::get("\Tea\Core\TeaInterface\LoggerInterface"));
 
-
+**/
 

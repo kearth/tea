@@ -15,8 +15,8 @@ define('ROOT_PATH', dirname(__DIR__));
 
 //自动加载
 require(ROOT_PATH . "/vendor/autoload.php");
-require(ROOT_PATH . "/config/app.php");
+require(ROOT_PATH . "/config/init.php");
 
+//约定大于配置
 //引导程序
-Tea\Core\Bootstrap::run();
-
+Tea\Core\Application::bootstrap();
