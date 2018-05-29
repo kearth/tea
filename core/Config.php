@@ -11,7 +11,6 @@ class Config
     {
         static::$appConfig = static::load(APP_CONFIG);
         static::$routeConfig = static::load(ROUTE_CONFIG);
-        var_export(static::$appConfig);
     }
 
     public static function load(string $fileName)
@@ -25,7 +24,8 @@ class Config
 
     public static function get()
     {
-        func_get_args();   
+        $keyLayout = func_get_args();
+        var_export($keyLayout);
     }
 
     public static function set()

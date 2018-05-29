@@ -4,20 +4,10 @@ namespace Tea\Core;
 
 class Seed
 {
-    private $closure;
-    private $args = [];
 
-    public function __construct(\Closure $closure)
+    public static function sow()
     {
-        $args = func_get_args();
-        $num  = func_num_args();
-
-        if ($num > 1) {
-            array_shift($args);
-            $this->args = $args;
-        }
-
-        $this->closure = $closure;
+        return $this;   
     }
 
     public function germinate()

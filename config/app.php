@@ -1,7 +1,11 @@
 <?php
 
 return [
-    "hello" => 555
+    "core" => [
+        "init" => [
+        
+        ]
+    ]
 ];
 
 

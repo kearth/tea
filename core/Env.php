@@ -4,17 +4,8 @@ namespace Tea\Core;
 
 class Env
 {
-
-    use TeaTrait\Init;
-
-    public static function get(string $envName) : string
-    {
-        return getenv($envName);   
-    }
-
-    public static function set(string $envName, string $value)
-    {
-        putenv($envName . "=" . $value);
-    }
+    const ENV_PRODUCT = "product";
+    const ENV_TEST = "test";
+    const ENV_DEV = "dev";
 }
 

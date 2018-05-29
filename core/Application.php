@@ -6,12 +6,11 @@ class Application
 {
     public static function bootstrap()
     {
-        //判断模式
-        static::appMode()->start();
+        Seed::sow();
     }
 
-    public static function appMode()
+    public static function whichMode()
     {
-        return new HttpMode();
+        return php_sapi_name();
     }
 }
