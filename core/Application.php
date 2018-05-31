@@ -2,9 +2,8 @@
 
 namespace Tea\Core;
 
-use Tea\Core\Base\{
-    Stream,Alias
-};
+use Tea\Core\Base\Alias;
+use Tea\Core\Base\Stream;
 
 class Application
 {
@@ -19,12 +18,19 @@ class Application
 
     private static function seed()
     {
-        Mode::detectWhichMode();
-        Alias::set([
-            'Mode' => '\Tea\Core\Mode'
-        ]);
-
+        try {
+            Mode::detectWhichMode();
+            new Alias();
+        //Alias::set([
+            //'Mode' => '\Tea\Core\Mode'
+            //]);
+        echo 555;
         Stream::from('Mode')->detectWhichMode()->initTheMode();
+        } catch(Exception $e) {
+            throw new \Exception("为啥");
+            var_export($e->getMessage());
+            exit;
+        }
 
     }
 

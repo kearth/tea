@@ -10,6 +10,7 @@
 //默认开启严格模式
 declare(strict_types=1);
 
+error_reporting(E_ALL);
 //基础常量
 define('ROOT_PATH', dirname(__DIR__));
 
