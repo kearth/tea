@@ -2,15 +2,48 @@
 
 namespace Tea\Core;
 
+use Tea\Core\Base\{
+    Stream,Alias
+};
+
 class Application
 {
+
     public static function bootstrap()
     {
-        Seed::sow();
+        static::seed();
+        static::germinate();
+        static::grow();
+        static::fade();
     }
 
-    public static function whichMode()
+    private static function seed()
     {
-        return php_sapi_name();
+        Mode::detectWhichMode();
+        Alias::set([
+            'Mode' => '\Tea\Core\Mode'
+        ]);
+
+        Stream::from('Mode')->detectWhichMode()->initTheMode();
+
+    }
+
+    //public static function whichMode()
+    //{
+        //return php_sapi_name();
+    //}
+
+    private static function germinate()
+    {
+    
+    }
+
+    private static function grow()
+    {
+    }
+
+    private static function fade()
+    {
+    
     }
 }

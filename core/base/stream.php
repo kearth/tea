@@ -1,80 +1,31 @@
 <?php
 
-namespace Akf\Core\BaseSource;
+namespace Tea\Core\Base;
 
-final class Stream extends BaseSource
+final class Stream
 {
-    private $uri        = null;
-    private $controller = null;
-    private $action     = null;
-    private $param      = [];
+    private static $class;
 
-    /**
-     *  请求
-     */
-    private $request = null;
+    private static $instance;
 
-    /**
-     *  响应
-     */
-    private $response = null;
+    private static $params;
 
-    public function __construct(Request $request)
+    public static function from(string $class)
     {
-        $this->request  = $request;
+        if (array_key_exists($class, Alias::get())){
+            self::$class = Alias::get()[$class];
+            if (self::$instance == null) {
+                self::$instance = new static;
+            }
+            return self::$instance;
+        } 
+        throw new \Exception("不存在这个类");
     }
 
-    public function getUri() : string
+    public function __call($name, $args)
     {
-        if (is_null($this->uri)) {
-            $this->uri = $this->request->getUri();
-        }
-        return $this->uri;
-    }   
-    
-    public function getController() : string
-    {
-        return $this->controller;
-    }
-
-    public function getAction() : string 
-    {
-        return $this->action;
-    }
-
-    public function getParam() : array
-    {
-        return $this->request->getParam();
-    }
-    
-    public function setUri(string $uri)
-    {
-        $this->uri = $uri;
-    }
-
-    public function setController(string $controller)
-    {
-        $this->controller = $controller;
-    }
-
-    public function setAction(string $action)
-    {
-        $this->action = $action;
-    }
-
-    public function getResponse() : Response
-    {
-        return $this->response;
-    }
-
-    public function setResponse(Response $value) 
-    {
-        $this->response = $value;
-    }
-
-    public function out()
-    {
-        exit;
+        self::$params = forward_static_call_array([self::$class, $name], $args);
+        return $this;
     }
 }
 
