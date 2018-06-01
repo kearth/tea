@@ -18,19 +18,12 @@ class Application
 
     private static function seed()
     {
-        try {
-            Mode::detectWhichMode();
-            new Alias();
-        //Alias::set([
-            //'Mode' => '\Tea\Core\Mode'
-            //]);
+        Mode::detectWhichMode();
+        Alias::set([
+            'Mode' => '\Tea\Core\Mode'
+        ]);
         echo 555;
         Stream::from('Mode')->detectWhichMode()->initTheMode();
-        } catch(Exception $e) {
-            throw new \Exception("为啥");
-            var_export($e->getMessage());
-            exit;
-        }
 
     }
 
