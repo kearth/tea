@@ -2,15 +2,17 @@
 
 namespace Tea\Core;
 
-use Tea\Core\Base\Alias;
-use Tea\Core\Base\Stream;
+use Tea\Core\Base\{
+    Alias,
+    Stream
+}
 
-class Application
+final class Application
 {
 
     public static function bootstrap()
     {
-        echo __class__;
+        Config::init(INIT_CONFIG_PATH);
         echo Tea\Core\Base\Stream::class;
         static::seed();
         static::germinate();
