@@ -2,6 +2,9 @@
 
 namespace Tea\Framework;
 
+/**
+ * 配置类
+ */
 class Config {
 
     public static $confRoot = ROOT_PATH . '/conf/';
@@ -24,7 +27,7 @@ class Config {
 
     public static function load(string $fileName) {
         if (is_file($fileName)) {
-            return require($fileName);
+            return include($fileName);
         } 
         throw new \Exception("配置文件不存在", 1);
     }

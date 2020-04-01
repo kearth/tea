@@ -5,8 +5,15 @@
  */
 
 // 配置项
-retur [
-    '{controller|[a-zA-Z]+}/{action}' => function ($controller, $action) {
-        return ucfirst($controller) . "/" . $action;
-    }
-];
+return array(
+    'rule' => array(
+        '/{controller|[a-zA-Z]+}\/{action}/' => function ($matches) {
+            $controller = $matchs[0];
+            $action = $matchs[1];
+            return ucfirst($controller) . "/" . $action;
+        },
+    ),
+    'map' => array(
+        '/service/index' => 'controller/index'
+    ),
+);

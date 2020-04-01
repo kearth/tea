@@ -1,62 +1,37 @@
 <?php
 
-namespace Akf\Core\BaseSource;
+namespace Tea\Framework;
 
-final class Request
-{
-    const HTTP_METHOD_GET  = 'GET';
-    const HTTP_METHOD_POST = 'POST';
-    
-    private $httpAccept    = '';
-    private $httpUserAgent = '';
-    private $requestMethod = '';
-    private $uri           = '';
-    private $param         = [];
+class Request {
 
-    public function __construct()
-    {
-        $this->httpAccept    = $_SERVER['HTTP_ACCEPT'];
-        $this->httpUserAgent = $_SERVER['HTTP_USER_AGENT'];
-        $this->requestMethod = $_SERVER['REQUEST_METHOD'];
-        $this->uri           = $_REQUEST['rewrite'];
-        $this->param         = array_diff_key($_REQUEST, ['rewrite' => []]); 
-        $this->check();
+    public static $server = array();
+    public static $request = array();
+
+    public static function init() {
+        static::$request = $_REQUEST; 
+        static::$server = $_SERVER;
+        unset($_REQUEST);
+        unset($_SERVER);
     }
 
-    private function check()
-    {
-        if (
-            empty($this->httpAccept)    || 
-            empty($this->httpUserAgent) ||
-            empty($this->requestMethod) ||
-            empty($this->uri)     
-        ) {
-            throw \Exception('Request init failed');
-        }
+    public static function getParams() {
+        return static::$request;
     }
 
-    public function getAccept()
-    {
-        return $this->httpAccept;  
+    public static function getServer() {
+        return static::$server;
     }
 
-    public function getUserAgent()
-    {
-        return $this->httpUserAgent;
+
+    public static function getParam($name) {
+        if (isset(static::$request[$name])){
+            return static::$request[$name];
+        } 
+        Error::throw('此参数不存在');
+    } 
+
+    public static function setParam($name, $value) {
+        static::$request[$name] = $value;
     }
 
-    public function getRequestMethod() : string
-    {
-        return (self::HTTP_METHOD_GET === $this->requestMethod) ? self::HTTP_METHOD_GET : self::HTTP_METHOD_POST;
-    }
-
-    public function getUri()
-    {
-        return $this->uri;
-    }
-
-    public function getParam()
-    {
-        return $this->param;
-    }
 }
