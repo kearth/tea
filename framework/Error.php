@@ -7,12 +7,21 @@ namespace Tea\Framework;
  */
 class Error {
 
+    /**
+     * 错误信息映射
+     */
     public static $errMsgMap = array();
 
-    public static function init() {
-        static::$errMsgMap = Config::get('errMsgMap', 'error');
+    /**
+     * 初始化
+     */
+    public static function init() : void {
+        static::$errMsgMap = Config::initConf(__CLASS__);
     }
 
+    /**
+     * 抛异常
+     */
     public static function throw(string $message, $code = -1) {
         if (isset(static::$errMsgMap[$code])) {
             $message = static::$errMsgMap[$code];
@@ -20,6 +29,10 @@ class Error {
         throw new \Exception($message, $code); 
     }
 
+    /**
+     * 安全调用
+     * TODO
+     */
     public static function safe() {
         try {
         
@@ -27,6 +40,5 @@ class Error {
         
         }
     }
-
 
 }

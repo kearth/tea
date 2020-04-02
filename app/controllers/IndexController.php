@@ -1,12 +1,11 @@
 <?php 
 
-namespace App/Controllers;
+namespace App\Controllers;
 
 class IndexController {
 
     public static function index() {
-        echo "666";
+        echo "welcome to Tea framework";
     }
-
 
 }

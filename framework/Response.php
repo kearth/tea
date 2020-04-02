@@ -1,11 +1,9 @@
 <?php
 
-namespace Tea\Core;
+namespace Tea\Framework;
 
-class Response
-{
-    public static function run()
-    {
+class Response {
+    public static function run() {
     
     }
 }

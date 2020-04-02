@@ -29,7 +29,6 @@ class BootStrap {
         Request::init();
         // 路由初始化
         Router::init(); 
-        Router::getRouter(); 
     }
 
     /**

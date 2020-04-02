@@ -2,6 +2,9 @@
 
 namespace Tea\Framework;
 
+/**
+ * 请求类
+ */
 class Request {
 
     public static $server = array();
@@ -21,7 +24,6 @@ class Request {
     public static function getServer() {
         return static::$server;
     }
-
 
     public static function getParam($name) {
         if (isset(static::$request[$name])){

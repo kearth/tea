@@ -3,17 +3,15 @@
 /**
  * 路由配置
  */
-
-// 配置项
 return array(
-    'rule' => array(
-        '/{controller|[a-zA-Z]+}\/{action}/' => function ($matches) {
-            $controller = $matchs[0];
-            $action = $matchs[1];
-            return ucfirst($controller) . "/" . $action;
+    Tea\Framework\Router::RULE => array(
+        '|\/(.*)\/(.*)\?.*|' => function ($matches) {
+            $controller = $matches[1];
+            $action = $matches[2];
+            return $controller . "_" . $action;
         },
     ),
-    'map' => array(
-        '/service/index' => 'controller/index'
+    Tea\Framework\Router::RULE_MAP => array(
+        '/service/index' => 'controller/index_action'
     ),
 );

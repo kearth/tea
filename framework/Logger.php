@@ -2,6 +2,9 @@
 
 namespace Tea\Framework;
 
+/**
+ * 日志类
+ */
 class Logger {
 
     public static function init() {
