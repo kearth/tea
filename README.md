@@ -1,6 +1,5 @@
 Tea (A kind of framework)
 
-.|
 
 -app // 项目目录
 
