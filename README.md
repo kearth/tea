@@ -1,9 +1,13 @@
-Akf (A kind of framework)
+Tea (A kind of framework)
 
-.
-|-application
-|-basestone
-|-config
-|-public
-|-test
-|-vendor
+.|
+
+-app // 项目目录
+
+-bin // 脚本目录
+
+-conf // 配置目录
+
+-framework // 框架目录
+
+index.php // 文件入口
