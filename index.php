@@ -14,7 +14,9 @@ error_reporting(E_ALL);
 
 use Tea\Framework\Bootstrap as Bootstrap;
 
-require(__DIR__ . '/framework/bootstrap.php');
+define("APP_ROOT", __DIR__ . "/app");
 
-Bootstrap::run(__DIR__);
+require(__DIR__ . '/vendor/autoload.php');
+
+Bootstrap::run(__DIR__ . "/conf/");
 

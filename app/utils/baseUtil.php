@@ -1,6 +1,6 @@
 <?php 
 
-namespace Tea\App\Utils;
+namespace App\Utils;
 
 abstract class BaseUtil {
 

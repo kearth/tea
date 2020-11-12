@@ -1,6 +1,6 @@
 <?php 
 
-namespace  Tea\App\Action;
+namespace  App\Action;
 
 abstract class BaseAction {
 

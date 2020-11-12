@@ -27,13 +27,12 @@ class Bootstrap {
     /**
      * Run 
      */
-    public static function run(string $rootPath) {
-        self::init($rootPath);
-        self::startFlow($rootPath);
+    public static function run(string $confDir) {
+        self::init($confDir);
+        self::startFlow();
     }
 
-    private static function init(string $rootPath) : void {
-        $dir = $rootPath . self::$confDir;
+    private static function init(string $dir) : void {
         if (!is_dir($dir)){
             throw new Error("conf dir is not exist!");
         }
@@ -50,9 +49,7 @@ class Bootstrap {
         }
     }
 
-    private static function startFlow(string $rootPath) {
-        require($rootPath . "/framework/autoload.php");
-        Autoload::init($rootPath);
+    private static function startFlow() {
         $pluginList = self::$conf[self::PLUGINLIST][self::PLUGIN] ?? array();
         foreach ($pluginList as $k => $plugin){
             $plugin = self::$conf[$plugin] ?? array();

@@ -11,6 +11,12 @@
    "bin":["bin/server.php"],
    "require":{
        "php":">=7.3"
+   },
+   "autoload": {
+        "psr-4":{
+            "Tea\\":"src",
+            "App\\":"app"
+        }
    }
 }
 

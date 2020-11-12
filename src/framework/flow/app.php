@@ -24,6 +24,7 @@ class App extends Flow {
         $flow = $this->getFlow($flow);
         $this->env = $flow[self::ENV] ?? self::DEFAULT_ENV;
         if (!isset($flow[self::NEXTTO]) || !isset($flow[self::METHOD]) || !method_exists($flow[self::NEXTTO], $flow[self::METHOD])) {
+        var_dump($flow[self::NEXTTO]);
             throw new \Error("app conf error");
         }
         $this->nextTo($flow[self::NEXTTO], $flow[self::METHOD]);

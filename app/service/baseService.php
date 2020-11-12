@@ -1,6 +1,6 @@
 <?php 
 
-namespace Tea\App\Service;
+namespace App\Service;
 
 abstract class BaseService {
     

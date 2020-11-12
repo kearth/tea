@@ -1,9 +1,9 @@
 [app]
 ; product, test, dev
 env = dev 
-nextTo = App\Router
+nextTo = Router
 method = register
-actionSpace = App\Action
+actionSpace = Action
 classSuffix = Action
 
 [const]

@@ -1,12 +1,12 @@
 <?php
 
-namespace Tea\App;
+namespace App;
 
 use Tea\Framework\Plugin\Router as R;
 
 class Router {
 
-    private static string $toNamespace = "Tea\App\Action";
+    private static string $toNamespace = __namespace__ . "\Action";
 
     private static string $toSuffix = "Action";
 
