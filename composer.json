@@ -1,0 +1,15 @@
+{
+   "name":"kearth/tea",
+   "description":"A PHP Framework",
+   "authors":[
+       {
+            "name": "kearth",
+            "email":"kearth@yeah.net"
+       }
+   ],
+   "require":{
+       "php":">=7.3"
+   }
+}
+
+
