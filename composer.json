@@ -1,6 +1,7 @@
 {
    "name":"kearth/tea",
    "type":"project",
+   "license":"Apache-2.0",
    "description":"A PHP Framework",
    "authors":[
        {
@@ -17,6 +18,8 @@
             "Tea\\":"src",
             "App\\":"app"
         }
+   },
+   "script":{
    }
 }
 
