@@ -1,5 +1,6 @@
 {
    "name":"kearth/tea",
+   "type":"project",
    "description":"A PHP Framework",
    "authors":[
        {
@@ -7,6 +8,7 @@
             "email":"kearth@yeah.net"
        }
    ],
+   "bin":["bin/server.php"],
    "require":{
        "php":">=7.3"
    }
