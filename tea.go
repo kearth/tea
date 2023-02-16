@@ -9,8 +9,25 @@ package tea
 
 import "github.com/kearth/tea/app"
 
+const (
+	AppTypeHTTPServer = "HTTPServer"
+	AppTypeScript     = "Script"
+	AppTypeCronTask   = "CronTask"
+	AppTypeTestServer = "TestServer"
+)
+
+// New
 func New(tp string) app.App {
 	switch tp {
+	/*	case AppTypeCronTask:
+			return
+		case AppTypeHTTPServer:
+			return new(app.HTTPServer)
+		case AppTypeScript:
+			return
+		case AppTypeTestServer:
+			return
+	*/
 	default:
 		return new(app.HTTPServer)
 	}
