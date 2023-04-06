@@ -1,3 +1,5 @@
 package component
 
-type Component interface{}
+type Component interface {
+	Register()
+}

@@ -4,21 +4,7 @@ import "github.com/kearth/tea/std/conf"
 
 var (
 	appConfigPath = "conf/app.toml"
-	appConf       = (*AppConfig)(nil)
 )
-
-// AppConfig
-type AppConfig struct {
-	AppName    string
-	RunMode    string
-	Port       int
-	IDC        string
-	HttpServer *struct {
-		ReadTimeout  int
-		WriteTimeout int
-		IdleTimeout  int
-	}
-}
 
 // SetAppConfigPath
 func SetAppConfigPath(path string) {

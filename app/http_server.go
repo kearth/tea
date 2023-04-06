@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/kearth/tea/conf"
 	"github.com/spf13/cast"
 )
 
@@ -14,26 +15,41 @@ type HTTPServer struct {
 	http.Server
 }
 
-// HTTPSServer
-// TODO
-type HTTPSServer struct {
-	http.Server
+// HTTPConfig
+type HTTPConfig struct {
+	AppName    string
+	RunMode    string
+	Port       int
+	IDC        string
+	HttpServer *struct {
+		ReadTimeout  int
+		WriteTimeout int
+		IdleTimeout  int
+	}
+}
+
+func (c *HTTPConfig) Parse() error {
+	if err := conf.Parse(path, &appConf); err != nil {
+		return nil, err
+	}
+	return appConf, nil
 }
 
 // Init
 func (h *HTTPServer) Init(ctx context.Context, appConfig *AppConfig) {
-	if appConfig.Port != 0 {
-		h.Addr = fmt.Sprintf(":%s", cast.ToString(appConfig.Port))
+	config := appConfig.(HTTPConfig)
+	if config.Port != 0 {
+		h.Addr = fmt.Sprintf(":%s", cast.ToString(config.Port))
 	}
-	if appConfig.HttpServer != nil {
+	if config.HttpServer != nil {
 		var to int
-		if to = appConfig.HttpServer.ReadTimeout; to > 0 {
+		if to = config.HttpServer.ReadTimeout; to > 0 {
 			h.ReadTimeout = time.Duration(to) * time.Millisecond
 		}
-		if to = appConfig.HttpServer.WriteTimeout; to > 0 {
+		if to = config.HttpServer.WriteTimeout; to > 0 {
 			h.WriteTimeout = time.Duration(to) * time.Millisecond
 		}
-		if to = appConfig.HttpServer.IdleTimeout; to > 0 {
+		if to = config.HttpServer.IdleTimeout; to > 0 {
 			h.IdleTimeout = time.Duration(to) * time.Millisecond
 		}
 	}
@@ -42,7 +58,7 @@ func (h *HTTPServer) Init(ctx context.Context, appConfig *AppConfig) {
 // LoadConfig
 func (h *HTTPServer) LoadConfig(configPath string) *AppConfig {
 	var (
-		appConfig *AppConfig
+		appConfig *HTTPConfig
 		err       error
 	)
 	if appConfig, err = LoadAppConfig(configPath); err != nil {

@@ -9,11 +9,13 @@ package tea
 
 import "github.com/kearth/tea/app"
 
+// App Type
 const (
-	AppTypeHTTPServer = "HTTPServer"
-	AppTypeScript     = "Script"
-	AppTypeCronTask   = "CronTask"
-	AppTypeTestServer = "TestServer"
+	AppTypeHTTPServer  = "HTTPServer"
+	AppTypeHTTPSServer = "HTTPSServer"
+	AppTypeScript      = "Script"
+	AppTypeCronTask    = "CronTask"
+	AppTypeTestServer  = "TestServer"
 )
 
 // New
