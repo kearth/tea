@@ -7,30 +7,29 @@
  */
 package tea
 
-import "github.com/kearth/tea/app"
+import (
+	"github.com/kearth/tea/app"
+	"github.com/kearth/tea/tserver"
+)
 
-// App Type
+type AppType string
+
+var (
+	_ app.IApp = new(tserver.HTTPServer)
+)
+
 const (
-	AppTypeHTTPServer  = "HTTPServer"
-	AppTypeHTTPSServer = "HTTPSServer"
-	AppTypeScript      = "Script"
-	AppTypeCronTask    = "CronTask"
-	AppTypeTestServer  = "TestServer"
+	AppHttpServer AppType = "http_server"
 )
 
 // New
-func New(tp string) app.App {
-	switch tp {
-	/*	case AppTypeCronTask:
-			return
-		case AppTypeHTTPServer:
-			return new(app.HTTPServer)
-		case AppTypeScript:
-			return
-		case AppTypeTestServer:
-			return
-	*/
+func NewServer(at AppType) app.IServer {
+	var is app.IServer
+	switch at {
+	case AppHttpServer:
+		is = new(tserver.HTTPServer)
 	default:
-		return new(app.HTTPServer)
+		is = new(tserver.HTTPServer)
 	}
+	return is
 }

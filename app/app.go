@@ -2,17 +2,29 @@ package app
 
 import "context"
 
-type App interface {
-	LoadConfig(configPath string) *AppConfig
-	Init(ctx context.Context, appConfig *AppConfig)
+// IApp
+type IApp interface {
+	Init(ctx context.Context) error
 	Start() error
+	Shutdown(ctx context.Context, cancel context.CancelFunc) error
 }
 
-type AppConfig interface {
-	Parse() error
+// Bootstrap
+type Bootstrap func(ctx context.Context) error
+
+// IServer
+type IServer interface {
+	IApp
+	SetConf(path string) error
+	SetBootstrap(bs Bootstrap) error
+	SetRouter(ir IRouter) error
 }
 
-type Bootstrap interface {
-	Init(ctx context.Context)
-	Start() error
+// IRouter
+type IRouter interface {
+	Group(pattern string) IRouter
+	Use()
 }
+
+// BaseServer
+type BaseServer struct{}
