@@ -3,31 +3,19 @@ package tea
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/kearth/tea/conf"
 	"github.com/spf13/cast"
 )
 
-// IHTTPRouter
-type IHTTPRouter interface {
-	http.Handler
-	IRouter
-}
-
-// HTTPRouter
-type HTTPRouter struct {
-	http.ServeMux
-}
-
-func (h *HTTPRouter) Group(pattern string) IRouter { return h }
-func (h *HTTPRouter) Use()                         {}
-
-//type HandlerFunc func(w http.ResponseWriter, r *http.Request)
-
 var _ IContainer = &HTTPServer{}
+
+// Bootstrap
+type Bootstrap func(ctx context.Context) error
+type RouterFunc func(ctx context.Context) *HTTPRouter
 
 // init
 func init() {
@@ -40,7 +28,7 @@ type HTTPServer struct {
 	http.Server
 	ConfigPath    string
 	BootstrapFunc Bootstrap
-	Router        IHTTPRouter
+	RouterFunc    RouterFunc
 }
 
 // Name
@@ -52,25 +40,24 @@ func (h *HTTPServer) Name() string {
 func (h *HTTPServer) New() IContainer {
 	// Default
 	h.ConfigPath = "./conf/app.toml"
+	h.RouterFunc = func(ctx context.Context) *HTTPRouter {
+		defaultRouter := NewHTTPRouter()
+		defaultRouter.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+			io.WriteString(w, "hello, world!\n")
+		})
+		return defaultRouter
+	}
+	h.BootstrapFunc = func(ctx context.Context) error {
+		return nil
+	}
 	return h
-}
-
-// HTTPConfig
-type HTTPConfig struct {
-	Name         string `toml:"Name"`
-	Port         int    `toml:"Port"`
-	ReadTimeout  int    `toml:"ReadTimeout"`
-	WriteTimeout int    `toml:"WriteTimeout"`
-	IdleTimeout  int    `toml:"IdleTimeout"`
 }
 
 // Init
 func (h *HTTPServer) Init(ctx context.Context) error {
-	var (
-		config = new(HTTPConfig)
-		err    error
-	)
-	if err = conf.Parse(h.ConfigPath, &config); err != nil {
+	httpconfig, err := IOC().Get("HTTPConfig")
+	config := httpconfig.(*HTTPConfig)
+	if err = Parse(h.ConfigPath, &config); err != nil {
 		panic(err)
 	}
 	if config.Port != 0 {
@@ -97,15 +84,17 @@ func (h *HTTPServer) Start() error {
 		return err
 	}
 	if err := h.BootstrapFunc(ctx); err != nil {
+		return err
 	}
-	// TODO
-	h.Handler = h.Router
+	h.Handler = h.RouterFunc(ctx)
+	//TODO
 	fmt.Println("ListenAndServe:8080")
 	return h.Server.ListenAndServe()
 }
 
 // Shutdown
 func (h *HTTPServer) Shutdown(ctx context.Context, cancel context.CancelFunc) error {
+	// TODO
 	return nil
 }
 
@@ -114,12 +103,9 @@ func (h *HTTPServer) SetBootstrap(bs Bootstrap) {
 	h.BootstrapFunc = bs
 }
 
-// TODO
-// RegisetrRouter
-func (h *HTTPServer) SetRouter(r IRouter) error {
-	h.Router = r.(IHTTPRouter)
-	// TODO
-	return nil
+// SetRouter
+func (h *HTTPServer) SetRouter(r RouterFunc) {
+	h.RouterFunc = r
 }
 
 // SetConf
@@ -129,9 +115,4 @@ func (h *HTTPServer) SetConf(path string) error {
 	}
 	h.ConfigPath = path
 	return nil
-}
-
-// NewRouter
-func NewRouter() *HTTPRouter {
-	return new(HTTPRouter)
 }

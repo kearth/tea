@@ -1,4 +1,4 @@
-package app
+package tea
 
 // ComponentType
 type ComponentType string

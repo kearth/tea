@@ -1,4 +1,4 @@
-package conf
+package tea
 
 import (
 	"encoding/json"
