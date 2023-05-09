@@ -1,12 +1,12 @@
-package tserver
+package tea
 
 import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
-	"github.com/kearth/tea/app"
 	"github.com/kearth/tea/conf"
 	"github.com/spf13/cast"
 )
@@ -14,24 +14,45 @@ import (
 // IHTTPRouter
 type IHTTPRouter interface {
 	http.Handler
-	app.IRouter
+	IRouter
 }
 
+// HTTPRouter
 type HTTPRouter struct {
 	http.ServeMux
 }
 
-func (h *HTTPRouter) Group(pattern string) app.IRouter { return h }
-func (h *HTTPRouter) Use()                             {}
+func (h *HTTPRouter) Group(pattern string) IRouter { return h }
+func (h *HTTPRouter) Use()                         {}
 
 //type HandlerFunc func(w http.ResponseWriter, r *http.Request)
+
+var _ IContainer = &HTTPServer{}
+
+// init
+func init() {
+	// register
+	IOC().Register(new(HTTPServer))
+}
 
 // HTTPServer
 type HTTPServer struct {
 	http.Server
 	ConfigPath    string
-	BootstrapFunc app.Bootstrap
+	BootstrapFunc Bootstrap
 	Router        IHTTPRouter
+}
+
+// Name
+func (h *HTTPServer) Name() string {
+	return "HTTPServer"
+}
+
+// New
+func (h *HTTPServer) New() IContainer {
+	// Default
+	h.ConfigPath = "./conf/app.toml"
+	return h
 }
 
 // HTTPConfig
@@ -89,37 +110,28 @@ func (h *HTTPServer) Shutdown(ctx context.Context, cancel context.CancelFunc) er
 }
 
 // Bootstrap
-func (h *HTTPServer) SetBootstrap(bs app.Bootstrap) error {
+func (h *HTTPServer) SetBootstrap(bs Bootstrap) {
 	h.BootstrapFunc = bs
-	// TODO
-	return nil
 }
 
 // TODO
 // RegisetrRouter
-func (h *HTTPServer) SetRouter(r app.IRouter) error {
+func (h *HTTPServer) SetRouter(r IRouter) error {
 	h.Router = r.(IHTTPRouter)
 	// TODO
 	return nil
 }
 
-// RegisetrRouter
+// SetConf
 func (h *HTTPServer) SetConf(path string) error {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return err
+	}
 	h.ConfigPath = path
-	// TODO
 	return nil
 }
 
+// NewRouter
 func NewRouter() *HTTPRouter {
 	return new(HTTPRouter)
 }
-
-// DefaultServer
-/*
-func (h *HTTPServer) DefaultServer() *http.Server {
-	h.Handler = (http.HandlerFunc)(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello World")
-	})
-	return &h.Server
-}
-*/

@@ -1,5 +1,6 @@
 package app
 
+// ComponentType
 type ComponentType string
 
 const (
@@ -8,10 +9,12 @@ const (
 	ThirdPartComponent ComponentType = "third-part"
 )
 
+// String
 func (ct ComponentType) String() string {
 	return string(ct)
 }
 
+// IComponent
 type IComponent interface {
 	Register(name string) error
 	Type() ComponentType

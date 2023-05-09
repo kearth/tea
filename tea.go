@@ -7,29 +7,12 @@
  */
 package tea
 
-import (
-	"github.com/kearth/tea/app"
-	"github.com/kearth/tea/tserver"
-)
-
-type AppType string
-
-var (
-	_ app.IApp = new(tserver.HTTPServer)
-)
-
-const (
-	AppHttpServer AppType = "http_server"
-)
-
-// New
-func NewServer(at AppType) app.IServer {
-	var is app.IServer
-	switch at {
-	case AppHttpServer:
-		is = new(tserver.HTTPServer)
-	default:
-		is = new(tserver.HTTPServer)
+// NewHTTPServer
+func NewHTTPServer() *HTTPServer {
+	var httpServer IContainer
+	var err error
+	if httpServer, err = IOC().Get("HTTPServer"); err != nil {
+		panic(err)
 	}
-	return is
+	return httpServer.(*HTTPServer)
 }
