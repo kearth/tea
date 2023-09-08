@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cast"
 )
 
+// Check Interface
 var _ IContainer = &HTTPServer{}
 
 // Bootstrap
@@ -55,6 +56,7 @@ func (h *HTTPServer) New() IContainer {
 
 // Init
 func (h *HTTPServer) Init(ctx context.Context) error {
+	var err error
 	httpconfig, err := IOC().Get("HTTPConfig")
 	config := httpconfig.(*HTTPConfig)
 	if err = Parse(h.ConfigPath, &config); err != nil {

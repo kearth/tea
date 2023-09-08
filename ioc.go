@@ -1,13 +1,16 @@
 package tea
 
 import (
-	"errors"
 	"sync"
+
+	"github.com/kearth/tea/terrors"
 )
 
-// IContainer
+// IContainer 容器
 type IContainer interface {
+	// 名称
 	Name() string
+	// 新容器
 	New() IContainer
 }
 
@@ -34,18 +37,18 @@ func IOC() *ioc {
 }
 
 // Register
-func (i *ioc) Register(ic IContainer) error {
+func (i *ioc) Register(ic IContainer) terrors.IError {
 	if _, ok := iocMap[ic.Name()]; !ok {
 		iocMap[ic.Name()] = ic
 		return nil
 	}
-	return errors.New("the name has registered")
+	return terrors.NameRegistered
 }
 
 // Get
-func (i *ioc) Get(name string) (IContainer, error) {
+func (i *ioc) Get(name string) (IContainer, terrors.IError) {
 	if ic, ok := iocMap[name]; ok {
 		return ic.New(), nil
 	}
-	return nil, errors.New("the name not regisered")
+	return nil, terrors.NameNotRegistered
 }

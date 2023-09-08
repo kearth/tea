@@ -1,0 +1,7 @@
+Name = "666"
+RunMode = "debug"
+Port=8080
+IDC = "test"
+ReadTimeout=1000
+WriteTimeout=40000 # 40s
+IdleTimeout=1000

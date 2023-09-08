@@ -1,12 +1,12 @@
 package tea
 
-// ComponentType
+// ComponentType 组件类型
 type ComponentType string
 
 const (
-	CoreComponent      ComponentType = "core"
-	UserComponent      ComponentType = "user"
-	ThirdPartComponent ComponentType = "third-part"
+	CoreComponent      ComponentType = "core"       // 核心组件
+	UserComponent      ComponentType = "user"       // 用户组件-允许自定义
+	ThirdPartComponent ComponentType = "third-part" // 第三方组件
 )
 
 // String
@@ -16,6 +16,8 @@ func (ct ComponentType) String() string {
 
 // IComponent
 type IComponent interface {
+	// 注册组件
 	Register(name string) error
+	// 组件类型
 	Type() ComponentType
 }
