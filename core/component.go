@@ -1,4 +1,4 @@
-package tea
+package core
 
 // ComponentType 组件类型
 type ComponentType string

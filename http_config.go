@@ -1,11 +1,13 @@
 package tea
 
-var _ IContainer = &HTTPConfig{}
+import "github.com/kearth/tea/core"
+
+var _ core.IContainer = &HTTPConfig{}
 
 // init
 func init() {
 	// register
-	IOC().Register(new(HTTPConfig))
+	core.IOC().Register(new(HTTPConfig))
 }
 
 // HTTPConfig
@@ -22,6 +24,6 @@ func (h *HTTPConfig) Name() string {
 }
 
 // New
-func (h *HTTPConfig) New() IContainer {
+func (h *HTTPConfig) New() core.IContainer {
 	return h
 }

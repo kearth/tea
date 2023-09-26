@@ -7,11 +7,13 @@
  */
 package tea
 
+import "github.com/kearth/tea/core"
+
 // NewHTTPServer
 func NewHTTPServer() *HTTPServer {
-	var httpServer IContainer
+	var httpServer core.IContainer
 	var err error
-	if httpServer, err = IOC().Get("HTTPServer"); err != nil {
+	if httpServer, err = core.IOC().Get("HTTPServer"); err != nil {
 		panic(err)
 	}
 	return httpServer.(*HTTPServer)

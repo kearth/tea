@@ -8,11 +8,12 @@ import (
 	"os"
 	"time"
 
+	"github.com/kearth/tea/core"
 	"github.com/spf13/cast"
 )
 
 // Check Interface
-var _ IContainer = &HTTPServer{}
+var _ core.IContainer = &HTTPServer{}
 
 // Bootstrap
 type Bootstrap func(ctx context.Context) error
@@ -21,7 +22,7 @@ type RouterFunc func(ctx context.Context) *HTTPRouter
 // init
 func init() {
 	// register
-	IOC().Register(new(HTTPServer))
+	core.IOC().Register(new(HTTPServer))
 }
 
 // HTTPServer
@@ -38,7 +39,7 @@ func (h *HTTPServer) Name() string {
 }
 
 // New
-func (h *HTTPServer) New() IContainer {
+func (h *HTTPServer) New() core.IContainer {
 	// Default
 	h.ConfigPath = "./conf/app.toml"
 	h.RouterFunc = func(ctx context.Context) *HTTPRouter {
@@ -57,9 +58,9 @@ func (h *HTTPServer) New() IContainer {
 // Init
 func (h *HTTPServer) Init(ctx context.Context) error {
 	var err error
-	httpconfig, err := IOC().Get("HTTPConfig")
+	httpconfig, err := core.IOC().Get("HTTPConfig")
 	config := httpconfig.(*HTTPConfig)
-	if err = Parse(h.ConfigPath, &config); err != nil {
+	if err = core.Parse(h.ConfigPath, &config); err != nil {
 		panic(err)
 	}
 	if config.Port != 0 {

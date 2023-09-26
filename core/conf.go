@@ -1,4 +1,4 @@
-package tea
+package core
 
 import (
 	"encoding/json"

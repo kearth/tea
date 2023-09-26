@@ -2,9 +2,11 @@ package tea
 
 import (
 	"net/http"
+
+	"github.com/kearth/tea/core"
 )
 
-var _ IContainer = &HTTPRouter{}
+var _ core.IContainer = &HTTPRouter{}
 
 // HandlerFunc
 type HandlerFunc func(http.ResponseWriter, *http.Request)
@@ -20,7 +22,7 @@ type HTTPRouter struct {
 // init
 func init() {
 	// register
-	IOC().Register(new(HTTPRouter))
+	core.IOC().Register(new(HTTPRouter))
 }
 
 // Name
@@ -29,13 +31,13 @@ func (h *HTTPRouter) Name() string {
 }
 
 // New
-func (h *HTTPRouter) New() IContainer {
+func (h *HTTPRouter) New() core.IContainer {
 	return h
 }
 
 // NewHTTPRouter
 func NewHTTPRouter() *HTTPRouter {
-	httpRouter, err := IOC().Get("HTTPRouter")
+	httpRouter, err := core.IOC().Get("HTTPRouter")
 	if err != nil {
 		panic(err)
 	}
