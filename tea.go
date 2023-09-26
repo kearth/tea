@@ -3,13 +3,14 @@
 * Version 1.0.1
 *
 * Copyright 2018 - 2023, Kearth
-* Golang 1.20
+* Golang 1.21
  */
 package tea
 
 import "github.com/kearth/tea/core"
 
 // NewHTTPServer
+// panic
 func NewHTTPServer() *HTTPServer {
 	var httpServer core.IContainer
 	var err error
