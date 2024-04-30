@@ -2,6 +2,7 @@ package tea
 
 import "github.com/kearth/tea/core"
 
+// HTTPConfig
 var _ core.IContainer = &HTTPConfig{}
 
 // init

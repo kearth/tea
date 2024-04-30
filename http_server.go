@@ -21,16 +21,16 @@ type RouterFunc func(ctx context.Context) *HTTPRouter
 
 // init
 func init() {
-	// register
+	// register 注册
 	core.IOC().Register(new(HTTPServer))
 }
 
-// HTTPServer
+// HTTPServer HTTP服务器
 type HTTPServer struct {
-	http.Server
-	ConfigPath    string
-	BootstrapFunc Bootstrap
-	RouterFunc    RouterFunc
+	http.Server              // 继承
+	ConfigPath    string     // 配置文件路径
+	BootstrapFunc Bootstrap  // 启动函数
+	RouterFunc    RouterFunc // 路由函数
 }
 
 // Name
@@ -55,8 +55,8 @@ func (h *HTTPServer) New() core.IContainer {
 	return h
 }
 
-// Init
-func (h *HTTPServer) Init(ctx context.Context) error {
+// initServe
+func (h *HTTPServer) initServe(ctx context.Context) error {
 	var err error
 	httpconfig, err := core.IOC().Get("HTTPConfig")
 	config := httpconfig.(*HTTPConfig)
@@ -83,7 +83,7 @@ func (h *HTTPServer) Init(ctx context.Context) error {
 func (h *HTTPServer) Start() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer h.Shutdown(ctx, cancel)
-	if err := h.Init(ctx); err != nil {
+	if err := h.initServe(ctx); err != nil {
 		return err
 	}
 	if err := h.BootstrapFunc(ctx); err != nil {

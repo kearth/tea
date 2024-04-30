@@ -9,12 +9,13 @@ package tea
 
 import "github.com/kearth/tea/core"
 
-// NewHTTPServer
-// panic
+// NewHTTPServer 获取HTTPServer实例
+// panic 获取失败时抛出异常
 func NewHTTPServer() *HTTPServer {
 	var httpServer core.IContainer
 	var err error
-	if httpServer, err = core.IOC().Get("HTTPServer"); err != nil {
+	// 获取HTTPServer实例
+	if httpServer, err = core.IOC().Get(new(HTTPServer).Name()); err != nil {
 		panic(err)
 	}
 	return httpServer.(*HTTPServer)

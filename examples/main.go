@@ -7,6 +7,7 @@ import (
 	"github.com/kearth/tea"
 )
 
+// 框架入口
 func main() {
 	// HTTP Server
 	httpserver := tea.NewHTTPServer()

@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"errors"
 	"os"
 	"path"
 	"strings"
@@ -10,32 +9,31 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-type ParserFunc func(b []byte, obj any) error
-
-type Conf interface {
-	Exists(string) bool
-	Parse(string, any) error
-	RegisterParserFunc(string, ParserFunc) error
-}
-
-const (
-	FileTOML = ".toml"
-	FileJSON = ".json"
-)
-
 var (
-	TOMLParserFunc ParserFunc = toml.Unmarshal
-	JSOMParserFunc ParserFunc = json.Unmarshal
+	TOMLParserFunc ParserFunc = toml.Unmarshal // 解析toml文件
+	JSOMParserFunc ParserFunc = json.Unmarshal // 解析json文件
 
-	ErrNoExists = errors.New("conf no exists")
-	ErrNoParser = errors.New("no parser found")
-	ErrFileExt  = errors.New("not file extension")
-
+	// 解析器
 	ParserFuncs = map[string]ParserFunc{
 		FileTOML: TOMLParserFunc,
 		FileJSON: JSOMParserFunc,
 	}
 )
+
+const (
+	FileTOML = ".toml" // toml
+	FileJSON = ".json" // json
+)
+
+// 配置文件解析器
+type ParserFunc func(b []byte, obj any) error
+
+// Conf 配置接口
+type Conf interface {
+	Exists(string) bool
+	Parse(string, any) error
+	RegisterParserFunc(string, ParserFunc) IError
+}
 
 // Exists
 func Exists(fname string) bool {
@@ -47,38 +45,42 @@ func Exists(fname string) bool {
 }
 
 // Parse
-func Parse(fname string, confObj any) error {
+func Parse(fname string, confObj any) IError {
 	var fn ParserFunc
 	var ok bool
 	if !Exists(fname) {
-		return ErrNoExists
+		return ConfNotExists
 	}
 	ext := path.Ext(fname)
 	if fn, ok = ParserFuncs[ext]; !ok {
-		return ErrNoParser
+		return NoParserFound
 	}
 	f, err := os.Open(fname)
 	defer f.Close()
 	if err != nil {
-		return err
+		return FrameworkCoreError.Wrap(err)
 	}
 	fi, err := f.Stat()
 	if err != nil {
-		return err
+		return FrameworkCoreError.Wrap(err)
 	}
 	b := make([]byte, fi.Size())
 	_, err = f.Read(b)
 	if err != nil {
-		return err
+		return FrameworkCoreError.Wrap(err)
 	}
-	return fn(b, confObj)
+	err = fn(b, confObj)
+	if err != nil {
+		return FrameworkCoreError.Wrap(err)
+	}
+	return nil
 }
 
-// RegisterParserFunc
-func RegisterParserFunc(fileExt string, fn ParserFunc) error {
+// RegisterParserFunc 注册解析器
+func RegisterParserFunc(fileExt string, fn ParserFunc) IError {
 	if strings.HasPrefix(fileExt, ".") {
 		ParserFuncs[fileExt] = fn
 		return nil
 	}
-	return ErrFileExt
+	return NoParserFound
 }
