@@ -1,4 +1,4 @@
-package core
+package tea
 
 import (
 	"errors"
@@ -20,13 +20,13 @@ var (
 	ConfError   = &Error{100007, "conf error"}   // 内部配置错误
 	NoData      = &Error{100008, "no data"}      // 没有数据
 	// 200 开头是框架core错误
-	NameRegistered     = &Error{200000, "the name has registered"} // 容器已注册
-	NameNotRegistered  = &Error{200001, "the name not regisered"}  // 容器未注册
-	NotAllowType       = &Error{200002, "not allow type"}          // 不允许的类型
-	ConfNotExists      = &Error{200003, "conf not exists"}         // 配置文件不存在
-	NoParserFound      = &Error{200004, "no parser found"}         // 解析器不存在
-	NoFileExt          = &Error{200005, "not file extension"}      // 文件后缀名错误
-	FrameworkCoreError = &Error{200006, "framework core error"}    // 框架核心错误
+	NameRegistered    = &Error{200000, "the name has registered"} // 容器已注册
+	NameNotRegistered = &Error{200001, "the name not regisered"}  // 容器未注册
+	NotAllowType      = &Error{200002, "not allow type"}          // 不允许的类型
+	ConfNotExists     = &Error{200003, "conf not exists"}         // 配置文件不存在
+	NoParserFound     = &Error{200004, "no parser found"}         // 解析器不存在
+	NoFileExt         = &Error{200005, "not file extension"}      // 文件后缀名错误
+	FrameworkError    = &Error{200006, "framework error"}         // 框架核心错误
 	// 300 开头是框架其他部分错误
 	// 400 开头是用户自定义错误
 )

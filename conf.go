@@ -1,4 +1,4 @@
-package core
+package tea
 
 import (
 	"encoding/json"
@@ -58,20 +58,20 @@ func Parse(fname string, confObj any) IError {
 	f, err := os.Open(fname)
 	defer f.Close()
 	if err != nil {
-		return FrameworkCoreError.Wrap(err)
+		return FrameworkError.Wrap(err)
 	}
 	fi, err := f.Stat()
 	if err != nil {
-		return FrameworkCoreError.Wrap(err)
+		return FrameworkError.Wrap(err)
 	}
 	b := make([]byte, fi.Size())
 	_, err = f.Read(b)
 	if err != nil {
-		return FrameworkCoreError.Wrap(err)
+		return FrameworkError.Wrap(err)
 	}
 	err = fn(b, confObj)
 	if err != nil {
-		return FrameworkCoreError.Wrap(err)
+		return FrameworkError.Wrap(err)
 	}
 	return nil
 }

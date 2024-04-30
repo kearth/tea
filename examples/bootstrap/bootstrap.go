@@ -1,11 +1,12 @@
 package bootstrap
 
 import (
-	"context"
 	"fmt"
+
+	"github.com/kearth/tea"
 )
 
-func Bootstrap(ctx context.Context) error {
+func Bootstrap(ctx tea.Context) tea.IError {
 	fmt.Println("hello world")
 	return nil
 }
