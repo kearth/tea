@@ -11,7 +11,7 @@ import (
 )
 
 // Check Interface
-var _ IContainer = &HTTPServer{}
+var _ IContainer = &httpServer{}
 
 // Bootstrap
 type Bootstrap func(ctx Context) IError // 启动函数
@@ -21,11 +21,11 @@ type RouterFunc func(ctx Context) *HTTPRouter // 路由函数
 // init
 func init() {
 	// register 注册
-	IOC().Register(new(HTTPServer))
+	IOC().Register(new(httpServer))
 }
 
-// HTTPServer HTTP服务器
-type HTTPServer struct {
+// httpServer HTTP服务器
+type httpServer struct {
 	http.Server              // 继承
 	ConfigPath    string     // 配置文件路径
 	BootstrapFunc Bootstrap  // 启动函数
@@ -33,16 +33,16 @@ type HTTPServer struct {
 }
 
 // Name
-func (h *HTTPServer) Name() string {
-	return "HTTPServer"
+func (h *httpServer) Name() string {
+	return "httpServer"
 }
 
 const (
 	DefaultConfigPath = "./conf/app.toml" // 默认配置文件路径
 )
 
-// New 创建
-func (h *HTTPServer) New() IContainer {
+// New 创建实例
+func (h *httpServer) New() IContainer {
 	// Default
 	h.ConfigPath = DefaultConfigPath
 	h.RouterFunc = func(ctx Context) *HTTPRouter {
@@ -59,7 +59,7 @@ func (h *HTTPServer) New() IContainer {
 }
 
 // initServe
-func (h *HTTPServer) initServe(ctx Context) error {
+func (h *httpServer) initServe(ctx Context) error {
 	var err error
 	httpconfig, err := IOC().Get("HTTPConfig")
 	config := httpconfig.(*HTTPConfig)
@@ -83,7 +83,7 @@ func (h *HTTPServer) initServe(ctx Context) error {
 }
 
 // Start 启动
-func (h *HTTPServer) Start() IError {
+func (h *httpServer) Start() IError {
 	ctx, cancel := WithCancel(Background())
 	defer h.Shutdown(ctx, cancel)
 	if err := h.initServe(ctx); err != nil {
@@ -103,23 +103,23 @@ func (h *HTTPServer) Start() IError {
 }
 
 // Shutdown
-func (h *HTTPServer) Shutdown(ctx Context, cancel context.CancelFunc) IError {
+func (h *httpServer) Shutdown(ctx Context, cancel context.CancelFunc) IError {
 	// TODO
 	return nil
 }
 
 // Bootstrap 设置启动函数
-func (h *HTTPServer) SetBootstrap(bs Bootstrap) {
+func (h *httpServer) SetBootstrap(bs Bootstrap) {
 	h.BootstrapFunc = bs
 }
 
 // SetRouter 设置路由
-func (h *HTTPServer) SetRouter(r RouterFunc) {
+func (h *httpServer) SetRouter(r RouterFunc) {
 	h.RouterFunc = r
 }
 
 // SetConf
-func (h *HTTPServer) SetConf(path string) error {
+func (h *httpServer) SetConf(path string) error {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return err
 	}

@@ -7,14 +7,14 @@
  */
 package tea
 
-// NewHTTPServer 获取HTTPServer实例
+// HTTPServer 获取HTTPServer实例
 // panic 获取失败时抛出异常
-func NewHTTPServer() *HTTPServer {
-	var httpServer IContainer
+func HTTPServer() *httpServer {
+	var hs IContainer
 	var err error
 	// 获取HTTPServer实例
-	if httpServer, err = IOC().Get(new(HTTPServer).Name()); err != nil {
+	if hs, err = IOC().Get(new(httpServer).Name()); err != nil {
 		panic(err)
 	}
-	return httpServer.(*HTTPServer)
+	return hs.(*httpServer)
 }
