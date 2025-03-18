@@ -7,14 +7,14 @@
  */
 package tea
 
-// HTTPServer 获取HTTPServer实例
-// panic 获取失败时抛出异常
-func HTTPServer() *httpServer {
-	var hs IContainer
-	var err error
-	// 获取HTTPServer实例
-	if hs, err = IOC().Get(new(httpServer).Name()); err != nil {
-		panic(err)
-	}
-	return hs.(*httpServer)
+import "github.com/kearth/tea/frame"
+
+// 喝
+func Drink(t *frame.Tea) {
+	t.PourIntoCup()
+}
+
+// 一杯茶
+func ACupOfTea() *frame.Tea {
+	return frame.GetSomeTea().AddHotWater().BrewForAFewTime()
 }
