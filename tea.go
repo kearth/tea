@@ -1,20 +1,16 @@
-/**
-* Tea Framework
-* Version 1.0.1
-*
-* Copyright 2018 - 2023, Kearth
-* Golang 1.21
- */
 package tea
 
-import "github.com/kearth/tea/frame"
+import (
+	"github.com/kearth/tea/frame"
+	"github.com/kearth/tea/frame/tctx"
+)
 
-// 喝
-func Drink(t *frame.Tea) {
-	t.PourIntoCup()
-}
+const (
+	// Version 版本号
+	Version = "0.0.1"
+)
 
-// 一杯茶
-func ACupOfTea() *frame.Tea {
-	return frame.GetSomeTea().AddHotWater().BrewForAFewTime()
+// 喝一杯茶
+func WorkWillBeDone() {
+	frame.GetSomeTea(Version).Drink(tctx.New())
 }
