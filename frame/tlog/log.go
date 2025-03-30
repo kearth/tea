@@ -27,8 +27,13 @@ var colorMaps = map[int]int{
 	glog.LEVEL_FATA: glog.COLOR_HI_RED,
 }
 
-// 初始化日志
+// 日志
 var instance = g.Log()
+
+// 初始化日志
+func init() {
+	glog.SetDefaultHandler(DefaultHandler)
+}
 
 // LogInfo 日志信息
 type LogInfo struct {
@@ -131,7 +136,7 @@ func Info(ctx context.Context, v ...any) {
 
 // Debug 打印日志
 func Debug(ctx context.Context, v ...any) {
-	if env.Instance().IsDebug() {
+	if env.IsDebug() {
 		Logger().Debug(ctx, v...)
 	}
 }

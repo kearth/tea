@@ -16,7 +16,11 @@ var (
 	NotFound      = gerror.NewCode(gcode.CodeNotFound, "Not Found")                // 未找到
 
 	// 100 Framework errors.
-	ConfigFileNotExists = gerror.NewCode(gcode.New(100000, "", nil), "Config file not exists") // 配置文件不存在
+	ConfigFileNotExists   = gerror.NewCode(gcode.New(100000, "", nil), "Config file not exists")   // 配置文件不存在
+	DefaultServerNotFound = gerror.NewCode(gcode.New(100001, "", nil), "Default server not found") // 默认服务器未找到
+	RouterNotFound        = gerror.NewCode(gcode.New(100002, "", nil), "Router not found")         // 路由器未找到
+	ListenerNotFound      = gerror.NewCode(gcode.New(100003, "", nil), "Listener not found")       // 监听器未找到
+	ResourceNotFound      = gerror.NewCode(gcode.New(100004, "", nil), "Resource not found")       // 资源未找到
 
 	// RPCError          = &Error{100006, "rpc error"}               // 远程调用错误
 	// NameRegistered    = &Error{200000, "the name has registered"} // 容器已注册
@@ -26,3 +30,8 @@ var (
 	// NoFileExt         = &Error{200005, "not file extension"}      // 文件后缀名错误
 	// FrameworkError    = &Error{200006, "framework error"}         // 框架核心错误
 )
+
+// Wrap 包装错误
+func Wrap(err error, message string) error {
+	return gerror.Wrap(err, message)
+}

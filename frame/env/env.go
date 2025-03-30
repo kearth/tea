@@ -1,161 +1,82 @@
 package env
 
 import (
-	"bytes"
-	"context"
-	"io"
-	"os"
-	"runtime"
-
-	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/os/gproc"
-	"github.com/gogf/gf/v2/text/gstr"
-	"github.com/kearth/tea/frame/config"
-	"github.com/kearth/tea/frame/container"
+	"github.com/gogf/gf/v2/os/gcfg"
 	"github.com/kearth/tea/frame/defined"
-	"github.com/kearth/tea/frame/utils"
-	"golang.org/x/text/encoding/simplifiedchinese"
-	"golang.org/x/text/transform"
+	"github.com/kearth/tea/internal/envinfo"
 )
 
-// 实现组件接口
-var _ container.Component = (*Env)(nil)
-
-type ModeType string
-
-func (m ModeType) String() string {
-	return string(m)
+// IsDebug 是否调试模式
+func IsDebug() bool {
+	return envinfo.Instance().Mode == defined.EnvModeDebug
 }
 
-type OSType string
-
-func (m OSType) String() string {
-	return string(m)
+// IsNormal 是否正常模式
+func IsNormal() bool {
+	return !IsDebug()
 }
 
-const (
-	EnvModeNormal ModeType = "normal" // 正常模式
-	EnvModeDebug  ModeType = "debug"  // 调试模式
-
-	OSMac       OSType = "darwin"    // macOS
-	OSLinux     OSType = "linux"     // Linux
-	OSWindows   OSType = "windows"   // Windows
-	OSAndroid   OSType = "android"   // Android
-	OSFreeBSD   OSType = "freebsd"   // FreeBSD
-	OSDragonfly OSType = "dragonfly" // Dragonfly
-	OSNetBSD    OSType = "netbsd"    // NetBSD
-	OSPlain     OSType = "plan9"     // Plan 9
-	OSSolaris   OSType = "solaris"   // Solaris
-	OSOpenBSD   OSType = "openbsd"   // OpenBSD
-	OSUnknown   OSType = "unknown"   // 未知系统
-
-)
-
-// 实例
-var instance *Env = &Env{
-	Mode: EnvModeNormal,
+// IsRelease 是否正式模式
+func IsMac() bool {
+	return envinfo.Instance().OS == defined.OSMac
 }
 
-// 环境
-type Env struct {
-	container.BaseObject
-	Version       string
-	ServerName    string   `json:"server_name"`
-	ServerVersion string   `json:"server_version"`
-	Mode          ModeType `json:"mode"`
-	OS            OSType
-	Port          int    `json:"port"`
-	IP            string `json:"ip"`
-	Host          string `json:"host"`
-	Address       string
-	Arch          string
-	SystemVersion string
-	CPU           int
-	PID           int
-	Hostname      string
-	RootDir       string `json:"root_dir"`
-	ResourcesDir  string `json:"resources_dir"`
+// IsWin 是否Windows系统
+func IsWin() bool {
+	return envinfo.Instance().OS == defined.OSWindows
 }
 
-func Instance() *Env {
-	return instance
+// IsLinux 是否Linux系统
+func IsLinux() bool {
+	return envinfo.Instance().OS == defined.OSLinux
 }
 
-// 初始化环境
-func (e *Env) Init(ctx context.Context) error {
-	// 解析配置文件
-	cfg, err := config.ParseTOML(defined.ConfigPath)
-	if err != nil {
-		return err
-	}
-
-	e.ServerName = cfg.MustGet(ctx, "server.name", "tea").String()
-	e.ServerVersion = cfg.MustGet(ctx, "server.version", "1.0.0").String()
-	e.RootDir = cfg.MustGet(ctx, "server.root_dir", gfile.Pwd()).String()
-	e.ResourcesDir = cfg.MustGet(ctx, "server.resources_dir", "./resources").String()
-	e.Mode = ModeType(cfg.MustGet(ctx, "server.mode", EnvModeNormal).String())
-	e.IP = cfg.MustGet(ctx, "server.ip", "").String()
-	e.Port = cfg.MustGet(ctx, "server.port", 8080).Int()
-	e.Host = cfg.MustGet(ctx, "server.host", "localhost").String()
-
-	if e.IP != "" {
-		e.Address = utils.SPF("%s:%d", e.IP, e.Port)
-	} else {
-		e.Address = utils.SPF("%s:%d", e.Host, e.Port)
-	}
-
-	instance.SystemVersion = e.getSystemVersion(ctx)
-	instance.OS = OSType(runtime.GOOS)
-	instance.Arch = runtime.GOARCH
-	instance.CPU = runtime.NumCPU()
-	instance.Hostname, _ = os.Hostname()
-	instance.PID = os.Getpid()
-	instance.SetName("Env")
-	return nil
+// IsUnknown 是否未知系统
+func IsUnknown() bool {
+	return envinfo.Instance().OS == defined.OSUnknown
 }
 
-// 获取系统版本
-func (e *Env) getSystemVersion(ctx context.Context) string {
-	switch runtime.GOOS {
-	case OSWindows.String():
-		bs, err := gproc.ShellExec(ctx, "ver")
-		if err == nil {
-			reader := transform.NewReader(
-				io.NopCloser(bytes.NewReader([]byte(bs))),
-				simplifiedchinese.GBK.NewDecoder(),
-			)
-			newBytes, _ := io.ReadAll(reader)
-			return gstr.TrimAll(string(newBytes))
-		}
-	case OSMac.String():
-		bs, err := gproc.ShellExec(ctx, "sw_vers -productVersion")
-		if err == nil {
-			return gstr.TrimAll(bs)
-		}
-	}
-	return ""
+// Port 端口
+func Port() int {
+	return envinfo.Instance().Port
 }
 
-func (e *Env) IsDebug() bool {
-	return e.Mode == EnvModeDebug
+// IP IP地址
+func IP() string {
+	return envinfo.Instance().IP
 }
 
-func (e *Env) IsNormal() bool {
-	return e.Mode == EnvModeNormal
+// Host 主机名
+func Host() string {
+	return envinfo.Instance().Host
 }
 
-func (e *Env) IsMac() bool {
-	return e.OS == OSMac
+// ServerName 服务器名称
+func ServerName() string {
+	return envinfo.Instance().ServerName
 }
 
-func (e *Env) IsWin() bool {
-	return e.OS == OSWindows
+// ServerVersion 服务器版本
+func ServerVersion() string {
+	return envinfo.Instance().ServerVersion
 }
 
-func (e *Env) IsLinux() bool {
-	return e.OS == OSLinux
+// ServerMode 服务器模式
+func ServerMode() string {
+	return envinfo.Instance().Mode
 }
 
-func (e *Env) IsUnknown() bool {
-	return e.OS == OSUnknown
+// RootDir 根目录
+func RootDir() string {
+	return envinfo.Instance().RootDir
+}
+
+// ResourcesDir 资源目录
+func ResourcesDir() string {
+	return envinfo.Instance().ResourcesDir
+}
+
+// Cfg 配置信息
+func Cfg() *gcfg.Config {
+	return envinfo.Instance().Cfg
 }

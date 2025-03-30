@@ -16,7 +16,7 @@ func Condition[T any](condition bool, trueVal, falseVal T) T {
 }
 
 // IfThen 条件成立执行
-func IfThen[T any](condition bool, f func()) {
+func IfThen(condition bool, f func()) {
 	if condition {
 		f()
 	}

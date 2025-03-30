@@ -9,7 +9,6 @@ import (
 	"github.com/kearth/tea/frame/utils"
 )
 
-// 上下文接口断言
 var _ Context = (*tCtx)(nil)
 
 type (

@@ -10,5 +10,5 @@ import (
  * 这是一个示例
  *******************************/
 func main() {
-	tea.WorkWillBeDone()
+	tea.Drink()
 }
