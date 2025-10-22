@@ -1,4 +1,4 @@
-package defined
+package base
 
 // Output 输出结构体
 type Output struct {

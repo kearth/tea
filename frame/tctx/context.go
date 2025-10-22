@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gogf/gf/v2/os/gctx"
-	"github.com/kearth/tea/frame/defined"
+	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/utils"
 )
 
@@ -60,8 +60,8 @@ var (
 		AddTags,
 	}
 
-	DefaultRequestID  = defined.DefaultID // 默认请求ID
-	DefaultResponseID = defined.DefaultID // 默认响应ID
+	DefaultRequestID  = base.DefaultID // 默认请求ID
+	DefaultResponseID = base.DefaultID // 默认响应ID
 )
 
 // 创建上下文

@@ -1,7 +1,7 @@
-package utils
+package base
 
 var (
-	version = "0.0.1"
+	version = "0.0.2"
 )
 
 // Version 获取版本号

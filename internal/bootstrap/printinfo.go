@@ -1,12 +1,12 @@
-package printinfo
+package bootstrap
 
 import (
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/tctx"
 	"github.com/kearth/tea/frame/tlog"
 	"github.com/kearth/tea/frame/utils"
-	"github.com/kearth/tea/internal/envinfo"
 )
 
 var (
@@ -14,7 +14,7 @@ var (
 	_ container.Component = (*PrintInfo)(nil)
 
 	// 单例
-	instance = &PrintInfo{}
+	printInfoInstance = &PrintInfo{}
 )
 
 // PrintInfo 打印信息
@@ -22,17 +22,17 @@ type PrintInfo struct {
 	container.BaseObject
 }
 
-// Instance 获取单例
-func Instance() *PrintInfo {
-	return instance
+// LoadPrintInfo 获取单例
+func LoadPrintInfo() *PrintInfo {
+	return printInfoInstance
 }
 
 // Init 初始化
 func (p *PrintInfo) Init(ctx tctx.Context) error {
 	p.SetName("Print")
-	envInfo := envinfo.Instance()
+	envInfo := LoadEnvInfo()
 	tlog.Info(ctx, "==================== Running Info Begin ====================")
-	tlog.Info(ctx, utils.SPF("Version [%v]", utils.Version()))
+	tlog.Info(ctx, utils.SPF("Version [%v]", base.Version()))
 	tlog.Info(ctx, utils.SPF("Mode [%v]", envInfo.Mode))
 	tlog.Info(ctx, utils.SPF("OS [%v]", envInfo.OS))
 	tlog.Info(ctx, utils.SPF("OSVersion [%s]", envInfo.SystemVersion))

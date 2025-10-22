@@ -1,8 +1,8 @@
 package t
 
 import (
+	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
-	"github.com/kearth/tea/frame/errs"
 	"github.com/kearth/tea/frame/utils"
 )
 
@@ -21,7 +21,7 @@ func SetServer(name string) error {
 		serverInstance = s
 		return nil
 	}
-	return errs.DefaultServerNotFound
+	return base.DefaultServerNotFound
 }
 
 // GetServer 获取服务实例
@@ -57,7 +57,7 @@ func RegisterRouter(key string, r container.Router) error {
 func GetRouter(key string) container.Router {
 	r := routerMap[key]
 	utils.IfThen(r == nil, func() {
-		panic(errs.RouterNotFound)
+		panic(base.RouterNotFound)
 	})
 	return r
 }
@@ -66,7 +66,7 @@ func GetRouter(key string) container.Router {
 func GetResource(key string) container.Resource {
 	r := resourcesMap[key]
 	utils.IfThen(r == nil, func() {
-		panic(errs.ResourceNotFound)
+		panic(base.ResourceNotFound)
 	})
 	return r
 }
@@ -75,7 +75,7 @@ func GetResource(key string) container.Resource {
 func GetListener(key string) container.Listener {
 	l := listenersMap[key]
 	utils.IfThen(l == nil, func() {
-		panic(errs.ListenerNotFound)
+		panic(base.ListenerNotFound)
 	})
 	return l
 }

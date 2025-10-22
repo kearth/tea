@@ -1,4 +1,4 @@
-package load
+package bootstrap
 
 import (
 	"github.com/kearth/tea/frame/container"
@@ -12,7 +12,7 @@ var (
 	// 接口
 	_ container.Object = (*Load)(nil)
 	// instance 实例
-	instance = &Load{}
+	loadInstance = &Load{}
 )
 
 // Load 加载器
@@ -21,8 +21,8 @@ type Load struct {
 }
 
 // Instance 获取实例
-func Instance() *Load {
-	return instance
+func Loads() *Load {
+	return loadInstance
 }
 
 // Init 初始化

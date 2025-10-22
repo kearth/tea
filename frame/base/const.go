@@ -1,4 +1,4 @@
-package defined
+package base
 
 const (
 	ConfigPath = "./conf/tea.toml" // 配置文件路径

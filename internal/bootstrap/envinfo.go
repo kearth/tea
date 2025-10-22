@@ -1,4 +1,4 @@
-package envinfo
+package bootstrap
 
 import (
 	"bytes"
@@ -7,13 +7,13 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcfg"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/os/gproc"
 	"github.com/gogf/gf/v2/text/gstr"
-	"github.com/kearth/tea/frame/config"
+	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
-	"github.com/kearth/tea/frame/defined"
 	"github.com/kearth/tea/frame/t"
 	"github.com/kearth/tea/frame/tctx"
 	"github.com/kearth/tea/frame/utils"
@@ -26,7 +26,7 @@ var (
 	_ container.Component = (*EnvInfo)(nil)
 
 	// 实例
-	instance = &EnvInfo{}
+	envInfoInstance = &EnvInfo{}
 )
 
 // 环境
@@ -51,15 +51,24 @@ type EnvInfo struct {
 	Cfg           *gcfg.Config
 }
 
-func Instance() *EnvInfo {
-	return instance
+func LoadEnvInfo() *EnvInfo {
+	return envInfoInstance
+}
+
+// ParseTOML 解析配置文件
+func ParseTOML(path string) (*gcfg.Config, error) {
+	if !gfile.Exists(path) {
+		return nil, base.ConfigFileNotExists
+	}
+	g.Cfg().GetAdapter().(*gcfg.AdapterFile).SetFileName(path)
+	return g.Cfg(), nil
 }
 
 // 初始化环境
 func (e *EnvInfo) Init(ctx tctx.Context) error {
 	e.SetName("EnvInfo")
 	// 解析配置文件
-	cfg, err := config.ParseTOML(defined.ConfigPath)
+	cfg, err := ParseTOML(base.ConfigPath)
 	if err != nil {
 		return err
 	}
@@ -70,7 +79,7 @@ func (e *EnvInfo) Init(ctx tctx.Context) error {
 	e.ServerVersion = cfg.MustGet(ctx, "server.version", "1.0.0").String()
 	e.RootDir = cfg.MustGet(ctx, "server.root_dir", gfile.Pwd()).String()
 	e.ResourcesDir = cfg.MustGet(ctx, "server.resources_dir", "./resources").String()
-	e.Mode = cfg.MustGet(ctx, "server.mode", defined.EnvModeNormal).String()
+	e.Mode = cfg.MustGet(ctx, "server.mode", base.EnvModeNormal).String()
 	e.IP = cfg.MustGet(ctx, "server.ip", "").String()
 	e.Port = cfg.MustGet(ctx, "server.port", 8080).Int()
 	e.Host = cfg.MustGet(ctx, "server.host", "localhost").String()
@@ -81,22 +90,22 @@ func (e *EnvInfo) Init(ctx tctx.Context) error {
 		e.Address = utils.SPF("%s:%d", e.Host, e.Port)
 	}
 
-	instance.SystemVersion = e.getSystemVersion(ctx)
-	instance.OS = runtime.GOOS
-	instance.Arch = runtime.GOARCH
-	instance.CPU = runtime.NumCPU()
-	instance.Hostname, _ = os.Hostname()
-	instance.PID = os.Getpid()
+	envInfoInstance.SystemVersion = e.getSystemVersion(ctx)
+	envInfoInstance.OS = runtime.GOOS
+	envInfoInstance.Arch = runtime.GOARCH
+	envInfoInstance.CPU = runtime.NumCPU()
+	envInfoInstance.Hostname, _ = os.Hostname()
+	envInfoInstance.PID = os.Getpid()
 
 	// 设置默认服务器
-	defaultServer := cfg.MustGet(ctx, "framework.default_server", defined.DefaultServer).String()
+	defaultServer := cfg.MustGet(ctx, "framework.default_server", base.DefaultServer).String()
 	return t.SetServer(defaultServer)
 }
 
 // 获取系统版本
 func (e *EnvInfo) getSystemVersion(ctx context.Context) string {
 	switch runtime.GOOS {
-	case defined.OSWindows:
+	case base.OSWindows:
 		bs, err := gproc.ShellExec(ctx, "ver")
 		if err == nil {
 			reader := transform.NewReader(
@@ -106,7 +115,7 @@ func (e *EnvInfo) getSystemVersion(ctx context.Context) string {
 			newBytes, _ := io.ReadAll(reader)
 			return gstr.TrimAll(string(newBytes))
 		}
-	case defined.OSMac:
+	case base.OSMac:
 		bs, err := gproc.ShellExec(ctx, "sw_vers -productVersion")
 		if err == nil {
 			return gstr.TrimAll(bs)
@@ -117,7 +126,7 @@ func (e *EnvInfo) getSystemVersion(ctx context.Context) string {
 
 // 设置debug模式
 func (e *EnvInfo) SetDebug() {
-	e.Mode = defined.EnvModeDebug
+	e.Mode = base.EnvModeDebug
 }
 
 // 设置RootDir

@@ -4,6 +4,7 @@ go 1.22
 
 require (
 	github.com/fatih/color v1.18.0
+	github.com/kearth/klib v0.0.0-20251021085431-e879ee226017
 	golang.org/x/text v0.21.0
 )
 

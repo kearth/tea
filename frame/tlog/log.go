@@ -9,8 +9,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/glog"
 	"github.com/gogf/gf/v2/util/gconv"
-	"github.com/kearth/tea/frame/defined"
-	"github.com/kearth/tea/frame/env"
+	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/tctx"
 	"github.com/kearth/tea/frame/utils"
 )
@@ -53,7 +52,7 @@ func Logger() *glog.Logger {
 
 // formatId 格式化 ID
 func formatId(id string) string {
-	return utils.Condition(id == "" || id == defined.DefaultID, "-", id)
+	return utils.Condition(id == "" || id == base.DefaultID, "-", id)
 }
 
 // formatBody 格式化日志主体
@@ -134,12 +133,12 @@ func Info(ctx context.Context, v ...any) {
 	Logger().Info(ctx, v...)
 }
 
-// Debug 打印日志
-func Debug(ctx context.Context, v ...any) {
-	if env.IsDebug() {
-		Logger().Debug(ctx, v...)
-	}
-}
+// // Debug 打印日志
+// func Debug(ctx context.Context, v ...any) {
+// 	if env.IsDebug() {
+// 		Logger().Debug(ctx, v...)
+// 	}
+// }
 
 // Notice 打印日志
 func Notice(ctx context.Context, v ...any) {

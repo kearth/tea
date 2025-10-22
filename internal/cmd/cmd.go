@@ -5,7 +5,7 @@ import (
 
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/tctx"
-	"github.com/kearth/tea/internal/envinfo"
+	"github.com/kearth/tea/internal/bootstrap"
 )
 
 var (
@@ -35,12 +35,12 @@ func (c *Cmd) Init(ctx tctx.Context) error {
 
 	// 开启调试模式
 	if *debug {
-		envinfo.Instance().SetDebug()
+		bootstrap.LoadEnvInfo().SetDebug()
 	}
 
 	// 设置根目录
 	if *rootDir != "" {
-		envinfo.Instance().SetRootDir(*rootDir)
+		bootstrap.LoadEnvInfo().SetRootDir(*rootDir)
 	}
 	return nil
 }

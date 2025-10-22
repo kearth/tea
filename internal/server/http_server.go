@@ -3,8 +3,8 @@ package server
 import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
-	"github.com/kearth/tea/frame/defined"
 	"github.com/kearth/tea/frame/env"
 	"github.com/kearth/tea/frame/t"
 	"github.com/kearth/tea/frame/tctx"
@@ -16,7 +16,7 @@ import (
 var _ container.Server = (*HTTPServer)(nil)
 
 // Register 注册服务
-var _ = t.RegisterServer(defined.DefaultServer, NewHTTPServer())
+var _ = t.RegisterServer(base.DefaultServer, NewHTTPServer())
 
 // RedocUI Redoc UI模板
 const RedocUI = `<!doctype html>
@@ -106,7 +106,7 @@ func (h *HTTPServer) Start(ctx tctx.Context) error {
 	if env.IsDebug() {
 		// 全局返回值
 		oa := h.Serv.GetOpenApi()
-		oa.Config.CommonResponse = defined.Output{}
+		oa.Config.CommonResponse = base.Output{}
 		oa.Config.CommonResponseDataField = "Data"
 		config = ghttp.ServerConfig{
 			Graceful:          true,                     // 优雅重启
