@@ -1,18 +1,21 @@
 package tea
 
 import (
-	"runtime"
-
-	"github.com/kearth/tea/frame/tctx"
+	"github.com/kearth/klib/kctx"
 	"github.com/kearth/tea/internal/tea"
 )
 
+var (
+	version = "0.0.2"
+)
+
+// Version 获取版本号
+func Version() string {
+	return version
+}
+
 // Drink 喝茶
 func Drink() {
-
-	// 设置最大CPU核心数
-	_ = runtime.GOMAXPROCS(runtime.NumCPU())
-
 	// 启动框架
-	tea.New().Run(tctx.New())
+	tea.New(kctx.New()).Run()
 }

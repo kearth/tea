@@ -1,23 +1,22 @@
 package bootstrap
 
 import (
+	"fmt"
+
+	"github.com/kearth/klib/kctx"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/t"
-	"github.com/kearth/tea/frame/tctx"
 	"github.com/kearth/tea/frame/tlog"
-	"github.com/kearth/tea/frame/utils"
 )
 
 var (
-	// 接口
-	_ container.Object = (*Load)(nil)
 	// instance 实例
 	loadInstance = &Load{}
 )
 
 // Load 加载器
 type Load struct {
-	container.BaseObject
+	container.Unit
 }
 
 // Instance 获取实例
@@ -26,8 +25,8 @@ func Loads() *Load {
 }
 
 // Init 初始化
-func (l *Load) Init(ctx tctx.Context) error {
-	l.SetName("Load")
+func (l *Load) Init(ctx kctx.Context) error {
+	l.Unit = container.NewUnit("Load")
 	var err error
 	// 解析步骤
 	s := t.GetServer()
@@ -37,10 +36,10 @@ func (l *Load) Init(ctx tctx.Context) error {
 		container.NewStep("Stop", s.Stop),
 	} {
 		if err = step.Run(ctx); err != nil {
-			tlog.Error(ctx, utils.SPF("[Step][%s] error:%e", step.Name(), err))
+			tlog.Error(ctx, fmt.Sprintf("[Step][%s] error:%e", step.Name(), err))
 			return err
 		}
-		tlog.Notice(ctx, utils.SPF("[Step][%s] success", step.Name()))
+		tlog.Notice(ctx, fmt.Sprintf("[Step][%s] success", step.Name()))
 	}
 	return nil
 }

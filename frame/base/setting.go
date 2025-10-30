@@ -1,5 +1,7 @@
 package base
 
+import "github.com/kearth/klib/kerr"
+
 const (
 	ConfigPath = "./conf/tea.toml" // 配置文件路径
 
@@ -23,4 +25,13 @@ const (
 	OSOpenBSD   = "openbsd"   // OpenBSD
 	OSUnknown   = "unknown"   // 未知系统
 
+)
+
+// Base error definitions
+var (
+	ConfigFileNotExists   = kerr.New(600001, "Config file not exists").WithDisplay("配置文件不存在")
+	DefaultServerNotFound = kerr.New(600002, "Default server not found").WithDisplay("默认服务器未找到")
+	RouterNotFound        = kerr.New(600003, "Router not found").WithDisplay("路由器未找到")
+	ListenerNotFound      = kerr.New(600004, "Listener not found").WithDisplay("监听器未找到")
+	ResourceNotFound      = kerr.New(600005, "Resource not found").WithDisplay("资源未找到")
 )

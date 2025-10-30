@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"os"
 	"runtime"
@@ -12,11 +13,10 @@ import (
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/os/gproc"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/kearth/klib/kctx"
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/t"
-	"github.com/kearth/tea/frame/tctx"
-	"github.com/kearth/tea/frame/utils"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 )
@@ -31,7 +31,7 @@ var (
 
 // 环境
 type EnvInfo struct {
-	container.BaseObject
+	container.Unit
 	Version       string
 	ServerName    string `json:"server_name"`
 	ServerVersion string `json:"server_version"`
@@ -65,8 +65,8 @@ func ParseTOML(path string) (*gcfg.Config, error) {
 }
 
 // 初始化环境
-func (e *EnvInfo) Init(ctx tctx.Context) error {
-	e.SetName("EnvInfo")
+func (e *EnvInfo) Init(ctx kctx.Context) error {
+	e.Unit = container.NewUnit("EnvInfo", nil)
 	// 解析配置文件
 	cfg, err := ParseTOML(base.ConfigPath)
 	if err != nil {
@@ -85,9 +85,9 @@ func (e *EnvInfo) Init(ctx tctx.Context) error {
 	e.Host = cfg.MustGet(ctx, "server.host", "localhost").String()
 
 	if e.IP != "" {
-		e.Address = utils.SPF("%s:%d", e.IP, e.Port)
+		e.Address = fmt.Sprintf("%s:%d", e.IP, e.Port)
 	} else {
-		e.Address = utils.SPF("%s:%d", e.Host, e.Port)
+		e.Address = fmt.Sprintf("%s:%d", e.Host, e.Port)
 	}
 
 	envInfoInstance.SystemVersion = e.getSystemVersion(ctx)

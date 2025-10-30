@@ -1,14 +1,27 @@
 package env
 
 import (
+	"sync"
+
 	"github.com/gogf/gf/v2/os/gcfg"
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/internal/bootstrap"
 )
 
+var envInfo *bootstrap.EnvInfo
+var once sync.Once
+
+// loadEnvInfo 用于懒加载环境信息
+func loadEnvInfo() *bootstrap.EnvInfo {
+	once.Do(func() {
+		envInfo = bootstrap.LoadEnvInfo()
+	})
+	return envInfo
+}
+
 // IsDebug 是否调试模式
 func IsDebug() bool {
-	return bootstrap.LoadEnvInfo().Mode == base.EnvModeDebug
+	return loadEnvInfo().Mode == base.EnvModeDebug
 }
 
 // IsNormal 是否正常模式
@@ -17,66 +30,71 @@ func IsNormal() bool {
 }
 
 // IsRelease 是否正式模式
+func IsRelease() bool {
+	return loadEnvInfo().Mode == base.EnvModeNormal
+}
+
+// IsMac 是否Mac系统
 func IsMac() bool {
-	return bootstrap.LoadEnvInfo().OS == base.OSMac
+	return loadEnvInfo().OS == base.OSMac
 }
 
 // IsWin 是否Windows系统
 func IsWin() bool {
-	return bootstrap.LoadEnvInfo().OS == base.OSWindows
+	return loadEnvInfo().OS == base.OSWindows
 }
 
 // IsLinux 是否Linux系统
 func IsLinux() bool {
-	return bootstrap.LoadEnvInfo().OS == base.OSLinux
+	return loadEnvInfo().OS == base.OSLinux
 }
 
 // IsUnknown 是否未知系统
 func IsUnknown() bool {
-	return bootstrap.LoadEnvInfo().OS == base.OSUnknown
+	return loadEnvInfo().OS == base.OSUnknown
 }
 
-// Port 端口
+// GetPort 获取端口
 func Port() int {
-	return bootstrap.LoadEnvInfo().Port
+	return loadEnvInfo().Port
 }
 
-// IP IP地址
-func IP() string {
-	return bootstrap.LoadEnvInfo().IP
+// GetIP 获取IP地址
+func GetIP() string {
+	return loadEnvInfo().IP
 }
 
-// Host 主机名
-func Host() string {
-	return bootstrap.LoadEnvInfo().Host
+// GetHost 获取主机名
+func GetHost() string {
+	return loadEnvInfo().Host
 }
 
-// ServerName 服务器名称
-func ServerName() string {
-	return bootstrap.LoadEnvInfo().ServerName
+// GetServerName 获取服务器名称
+func GetServerName() string {
+	return loadEnvInfo().ServerName
 }
 
-// ServerVersion 服务器版本
-func ServerVersion() string {
-	return bootstrap.LoadEnvInfo().ServerVersion
+// GetServerVersion 获取服务器版本
+func GetServerVersion() string {
+	return loadEnvInfo().ServerVersion
 }
 
-// ServerMode 服务器模式
-func ServerMode() string {
-	return bootstrap.LoadEnvInfo().Mode
+// GetServerMode 获取服务器模式
+func GetServerMode() string {
+	return loadEnvInfo().Mode
 }
 
-// RootDir 根目录
-func RootDir() string {
-	return bootstrap.LoadEnvInfo().RootDir
+// GetRootDir 获取根目录
+func GetRootDir() string {
+	return loadEnvInfo().RootDir
 }
 
-// ResourcesDir 资源目录
-func ResourcesDir() string {
-	return bootstrap.LoadEnvInfo().ResourcesDir
+// GetResourcesDir 获取资源目录
+func GetResourcesDir() string {
+	return loadEnvInfo().ResourcesDir
 }
 
-// Cfg 配置信息
+// GetCfg 获取配置信息
 func Cfg() *gcfg.Config {
-	return bootstrap.LoadEnvInfo().Cfg
+	return loadEnvInfo().Cfg
 }

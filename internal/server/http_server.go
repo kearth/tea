@@ -1,22 +1,24 @@
 package server
 
 import (
+	"fmt"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/env"
+
+	"github.com/kearth/klib/kctx"
 	"github.com/kearth/tea/frame/t"
-	"github.com/kearth/tea/frame/tctx"
 	"github.com/kearth/tea/frame/tlog"
-	"github.com/kearth/tea/frame/utils"
 )
 
 // Server 服务接口
 var _ container.Server = (*HTTPServer)(nil)
 
 // Register 注册服务
-var _ = t.RegisterServer(base.DefaultServer, NewHTTPServer())
+var _ = t.RegisterServer(base.DefaultServer, NewHTTPServer(kctx.New()))
 
 // RedocUI Redoc UI模板
 const RedocUI = `<!doctype html>
@@ -33,12 +35,12 @@ const RedocUI = `<!doctype html>
 
 // ServerPackage 服务包
 type ServerPackage struct {
-	container.BaseObject
+	container.Unit
 }
 
 // Register 注册服务包
 func (s *ServerPackage) Register() error {
-	s.SetName("ServerPackage")
+	s.Unit = container.NewUnit("ServerPackage")
 	return nil
 }
 
@@ -51,7 +53,7 @@ type HTTPConfig struct {
 
 // HTTPServer HTTP服务
 type HTTPServer struct {
-	container.BaseObject
+	container.Unit
 	Serv      *ghttp.Server
 	Port      int                  // 端口
 	Router    container.Router     // 路由
@@ -60,16 +62,17 @@ type HTTPServer struct {
 }
 
 // New 创建实例
-func NewHTTPServer() *HTTPServer {
+func NewHTTPServer(ctx kctx.Context) *HTTPServer {
 	hs := &HTTPServer{
+		Unit: container.NewUnit("HTTPServer"),
 		Serv: g.Server(),
 	}
-	hs.SetName("HTTPServer")
+	// hs.SetName("HTTPServer")
 	return hs
 }
 
 // Parse 解析配置
-func (h *HTTPConfig) Parse(ctx tctx.Context) error {
+func (h *HTTPConfig) Parse(ctx kctx.Context) error {
 	routerName := env.Cfg().MustGet(ctx, "server.router", "HTTPRouter").String()
 	h.Router = t.GetRouter(routerName)
 	listenerName := env.Cfg().MustGet(ctx, "server.listeners").Strings()
@@ -84,7 +87,7 @@ func (h *HTTPConfig) Parse(ctx tctx.Context) error {
 }
 
 // Set 设置服务
-func (h *HTTPServer) Set(ctx tctx.Context) error {
+func (h *HTTPServer) Set(ctx kctx.Context) error {
 	h.Port = env.Port()
 	cfg := &HTTPConfig{}
 	err := cfg.Parse(ctx)
@@ -98,7 +101,7 @@ func (h *HTTPServer) Set(ctx tctx.Context) error {
 }
 
 // Start 启动服务
-func (h *HTTPServer) Start(ctx tctx.Context) error {
+func (h *HTTPServer) Start(ctx kctx.Context) error {
 	// 服务配置
 	var config ghttp.ServerConfig
 
@@ -109,24 +112,24 @@ func (h *HTTPServer) Start(ctx tctx.Context) error {
 		oa.Config.CommonResponse = base.Output{}
 		oa.Config.CommonResponseDataField = "Data"
 		config = ghttp.ServerConfig{
-			Graceful:          true,                     // 优雅重启
-			PProfEnabled:      true,                     // 开启pprof
-			OpenApiPath:       "/api.json",              // 设置openapi路径
-			SwaggerPath:       "/swagger",               // 设置swagger路径
-			SwaggerUITemplate: RedocUI,                  // 设置swagger模板
-			Address:           utils.SPF(":%d", h.Port), // 设置监听端口
-			Logger:            tlog.Logger(),            // 设置日志
-			DumpRouterMap:     true,                     // 打印路由信息
-			LogStdout:         true,                     // 输出日志到控制台
-			ErrorStack:        true,                     // 打印错误堆栈
+			Graceful:          true,                       // 优雅重启
+			PProfEnabled:      true,                       // 开启pprof
+			OpenApiPath:       "/api.json",                // 设置openapi路径
+			SwaggerPath:       "/swagger",                 // 设置swagger路径
+			SwaggerUITemplate: RedocUI,                    // 设置swagger模板
+			Address:           fmt.Sprintf(":%d", h.Port), // 设置监听端口
+			Logger:            tlog.Logger(),              // 设置日志
+			DumpRouterMap:     true,                       // 打印路由信息
+			LogStdout:         true,                       // 输出日志到控制台
+			ErrorStack:        true,                       // 打印错误堆栈
 		}
 	} else {
 		config = ghttp.ServerConfig{
-			Graceful:   true,                     // 优雅重启
-			Address:    utils.SPF(":%d", h.Port), // 设置监听端口
-			Logger:     tlog.Logger(),            // 设置日志
-			LogStdout:  true,                     // 输出日志到控制台
-			ErrorStack: true,                     // 打印错误堆栈
+			Graceful:   true,                       // 优雅重启
+			Address:    fmt.Sprintf(":%d", h.Port), // 设置监听端口
+			Logger:     tlog.Logger(),              // 设置日志
+			LogStdout:  true,                       // 输出日志到控制台
+			ErrorStack: true,                       // 打印错误堆栈
 		}
 	}
 
@@ -137,7 +140,7 @@ func (h *HTTPServer) Start(ctx tctx.Context) error {
 }
 
 // Stop 停止服务
-func (h *HTTPServer) Stop(ctx tctx.Context) error {
+func (h *HTTPServer) Stop(ctx kctx.Context) error {
 	// 关闭监听器
 	for _, v := range h.Listeners {
 		_ = v.Close()

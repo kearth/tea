@@ -13,10 +13,10 @@ var _ = t.RegisterRouter("HTTPRouter", &HTTPRouter{})
 
 // HTTPRouter HTTP 路由
 type HTTPRouter struct {
-	container.BaseObject
+	container.Unit
 }
 
 // Register 注册路由
 func (h *HTTPRouter) Register(s container.Server) {
-	h.SetName("HTTPRouter")
+	h.Unit = container.NewUnit("HTTPRouter")
 }

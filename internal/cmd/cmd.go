@@ -3,22 +3,19 @@ package cmd
 import (
 	"flag"
 
+	"github.com/kearth/klib/kctx"
 	"github.com/kearth/tea/frame/container"
-	"github.com/kearth/tea/frame/tctx"
 	"github.com/kearth/tea/internal/bootstrap"
 )
 
 var (
-	// 接口检查
-	_ container.Component = (*Cmd)(nil)
-
 	// 实例
 	instance = &Cmd{}
 )
 
 // Cmd 命令行组件
 type Cmd struct {
-	container.BaseObject
+	container.Unit
 }
 
 // Instance 获取实例
@@ -27,8 +24,8 @@ func Instance() *Cmd {
 }
 
 // Init 初始化
-func (c *Cmd) Init(ctx tctx.Context) error {
-	c.SetName("Cmd")
+func (c *Cmd) Init(ctx kctx.Context) error {
+	c.Unit = container.NewUnit("Cmd")
 	debug := flag.Bool("debug", false, "调试模式")
 	rootDir := flag.String("root_dir", "", "根目录")
 	flag.Parse()

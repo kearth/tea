@@ -9,9 +9,9 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/glog"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/kearth/klib/kctx"
+	"github.com/kearth/klib/kutil"
 	"github.com/kearth/tea/frame/base"
-	"github.com/kearth/tea/frame/tctx"
-	"github.com/kearth/tea/frame/utils"
 )
 
 // 颜色映射
@@ -52,7 +52,7 @@ func Logger() *glog.Logger {
 
 // formatId 格式化 ID
 func formatId(id string) string {
-	return utils.Condition(id == "" || id == base.DefaultID, "-", id)
+	return kutil.If[string](id == "" || id == base.DefaultID, "-", id)
 }
 
 // formatBody 格式化日志主体
@@ -65,7 +65,7 @@ func formatBody(body []any) string {
 			}
 		}
 		encoded, err := gjson.EncodeString(m)
-		return utils.Condition(err != nil, "", encoded)
+		return kutil.If[string](err != nil, "", encoded)
 	} else if len(body) == 1 {
 		return gconv.String(body[0])
 	}
@@ -74,9 +74,9 @@ func formatBody(body []any) string {
 
 // formatAdd 格式化附加参数
 func formatAdd(add map[string]string) string {
-	return utils.Condition(len(add) > 0, func() string {
+	return kutil.If[string](len(add) > 0, func() string {
 		encoded, err := gjson.EncodeString(add)
-		return utils.Condition(err != nil, "", encoded)
+		return kutil.If[string](err != nil, "", encoded)
 	}(), "")
 }
 
@@ -86,7 +86,7 @@ func (l *LogInfo) String() string {
 		return formatBody(l.Body)
 	}
 	add := formatAdd(l.Add)
-	body := utils.Condition(add != "", add, formatBody(l.Body))
+	body := kutil.If[string](add != "", add, formatBody(l.Body))
 	return fmt.Sprintf(
 		"%s %s {%s} {%s} %s",
 		l.Time,
@@ -98,13 +98,13 @@ func (l *LogInfo) String() string {
 
 // DefaultHandler 默认日志处理
 func DefaultHandler(ctx context.Context, in *glog.HandlerInput) {
-	newCtx := tctx.NewWithCtx(ctx)
+	newCtx := kctx.New(ctx)
 	in.Buffer.WriteString((&LogInfo{
 		Time:       in.Time.Format("2006-01-02 15:04:05 Z07:00"),
 		Level:      in.LevelFormat,
 		LevelInt:   in.Level,
 		ResponseID: in.TraceId,
-		RequestId:  newCtx.GetRequestID(),
+		RequestId:  newCtx.TraceID(),
 		Body:       in.Values,
 		Add:        newCtx.Values(),
 	}).String())
@@ -114,18 +114,18 @@ func DefaultHandler(ctx context.Context, in *glog.HandlerInput) {
 
 // AddToCtx 追加参数
 func AddToCtx(ctx context.Context, key string, val string) context.Context {
-	newCtx := tctx.NewWithCtx(ctx)
+	newCtx := kctx.New(ctx)
 	newCtx.Set(key, val)
-	return newCtx.Ctx()
+	return newCtx.Context()
 }
 
 // AddMapToCtx 追加参数 - map
 func AddMapToCtx(ctx context.Context, kv map[string]string) context.Context {
-	newCtx := tctx.NewWithCtx(ctx)
+	newCtx := kctx.New(ctx)
 	for k, v := range kv {
 		newCtx.Set(k, v)
 	}
-	return newCtx.Ctx()
+	return newCtx.Context()
 }
 
 // Info 打印日志

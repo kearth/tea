@@ -1,9 +1,9 @@
 package t
 
 import (
+	"github.com/kearth/klib/kutil"
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
-	"github.com/kearth/tea/frame/utils"
 )
 
 var (
@@ -56,7 +56,7 @@ func RegisterRouter(key string, r container.Router) error {
 // GetRouter 获取路由
 func GetRouter(key string) container.Router {
 	r := routerMap[key]
-	utils.IfThen(r == nil, func() {
+	kutil.If[func()](r == nil, func() {
 		panic(base.RouterNotFound)
 	})
 	return r
@@ -65,7 +65,7 @@ func GetRouter(key string) container.Router {
 // GetResource 获取资源
 func GetResource(key string) container.Resource {
 	r := resourcesMap[key]
-	utils.IfThen(r == nil, func() {
+	kutil.If[func()](r == nil, func() {
 		panic(base.ResourceNotFound)
 	})
 	return r
@@ -74,13 +74,13 @@ func GetResource(key string) container.Resource {
 // GetListener 获取监听器
 func GetListener(key string) container.Listener {
 	l := listenersMap[key]
-	utils.IfThen(l == nil, func() {
+	kutil.If[func()](l == nil, func() {
 		panic(base.ListenerNotFound)
 	})
 	return l
 }
 
-// AddPackage 添加包
-func AddPackage(p container.Package) error {
+// AddModule 添加模块
+func AddModule(p container.Module) error {
 	return p.Register()
 }

@@ -1,9 +1,9 @@
 package server
 
 import (
+	"github.com/kearth/klib/kctx"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/t"
-	"github.com/kearth/tea/frame/tctx"
 )
 
 // HTTPListener 实现 HTTP 监听器接口
@@ -14,11 +14,11 @@ var _ = t.RegisterListener("HTTPListener", &HTTPListener{})
 
 // HTTPListener HTTP 监听器
 type HTTPListener struct {
-	container.BaseObject
+	container.Unit
 }
 
 // Listen 监听
-func (l *HTTPListener) Listen(ctx tctx.Context) error {
+func (l *HTTPListener) Listen(ctx kctx.Context) error {
 	l.SetName("HTTPListener")
 	return nil
 }
