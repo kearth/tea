@@ -3,14 +3,14 @@ module github.com/kearth/tea
 go 1.22
 
 require (
-	github.com/fatih/color v1.18.0
-	github.com/kearth/klib v0.0.0-20251028062717-7cebaf75d739
+	github.com/kearth/klib v0.0.5-0.20251031070951-522f20463c3f
 	golang.org/x/text v0.21.0
 )
 
 require (
 	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
+	github.com/fatih/color v1.18.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect

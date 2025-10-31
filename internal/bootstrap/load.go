@@ -4,9 +4,11 @@ import (
 	"fmt"
 
 	"github.com/kearth/klib/kctx"
+	"github.com/kearth/klib/kerr"
+	"github.com/kearth/klib/klog"
+	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/t"
-	"github.com/kearth/tea/frame/tlog"
 )
 
 var (
@@ -25,7 +27,7 @@ func Loads() *Load {
 }
 
 // Init 初始化
-func (l *Load) Init(ctx kctx.Context) error {
+func (l *Load) Setup(ctx kctx.Context) kerr.Error {
 	l.Unit = container.NewUnit("Load")
 	var err error
 	// 解析步骤
@@ -36,10 +38,10 @@ func (l *Load) Init(ctx kctx.Context) error {
 		container.NewStep("Stop", s.Stop),
 	} {
 		if err = step.Run(ctx); err != nil {
-			tlog.Error(ctx, fmt.Sprintf("[Step][%s] error:%e", step.Name(), err))
-			return err
+			klog.Error(ctx, fmt.Sprintf("[Step][%s] error:%e", step.Name(), err))
+			return base.StepError.Wrap(err)
 		}
-		tlog.Notice(ctx, fmt.Sprintf("[Step][%s] success", step.Name()))
+		klog.Notice(ctx, fmt.Sprintf("[Step][%s] success", step.Name()))
 	}
 	return nil
 }

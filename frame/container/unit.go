@@ -13,20 +13,36 @@ import (
  * 一个单元不应该并发执行
  *******************************************/
 
+type Role string
+
+const (
+	RoleModule    Role = "Module"
+	RoleComponent Role = "Component"
+	RoleRouter    Role = "Router"
+	RoleServer    Role = "Server"
+	RoleUnit      Role = "Unit"
+	RolePlugin    Role = "Plugin"
+	RoleUnknown   Role = "Unknown"
+)
+
 type Fn func(ctx kctx.Context, input ...any) (output any, err kerr.Error)
 
 // 修正后
 type Unit interface {
 	Cost() time.Duration
 	Name() string
+	Role() Role
+	Call(ctx kctx.Context, input ...any) (any, kerr.Error)
+	SetRole(role Role)
 	SetName(name string)
-	Call(ctx kctx.Context, input ...any) (any, error)
 	SetFn(fn Fn)
+	Setup(ctx kctx.Context) kerr.Error
 }
 
 // Unit 单元
 type unit struct {
 	name  string        // 名称
+	role  Role          // 角色
 	start time.Time     // 开始时间
 	end   time.Time     // 结束时间
 	cost  time.Duration // 耗时
@@ -34,19 +50,27 @@ type unit struct {
 	fn    Fn            // 执行方法
 }
 
-// Cost 计算耗时
+func (u *unit) Setup(ctx kctx.Context) kerr.Error {
+	return nil
+}
+
+// Role 获取角色
+func (u *unit) Role() Role {
+	return u.role
+}
+
+// SetRole 设置角色
+func (u *unit) SetRole(role Role) {
+	u.role = role
+}
+
+// Cost 计算耗时（仅在执行后有效）
 func (u *unit) Cost() time.Duration {
-	// 计算耗时
-	if u.start.IsZero() {
-		u.start = time.Now()
+	// 未执行过的单元耗时为 0
+	if u.start.IsZero() || u.end.IsZero() {
+		return 0
 	}
-	if u.end.IsZero() {
-		u.end = time.Now()
-	}
-	// 计算耗时
-	if u.cost == 0 {
-		u.cost = u.end.Sub(u.start)
-	}
+	// 已执行的单元返回预计算的耗时（避免重复计算）
 	return u.cost
 }
 
@@ -61,7 +85,7 @@ func (u *unit) SetName(name string) {
 }
 
 // Call 执行单元
-func (u *unit) Call(ctx kctx.Context, input ...any) (any, error) {
+func (u *unit) Call(ctx kctx.Context, input ...any) (any, kerr.Error) {
 	var output any
 	var err kerr.Error
 	u.start = time.Now()

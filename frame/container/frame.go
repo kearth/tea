@@ -4,11 +4,11 @@ import (
 	"github.com/kearth/klib/kctx"
 )
 
-// Module 模块接口
-type Module interface {
-	Register() error
-	Name() string
-}
+// // Module 模块接口
+// type Module interface {
+// 	Register() error
+// 	Name() string
+// }
 
 // Component 组件接口
 type Component interface {

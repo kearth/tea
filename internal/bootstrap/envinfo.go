@@ -14,6 +14,8 @@ import (
 	"github.com/gogf/gf/v2/os/gproc"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/kearth/klib/kctx"
+	"github.com/kearth/klib/kerr"
+	"github.com/kearth/klib/klog"
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/t"
@@ -22,9 +24,6 @@ import (
 )
 
 var (
-	// 组件接口
-	_ container.Component = (*EnvInfo)(nil)
-
 	// 实例
 	envInfoInstance = &EnvInfo{}
 )
@@ -51,7 +50,8 @@ type EnvInfo struct {
 	Cfg           *gcfg.Config
 }
 
-func LoadEnvInfo() *EnvInfo {
+// EnvInfoInstance 获取实例
+func EnvInfoInstance() *EnvInfo {
 	return envInfoInstance
 }
 
@@ -65,16 +65,18 @@ func ParseTOML(path string) (*gcfg.Config, error) {
 }
 
 // 初始化环境
-func (e *EnvInfo) Init(ctx kctx.Context) error {
-	e.Unit = container.NewUnit("EnvInfo", nil)
+func (e *EnvInfo) Setup(ctx kctx.Context) kerr.Error {
+	// 创建单元
+	unit := container.NewUnit("EnvInfo")
+	unit.SetRole(container.RoleComponent)
+	e.Unit = unit
 	// 解析配置文件
-	cfg, err := ParseTOML(base.ConfigPath)
+	cfg, err := ParseTOML(base.GetConfigPath())
 	if err != nil {
-		return err
+		return base.ConfigFileNotExists.Wrap(err)
 	}
 	// 设置配置信息
 	e.Cfg = cfg
-
 	e.ServerName = cfg.MustGet(ctx, "server.name", "tea").String()
 	e.ServerVersion = cfg.MustGet(ctx, "server.version", "1.0.0").String()
 	e.RootDir = cfg.MustGet(ctx, "server.root_dir", gfile.Pwd()).String()
@@ -90,15 +92,29 @@ func (e *EnvInfo) Init(ctx kctx.Context) error {
 		e.Address = fmt.Sprintf("%s:%d", e.Host, e.Port)
 	}
 
-	envInfoInstance.SystemVersion = e.getSystemVersion(ctx)
-	envInfoInstance.OS = runtime.GOOS
-	envInfoInstance.Arch = runtime.GOARCH
-	envInfoInstance.CPU = runtime.NumCPU()
-	envInfoInstance.Hostname, _ = os.Hostname()
-	envInfoInstance.PID = os.Getpid()
+	e.SystemVersion = e.getSystemVersion(ctx)
+	e.OS = runtime.GOOS
+	e.Arch = runtime.GOARCH
+	e.CPU = runtime.NumCPU()
+	e.Hostname, _ = os.Hostname()
+	e.PID = os.Getpid()
 
 	// 设置默认服务器
 	defaultServer := cfg.MustGet(ctx, "framework.default_server", base.DefaultServer).String()
+	klog.Print(ctx, "======================================== Env Info =========================================")
+	klog.Print(ctx, fmt.Sprintf("Version:         [ %v ]", e.Version))
+	klog.Print(ctx, fmt.Sprintf("Mode:            [ %v ]", e.Mode))
+	klog.Print(ctx, fmt.Sprintf("OS:              [ %v ]", e.OS))
+	klog.Print(ctx, fmt.Sprintf("OSVersion:       [ %s ]", e.SystemVersion))
+	klog.Print(ctx, fmt.Sprintf("Arch:            [ %v ]", e.Arch))
+	klog.Print(ctx, fmt.Sprintf("CPU:             [ %d ]", e.CPU))
+	klog.Print(ctx, fmt.Sprintf("Hostname:        [ %s ]", e.Hostname))
+	klog.Print(ctx, fmt.Sprintf("Pid:             [ %d ]", e.PID))
+	klog.Print(ctx, fmt.Sprintf("RootDir:         [ %s ]", e.RootDir))
+	klog.Print(ctx, fmt.Sprintf("ResourcesDir:    [ %s ]", e.ResourcesDir))
+	klog.Print(ctx, fmt.Sprintf("ServerVersion:   [ %s ]", e.ServerVersion))
+	klog.Notice(ctx, fmt.Sprintf("Server:          [ %s ] is starting...", gstr.UcFirst(e.ServerName)))
+	klog.Notice(ctx, fmt.Sprintf("Listening on:    [ %s ]", e.Address))
 	return t.SetServer(defaultServer)
 }
 
@@ -122,27 +138,4 @@ func (e *EnvInfo) getSystemVersion(ctx context.Context) string {
 		}
 	}
 	return ""
-}
-
-// 设置debug模式
-func (e *EnvInfo) SetDebug() {
-	e.Mode = base.EnvModeDebug
-}
-
-// 设置RootDir
-func (e *EnvInfo) SetRootDir(path string) bool {
-	if path == "" {
-		return false
-	}
-	e.RootDir = path
-	return true
-}
-
-// 设置ResourcesDir
-func (e *EnvInfo) SetResourcesDir(path string) bool {
-	if path == "" {
-		return false
-	}
-	e.ResourcesDir = path
-	return true
 }

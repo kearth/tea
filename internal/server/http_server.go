@@ -10,8 +10,9 @@ import (
 	"github.com/kearth/tea/frame/env"
 
 	"github.com/kearth/klib/kctx"
+	"github.com/kearth/klib/kerr"
+	"github.com/kearth/klib/klog"
 	"github.com/kearth/tea/frame/t"
-	"github.com/kearth/tea/frame/tlog"
 )
 
 // Server 服务接口
@@ -39,8 +40,9 @@ type ServerPackage struct {
 }
 
 // Register 注册服务包
-func (s *ServerPackage) Register() error {
-	s.Unit = container.NewUnit("ServerPackage")
+func (s *ServerPackage) Setup(ctx kctx.Context) kerr.Error {
+	s.Unit = container.NewUnit("HTTPServer")
+	s.Unit.SetRole("Module")
 	return nil
 }
 
@@ -118,7 +120,7 @@ func (h *HTTPServer) Start(ctx kctx.Context) error {
 			SwaggerPath:       "/swagger",                 // 设置swagger路径
 			SwaggerUITemplate: RedocUI,                    // 设置swagger模板
 			Address:           fmt.Sprintf(":%d", h.Port), // 设置监听端口
-			Logger:            tlog.Logger(),              // 设置日志
+			Logger:            klog.Logger(),              // 设置日志
 			DumpRouterMap:     true,                       // 打印路由信息
 			LogStdout:         true,                       // 输出日志到控制台
 			ErrorStack:        true,                       // 打印错误堆栈
@@ -127,7 +129,7 @@ func (h *HTTPServer) Start(ctx kctx.Context) error {
 		config = ghttp.ServerConfig{
 			Graceful:   true,                       // 优雅重启
 			Address:    fmt.Sprintf(":%d", h.Port), // 设置监听端口
-			Logger:     tlog.Logger(),              // 设置日志
+			Logger:     klog.Logger(),              // 设置日志
 			LogStdout:  true,                       // 输出日志到控制台
 			ErrorStack: true,                       // 打印错误堆栈
 		}

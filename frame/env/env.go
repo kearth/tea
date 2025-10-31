@@ -14,7 +14,7 @@ var once sync.Once
 // loadEnvInfo 用于懒加载环境信息
 func loadEnvInfo() *bootstrap.EnvInfo {
 	once.Do(func() {
-		envInfo = bootstrap.LoadEnvInfo()
+		envInfo = bootstrap.EnvInfoInstance()
 	})
 	return envInfo
 }

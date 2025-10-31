@@ -4,77 +4,61 @@ import (
 	"fmt"
 
 	"github.com/kearth/klib/kctx"
+	"github.com/kearth/klib/klog"
 	"github.com/kearth/tea/frame/container"
-	tt "github.com/kearth/tea/frame/t"
-	"github.com/kearth/tea/frame/tlog"
 	"github.com/kearth/tea/internal/bootstrap"
-	"github.com/kearth/tea/internal/cmd"
 	"github.com/kearth/tea/internal/server"
 )
 
 // Tea 茶
 type Tea struct {
 	container.Unit
-	RootCtx kctx.Context
+	Version string // 版本号
 }
 
 // New
-func New(ctx kctx.Context) *Tea {
-	t := &Tea{
+func New(version string) *Tea {
+	return &Tea{
+		Version: version,
 		Unit:    container.NewUnit("Tea"),
-		RootCtx: ctx,
 	}
-	return t
 }
 
 // Run
-func (t *Tea) Run() {
-	ctx := t.RootCtx
+func (t *Tea) Run(ctx kctx.Context) {
+	// 初始化日志
+	klog.Init()
 	// 开始
-	tlog.Info(ctx, "******************** Begin ********************")
-
-	// 注册服务包
-	if err := t.registerPackages(ctx); err != nil {
-		tlog.Error(ctx, err.Error())
+	klog.Print(ctx, "********************************* Tea Framework Begin *************************************")
+	klog.Print(ctx, "*  TTTTT  EEEEE  AAAAA                                                                    *")
+	klog.Print(ctx, "*    T    E      A   A                                                                    *")
+	klog.Print(ctx, "*    T    EEE    AAAAA                                                                    *")
+	klog.Print(ctx, "*    T    E      A   A                                                                    *")
+	klog.Print(ctx, "*    T    EEEEE  A   A                                                                    *")
+	klog.Print(ctx, "*******************************************************************************************")
+	// 安装服务单元
+	if err := t.SetupUnit(ctx); err != nil {
+		klog.Error(ctx, err.Error())
 		return
 	}
-
-	// 安装组件 (按顺序安装)
-	if err := t.installComponents(ctx); err != nil {
-		tlog.Error(ctx, err.Error())
-		return
-	}
-
-	tlog.Info(ctx, "******************** End ********************")
+	klog.Print(ctx, "********************************** Tea Framework End **************************************")
 }
 
-// registerPackages 注册服务包
-func (t *Tea) registerPackages(ctx kctx.Context) error {
-	packages := []container.Module{
-		&server.ServerPackage{},
+// SetupUnit 安装服务单元
+func (t *Tea) SetupUnit(ctx kctx.Context) error {
+	units := []container.Unit{
+		bootstrap.EnvInfoInstance(), // 环境
+		// cmd.Instance(),              // 命令行
+		bootstrap.Loads(),       // 加载器
+		&server.ServerPackage{}, // HTTP 服务器
 	}
 
-	for _, p := range packages {
-		if err := tt.AddModule(p); err != nil {
-			tlog.Error(ctx, fmt.Sprintf("[Module][%s] add failed, err:%e", p.Name(), err))
+	for _, u := range units {
+		if err := u.Setup(ctx); err != nil {
+			klog.Print(ctx, fmt.Sprintf("[%s][%s] setup failed, err:%e", u.Role(), u.Name(), err))
 			return err // 发生错误时停止
 		}
-		tlog.Notice(ctx, fmt.Sprintf("[Module][%s] add success", p.Name()))
+		klog.Print(ctx, fmt.Sprintf("[%s][%s] setup success", u.Role(), u.Name()))
 	}
 	return nil
-}
-
-// installComponents 安装组件
-func (t *Tea) installComponents(ctx kctx.Context) error {
-	components := []container.Component{
-		bootstrap.LoadEnvInfo(),   // 环境
-		cmd.Instance(),            // 命令行
-		bootstrap.LoadPrintInfo(), // 打印
-		bootstrap.Loads(),         // 加载器
-	}
-
-	// 安装组件并处理错误
-	return bootstrap.Install(ctx, components, func(s string) {
-		tlog.Notice(ctx, s)
-	})
 }

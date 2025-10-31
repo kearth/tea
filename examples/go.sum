@@ -25,8 +25,8 @@ github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aN
 github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/grokify/html-strip-tags-go v0.1.0 h1:03UrQLjAny8xci+R+qjCce/MYnpNXCtgzltlQbOBae4=
 github.com/grokify/html-strip-tags-go v0.1.0/go.mod h1:ZdzgfHEzAfz9X6Xe5eBLVblWIxXfYSQ40S/VKrAOGpc=
-github.com/kearth/klib v0.0.0-20251028062717-7cebaf75d739 h1:+pOXT6Yar02+4egzY/UT49GGSwGYTkJ2AGOONWosNSU=
-github.com/kearth/klib v0.0.0-20251028062717-7cebaf75d739/go.mod h1:umXZNK8STFZ1qiK2Cra6Z9Ir9smX0qjVkS/lMdFKi8w=
+github.com/kearth/klib v0.0.5-0.20251031070951-522f20463c3f h1:v1ag0/SZ22sx9qov/mR6RyX7LO+yMsgyoRnN3VvojfQ=
+github.com/kearth/klib v0.0.5-0.20251031070951-522f20463c3f/go.mod h1:MSb8BVE8pjJr2cKS39v7xiXR1bi1oh0LjOUhGYCGLDw=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=

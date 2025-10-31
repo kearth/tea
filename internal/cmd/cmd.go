@@ -4,8 +4,8 @@ import (
 	"flag"
 
 	"github.com/kearth/klib/kctx"
+	"github.com/kearth/klib/kerr"
 	"github.com/kearth/tea/frame/container"
-	"github.com/kearth/tea/internal/bootstrap"
 )
 
 var (
@@ -24,7 +24,7 @@ func Instance() *Cmd {
 }
 
 // Init 初始化
-func (c *Cmd) Init(ctx kctx.Context) error {
+func (c *Cmd) Setup(ctx kctx.Context) kerr.Error {
 	c.Unit = container.NewUnit("Cmd")
 	debug := flag.Bool("debug", false, "调试模式")
 	rootDir := flag.String("root_dir", "", "根目录")
@@ -32,12 +32,12 @@ func (c *Cmd) Init(ctx kctx.Context) error {
 
 	// 开启调试模式
 	if *debug {
-		bootstrap.LoadEnvInfo().SetDebug()
+		// bootstrap.EnvInfoInstance().SetDebug()
 	}
 
 	// 设置根目录
 	if *rootDir != "" {
-		bootstrap.LoadEnvInfo().SetRootDir(*rootDir)
+		// bootstrap.EnvInfoInstance().SetRootDir(*rootDir)
 	}
 	return nil
 }

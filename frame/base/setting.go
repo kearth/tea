@@ -2,9 +2,21 @@ package base
 
 import "github.com/kearth/klib/kerr"
 
-const (
-	ConfigPath = "./conf/tea.toml" // 配置文件路径
+var (
+	configPath = "./conf/tea.toml" // 配置文件路径
+)
 
+// SetConfigPath 设置配置文件路径
+func SetConfigPath(path string) {
+	configPath = path
+}
+
+// GetConfigPath 获取配置文件路径
+func GetConfigPath() string {
+	return configPath
+}
+
+const (
 	DefaultServer = "default" // 默认服务器
 )
 
@@ -34,4 +46,5 @@ var (
 	RouterNotFound        = kerr.New(600003, "Router not found").WithDisplay("路由器未找到")
 	ListenerNotFound      = kerr.New(600004, "Listener not found").WithDisplay("监听器未找到")
 	ResourceNotFound      = kerr.New(600005, "Resource not found").WithDisplay("资源未找到")
+	StepError             = kerr.New(600006, "Step error").WithDisplay("步骤错误")
 )

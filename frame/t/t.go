@@ -1,6 +1,7 @@
 package t
 
 import (
+	"github.com/kearth/klib/kerr"
 	"github.com/kearth/klib/kutil"
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
@@ -16,7 +17,7 @@ var (
 )
 
 // SetServer 设置服务实例
-func SetServer(name string) error {
+func SetServer(name string) kerr.Error {
 	if s, ok := serverMap[name]; ok {
 		serverInstance = s
 		return nil
@@ -80,7 +81,7 @@ func GetListener(key string) container.Listener {
 	return l
 }
 
-// AddModule 添加模块
-func AddModule(p container.Module) error {
-	return p.Register()
-}
+// // AddModule 添加模块
+// func AddModule(p container.Module) error {
+// 	return p.Register()
+// }
