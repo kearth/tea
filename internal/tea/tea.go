@@ -6,8 +6,8 @@ import (
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/klib/klog"
 	"github.com/kearth/tea/frame/container"
+	"github.com/kearth/tea/frame/server"
 	"github.com/kearth/tea/internal/bootstrap"
-	"github.com/kearth/tea/internal/server"
 )
 
 // Tea 茶
@@ -30,11 +30,11 @@ func (t *Tea) Run(ctx kctx.Context) {
 	klog.Init()
 	// 开始
 	klog.Print(ctx, "********************************* Tea Framework Begin *************************************")
-	klog.Print(ctx, "*  TTTTT  EEEEE  AAAAA                                                                    *")
-	klog.Print(ctx, "*    T    E      A   A                                                                    *")
-	klog.Print(ctx, "*    T    EEE    AAAAA                                                                    *")
-	klog.Print(ctx, "*    T    E      A   A                                                                    *")
-	klog.Print(ctx, "*    T    EEEEE  A   A                                                                    *")
+	klog.Print(ctx, "*  TTTTT  EEEEE   AAA   FFFFF  RRRR    AAA   M   M  EEEEE  W   W   OOO    RRRR   K   K    *")
+	klog.Print(ctx, "*    T    E      A   A  F      R   R  A   A  M M M  E      W   W  O   O   R   R  K  K     *")
+	klog.Print(ctx, "*    T    EEE    AAAAA  FFFFF  RRR    AAAAA  M M M  EEE    W W W  O   O   RRR    KKK      *")
+	klog.Print(ctx, "*    T    E      A   A  F      R  R   A   A  M   M  E      W W W  O   O   R  R   K  K     *")
+	klog.Print(ctx, "*    T    EEEEE  A   A  F      R   R  A   A  M   M  EEEEE  W   W   OOO    R   R  K   K    *")
 	klog.Print(ctx, "*******************************************************************************************")
 	// 安装服务单元
 	if err := t.SetupUnit(ctx); err != nil {
@@ -47,18 +47,17 @@ func (t *Tea) Run(ctx kctx.Context) {
 // SetupUnit 安装服务单元
 func (t *Tea) SetupUnit(ctx kctx.Context) error {
 	units := []container.Unit{
-		bootstrap.EnvInfoInstance(), // 环境
-		// cmd.Instance(),              // 命令行
-		bootstrap.Loads(),       // 加载器
-		&server.ServerPackage{}, // HTTP 服务器
+		bootstrap.Env().SetVersion(t.Version), // 环境
+		server.NewHTTPServer(),                // HTTP 服务器
+		bootstrap.LoadInstance(),              // 加载器
 	}
 
 	for _, u := range units {
 		if err := u.Setup(ctx); err != nil {
-			klog.Print(ctx, fmt.Sprintf("[%s][%s] setup failed, err:%e", u.Role(), u.Name(), err))
+			klog.Print(ctx, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s] error:%e <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name(), err))
 			return err // 发生错误时停止
 		}
-		klog.Print(ctx, fmt.Sprintf("[%s][%s] setup success", u.Role(), u.Name()))
+		klog.Print(ctx, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s] success <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name()))
 	}
 	return nil
 }

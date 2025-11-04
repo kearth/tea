@@ -16,8 +16,8 @@ import (
 type Role string
 
 const (
-	RoleModule    Role = "Module"
 	RoleComponent Role = "Component"
+	RoleModule    Role = "Module"
 	RoleRouter    Role = "Router"
 	RoleServer    Role = "Server"
 	RoleUnit      Role = "Unit"
@@ -114,6 +114,7 @@ func NewUnit(name string, fn ...Fn) Unit {
 	u := &unit{
 		name: name,
 		err:  kerr.Succ,
+		role: RoleUnit,
 	}
 	if len(fn) > 0 && fn[0] != nil {
 		u.fn = fn[0]

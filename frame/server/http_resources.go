@@ -3,14 +3,13 @@ package server
 import (
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/tea/frame/container"
-	"github.com/kearth/tea/frame/t"
 )
 
 // HTTPResources 实现Resource接口
 var _ container.Resource = (*HTTPResources)(nil)
 
 // 注册HTTP资源
-var _ = t.RegisterResource("HTTPResource", &HTTPResources{})
+var _ = RegisterResource("HTTPResource", &HTTPResources{})
 
 // HTTPResources HTTP资源
 type HTTPResources struct {

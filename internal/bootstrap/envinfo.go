@@ -16,9 +16,10 @@ import (
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/klib/kerr"
 	"github.com/kearth/klib/klog"
+	"github.com/kearth/klib/kutil"
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
-	"github.com/kearth/tea/frame/t"
+	"github.com/kearth/tea/frame/env"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 )
@@ -31,27 +32,11 @@ var (
 // 环境
 type EnvInfo struct {
 	container.Unit
-	Version       string
-	ServerName    string `json:"server_name"`
-	ServerVersion string `json:"server_version"`
-	Mode          string `json:"mode"`
-	OS            string
-	Port          int    `json:"port"`
-	IP            string `json:"ip"`
-	Host          string `json:"host"`
-	Address       string
-	Arch          string
-	SystemVersion string
-	CPU           int
-	PID           int
-	Hostname      string
-	RootDir       string `json:"root_dir"`
-	ResourcesDir  string `json:"resources_dir"`
-	Cfg           *gcfg.Config
+	env.Env
 }
 
-// EnvInfoInstance 获取实例
-func EnvInfoInstance() *EnvInfo {
+// Env 获取实例
+func Env() *EnvInfo {
 	return envInfoInstance
 }
 
@@ -64,10 +49,15 @@ func ParseTOML(path string) (*gcfg.Config, error) {
 	return g.Cfg(), nil
 }
 
+func (e *EnvInfo) SetVersion(version string) *EnvInfo {
+	e.Version = version
+	return e
+}
+
 // 初始化环境
 func (e *EnvInfo) Setup(ctx kctx.Context) kerr.Error {
 	// 创建单元
-	unit := container.NewUnit("EnvInfo")
+	unit := container.NewUnit("Env")
 	unit.SetRole(container.RoleComponent)
 	e.Unit = unit
 	// 解析配置文件
@@ -85,13 +75,7 @@ func (e *EnvInfo) Setup(ctx kctx.Context) kerr.Error {
 	e.IP = cfg.MustGet(ctx, "server.ip", "").String()
 	e.Port = cfg.MustGet(ctx, "server.port", 8080).Int()
 	e.Host = cfg.MustGet(ctx, "server.host", "localhost").String()
-
-	if e.IP != "" {
-		e.Address = fmt.Sprintf("%s:%d", e.IP, e.Port)
-	} else {
-		e.Address = fmt.Sprintf("%s:%d", e.Host, e.Port)
-	}
-
+	e.Address = kutil.If[string](e.IP != "", fmt.Sprintf("%s:%d", e.IP, e.Port), fmt.Sprintf("%s:%d", e.Host, e.Port))
 	e.SystemVersion = e.getSystemVersion(ctx)
 	e.OS = runtime.GOOS
 	e.Arch = runtime.GOARCH
@@ -99,8 +83,6 @@ func (e *EnvInfo) Setup(ctx kctx.Context) kerr.Error {
 	e.Hostname, _ = os.Hostname()
 	e.PID = os.Getpid()
 
-	// 设置默认服务器
-	defaultServer := cfg.MustGet(ctx, "framework.default_server", base.DefaultServer).String()
 	klog.Print(ctx, "======================================== Env Info =========================================")
 	klog.Print(ctx, fmt.Sprintf("Version:         [ %v ]", e.Version))
 	klog.Print(ctx, fmt.Sprintf("Mode:            [ %v ]", e.Mode))
@@ -113,9 +95,10 @@ func (e *EnvInfo) Setup(ctx kctx.Context) kerr.Error {
 	klog.Print(ctx, fmt.Sprintf("RootDir:         [ %s ]", e.RootDir))
 	klog.Print(ctx, fmt.Sprintf("ResourcesDir:    [ %s ]", e.ResourcesDir))
 	klog.Print(ctx, fmt.Sprintf("ServerVersion:   [ %s ]", e.ServerVersion))
-	klog.Notice(ctx, fmt.Sprintf("Server:          [ %s ] is starting...", gstr.UcFirst(e.ServerName)))
-	klog.Notice(ctx, fmt.Sprintf("Listening on:    [ %s ]", e.Address))
-	return t.SetServer(defaultServer)
+	klog.Print(ctx, fmt.Sprintf("Server:          [ %s ]", gstr.UcFirst(e.ServerName)))
+	klog.Print(ctx, fmt.Sprintf("Listening on:    [ %s ]", e.Address))
+	env.Init(&e.Env)
+	return nil
 }
 
 // 获取系统版本

@@ -28,7 +28,7 @@ type ServerConfig interface {
 
 // Server 服务器接口
 type Server interface {
-	Set(ctx kctx.Context) error   // 设置服务器
+	Init(ctx kctx.Context) error  // 设置服务器
 	Start(ctx kctx.Context) error // 启动服务器
 	Stop(ctx kctx.Context) error  // 停止服务器
 }

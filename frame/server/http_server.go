@@ -5,46 +5,16 @@ import (
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/kearth/tea/frame/base"
-	"github.com/kearth/tea/frame/container"
-	"github.com/kearth/tea/frame/env"
-
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/klib/kerr"
 	"github.com/kearth/klib/klog"
-	"github.com/kearth/tea/frame/t"
+	"github.com/kearth/tea/frame/base"
+	"github.com/kearth/tea/frame/container"
+	"github.com/kearth/tea/frame/env"
 )
 
 // Server 服务接口
 var _ container.Server = (*HTTPServer)(nil)
-
-// Register 注册服务
-var _ = t.RegisterServer(base.DefaultServer, NewHTTPServer(kctx.New()))
-
-// RedocUI Redoc UI模板
-const RedocUI = `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Redoc UI</title>
-  </head>
-  <body>
-    <redoc spec-url="{SwaggerUIDocUrl}"></redoc>
-    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
-  </body>
-</html>`
-
-// ServerPackage 服务包
-type ServerPackage struct {
-	container.Unit
-}
-
-// Register 注册服务包
-func (s *ServerPackage) Setup(ctx kctx.Context) kerr.Error {
-	s.Unit = container.NewUnit("HTTPServer")
-	s.Unit.SetRole("Module")
-	return nil
-}
 
 // HTTPConfig HTTP服务配置
 type HTTPConfig struct {
@@ -64,32 +34,38 @@ type HTTPServer struct {
 }
 
 // New 创建实例
-func NewHTTPServer(ctx kctx.Context) *HTTPServer {
-	hs := &HTTPServer{
-		Unit: container.NewUnit("HTTPServer"),
+func NewHTTPServer() *HTTPServer {
+	unit := container.NewUnit("HTTPServer")
+	unit.SetRole(container.RoleServer)
+	return &HTTPServer{
+		Unit: unit,
 		Serv: g.Server(),
 	}
-	// hs.SetName("HTTPServer")
-	return hs
+}
+
+// Register 注册服务包
+func (s *HTTPServer) Setup(ctx kctx.Context) kerr.Error {
+	RegisterServer(base.DefaultServer, s)
+	return nil
 }
 
 // Parse 解析配置
 func (h *HTTPConfig) Parse(ctx kctx.Context) error {
 	routerName := env.Cfg().MustGet(ctx, "server.router", "HTTPRouter").String()
-	h.Router = t.GetRouter(routerName)
+	h.Router = GetRouter(routerName)
 	listenerName := env.Cfg().MustGet(ctx, "server.listeners").Strings()
 	for _, l := range listenerName {
-		h.Listeners = append(h.Listeners, t.GetListener(l))
+		h.Listeners = append(h.Listeners, GetListener(l))
 	}
 	resourceName := env.Cfg().MustGet(ctx, "server.resources").Strings()
 	for _, r := range resourceName {
-		h.Resources = append(h.Resources, t.GetResource(r))
+		h.Resources = append(h.Resources, GetResource(r))
 	}
 	return nil
 }
 
 // Set 设置服务
-func (h *HTTPServer) Set(ctx kctx.Context) error {
+func (h *HTTPServer) Init(ctx kctx.Context) error {
 	h.Port = env.Port()
 	cfg := &HTTPConfig{}
 	err := cfg.Parse(ctx)

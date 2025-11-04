@@ -1,7 +1,6 @@
-package t
+package server
 
 import (
-	"github.com/kearth/klib/kerr"
 	"github.com/kearth/klib/kutil"
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
@@ -9,25 +8,15 @@ import (
 
 var (
 	// 服务实例
-	serverInstance container.Server
-	serverMap      = map[string]container.Server{}
-	resourcesMap   = map[string]container.Resource{}
-	listenersMap   = map[string]container.Listener{}
-	routerMap      = map[string]container.Router{}
+	serverMap    = map[string]container.Server{}
+	resourcesMap = map[string]container.Resource{}
+	listenersMap = map[string]container.Listener{}
+	routerMap    = map[string]container.Router{}
 )
 
-// SetServer 设置服务实例
-func SetServer(name string) kerr.Error {
-	if s, ok := serverMap[name]; ok {
-		serverInstance = s
-		return nil
-	}
-	return base.DefaultServerNotFound
-}
-
 // GetServer 获取服务实例
-func GetServer() container.Server {
-	return serverInstance
+func GetServers() map[string]container.Server {
+	return serverMap
 }
 
 // RegisterServerConfig 注册服务配置
@@ -80,8 +69,3 @@ func GetListener(key string) container.Listener {
 	})
 	return l
 }
-
-// // AddModule 添加模块
-// func AddModule(p container.Module) error {
-// 	return p.Register()
-// }
