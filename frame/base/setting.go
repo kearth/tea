@@ -47,4 +47,6 @@ var (
 	ListenerNotFound      = kerr.New(600004, "Listener not found").WithDisplay("监听器未找到")
 	ResourceNotFound      = kerr.New(600005, "Resource not found").WithDisplay("资源未找到")
 	StepError             = kerr.New(600006, "Step error").WithDisplay("步骤错误")
+	ServerShutdownError   = kerr.New(600007, "Server shutdown error").WithDisplay("服务器关闭错误")
+	ConfigParseError      = kerr.New(600008, "Config parse error").WithDisplay("配置解析错误")
 )

@@ -23,6 +23,8 @@ const (
 	RoleUnit      Role = "Unit"
 	RolePlugin    Role = "Plugin"
 	RoleUnknown   Role = "Unknown"
+
+	NoName = "unknown"
 )
 
 type Fn func(ctx kctx.Context, input ...any) (output any, err kerr.Error)
@@ -33,9 +35,9 @@ type Unit interface {
 	Name() string
 	Role() Role
 	Call(ctx kctx.Context, input ...any) (any, kerr.Error)
-	SetRole(role Role)
-	SetName(name string)
-	SetFn(fn Fn)
+	SetRole(role Role) Unit
+	SetName(name string) Unit
+	SetFn(fn Fn) Unit
 	Setup(ctx kctx.Context) kerr.Error
 }
 
@@ -60,8 +62,9 @@ func (u *unit) Role() Role {
 }
 
 // SetRole 设置角色
-func (u *unit) SetRole(role Role) {
+func (u *unit) SetRole(role Role) Unit {
 	u.role = role
+	return u
 }
 
 // Cost 计算耗时（仅在执行后有效）
@@ -80,8 +83,9 @@ func (u *unit) Name() string {
 }
 
 // SetName 设置名称
-func (u *unit) SetName(name string) {
+func (u *unit) SetName(name string) Unit {
 	u.name = name
+	return u
 }
 
 // Call 执行单元
@@ -101,14 +105,15 @@ func (u *unit) Call(ctx kctx.Context, input ...any) (any, kerr.Error) {
 }
 
 // SetFn 设置执行方法
-func (u *unit) SetFn(fn Fn) {
+func (u *unit) SetFn(fn Fn) Unit {
 	u.fn = fn
+	return u
 }
 
 // NewUnit 创建单元
 func NewUnit(name string, fn ...Fn) Unit {
 	if name == "" {
-		name = "NoNameUnit"
+		name = NoName
 	}
 
 	u := &unit{

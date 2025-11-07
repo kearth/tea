@@ -6,7 +6,7 @@ import (
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/klib/klog"
 	"github.com/kearth/tea/frame/container"
-	"github.com/kearth/tea/frame/server"
+	"github.com/kearth/tea/frame/server/httpserver"
 	"github.com/kearth/tea/internal/bootstrap"
 )
 
@@ -48,7 +48,7 @@ func (t *Tea) Run(ctx kctx.Context) {
 func (t *Tea) SetupUnit(ctx kctx.Context) error {
 	units := []container.Unit{
 		bootstrap.Env().SetVersion(t.Version), // 环境
-		server.NewHTTPServer(),                // HTTP 服务器
+		httpserver.NewHTTPServer(),            // HTTP 服务器
 		bootstrap.LoadInstance(),              // 加载器
 	}
 

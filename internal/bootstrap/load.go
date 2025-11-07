@@ -18,11 +18,11 @@ var (
 // Step 步骤
 type Step struct {
 	container.Unit
-	s func(ctx kctx.Context) error
+	s func(ctx kctx.Context) kerr.Error
 }
 
 // NewStep 创建步骤
-func NewStep(name string, s func(ctx kctx.Context) error) Step {
+func NewStep(name string, s func(ctx kctx.Context) kerr.Error) Step {
 	unit := container.NewUnit(name)
 	return Step{
 		Unit: unit,

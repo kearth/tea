@@ -1,6 +1,8 @@
 package main
 
 import (
+	"example/local/router"
+
 	"github.com/kearth/tea"
 )
 
@@ -10,5 +12,6 @@ import (
  * 这是一个示例
  *******************************/
 func main() {
+	router.Router()
 	tea.Drink()
 }

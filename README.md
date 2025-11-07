@@ -1,9 +1,8 @@
-Tea
-Drink a cup of tea, and work will be done. 
+# Tea Framework
 
--app // 项目目录 大类 -> 引导 -> 初始化资源 -> 核心处理流程 -> 等待流程
--> 结束流程
--component // 组件  
--bin // 脚本目录
+轻量级Go语言Web框架，快速构建HTTP服务。
 
-index.php // 文件入口
+## 安装
+```bash
+go get github.com/kearth/tea
+```

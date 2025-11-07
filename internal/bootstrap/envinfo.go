@@ -24,9 +24,15 @@ import (
 	"golang.org/x/text/transform"
 )
 
+const (
+	EnvName = "Env"
+)
+
 var (
 	// 实例
-	envInfoInstance = &EnvInfo{}
+	envInfoInstance = &EnvInfo{
+		Unit: container.NewUnit(EnvName).SetRole(container.RoleComponent),
+	}
 )
 
 // 环境
@@ -56,10 +62,6 @@ func (e *EnvInfo) SetVersion(version string) *EnvInfo {
 
 // 初始化环境
 func (e *EnvInfo) Setup(ctx kctx.Context) kerr.Error {
-	// 创建单元
-	unit := container.NewUnit("Env")
-	unit.SetRole(container.RoleComponent)
-	e.Unit = unit
 	// 解析配置文件
 	cfg, err := ParseTOML(base.GetConfigPath())
 	if err != nil {

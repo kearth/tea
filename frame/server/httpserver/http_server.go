@@ -1,4 +1,4 @@
-package server
+package httpserver
 
 import (
 	"fmt"
@@ -11,26 +11,27 @@ import (
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/env"
+	"github.com/kearth/tea/frame/server"
 )
 
 // Server 服务接口
-var _ container.Server = (*HTTPServer)(nil)
+var _ server.Server = (*HTTPServer)(nil)
 
 // HTTPConfig HTTP服务配置
 type HTTPConfig struct {
-	Router    container.Router     `json:"router"`    // 路由
-	Resources []container.Resource `json:"resources"` // 资源
-	Listeners []container.Listener `json:"listeners"` // 监听器
+	Router    server.Router     `json:"router"`    // 路由
+	Resources []server.Resource `json:"resources"` // 资源
+	Listeners []server.Listener `json:"listeners"` // 监听器
 }
 
 // HTTPServer HTTP服务
 type HTTPServer struct {
 	container.Unit
 	Serv      *ghttp.Server
-	Port      int                  // 端口
-	Router    container.Router     // 路由
-	Resources []container.Resource // 资源
-	Listeners []container.Listener // 监听器
+	Port      int               // 端口
+	Router    server.Router     // 路由
+	Resources []server.Resource // 资源
+	Listeners []server.Listener // 监听器
 }
 
 // New 创建实例
@@ -45,32 +46,32 @@ func NewHTTPServer() *HTTPServer {
 
 // Register 注册服务包
 func (s *HTTPServer) Setup(ctx kctx.Context) kerr.Error {
-	RegisterServer(base.DefaultServer, s)
+	server.RegisterServer(base.DefaultServer, s)
 	return nil
 }
 
 // Parse 解析配置
 func (h *HTTPConfig) Parse(ctx kctx.Context) error {
 	routerName := env.Cfg().MustGet(ctx, "server.router", "HTTPRouter").String()
-	h.Router = GetRouter(routerName)
+	h.Router = server.GetRouter(routerName)
 	listenerName := env.Cfg().MustGet(ctx, "server.listeners").Strings()
 	for _, l := range listenerName {
-		h.Listeners = append(h.Listeners, GetListener(l))
+		h.Listeners = append(h.Listeners, server.GetListener(l))
 	}
 	resourceName := env.Cfg().MustGet(ctx, "server.resources").Strings()
 	for _, r := range resourceName {
-		h.Resources = append(h.Resources, GetResource(r))
+		h.Resources = append(h.Resources, server.GetResource(r))
 	}
 	return nil
 }
 
 // Set 设置服务
-func (h *HTTPServer) Init(ctx kctx.Context) error {
+func (h *HTTPServer) Init(ctx kctx.Context) kerr.Error {
 	h.Port = env.Port()
 	cfg := &HTTPConfig{}
 	err := cfg.Parse(ctx)
 	if err != nil {
-		return err
+		return base.ConfigParseError.Wrap(err)
 	}
 	h.Router = cfg.Router
 	h.Resources = cfg.Resources
@@ -79,7 +80,7 @@ func (h *HTTPServer) Init(ctx kctx.Context) error {
 }
 
 // Start 启动服务
-func (h *HTTPServer) Start(ctx kctx.Context) error {
+func (h *HTTPServer) Start(ctx kctx.Context) kerr.Error {
 	// 服务配置
 	var config ghttp.ServerConfig
 
@@ -94,7 +95,7 @@ func (h *HTTPServer) Start(ctx kctx.Context) error {
 			PProfEnabled:      true,                       // 开启pprof
 			OpenApiPath:       "/api.json",                // 设置openapi路径
 			SwaggerPath:       "/swagger",                 // 设置swagger路径
-			SwaggerUITemplate: RedocUI,                    // 设置swagger模板
+			SwaggerUITemplate: server.RedocUI,             // 设置swagger模板
 			Address:           fmt.Sprintf(":%d", h.Port), // 设置监听端口
 			Logger:            klog.Logger(),              // 设置日志
 			DumpRouterMap:     true,                       // 打印路由信息
@@ -113,12 +114,13 @@ func (h *HTTPServer) Start(ctx kctx.Context) error {
 
 	_ = h.Serv.SetConfig(config) // 设置配置
 	h.Router.Register(h)         // 注册路由
+	h.Serv.SetPort(h.Port)       // 端口设置
 	h.Serv.Run()                 // 启动服务
 	return nil
 }
 
 // Stop 停止服务
-func (h *HTTPServer) Stop(ctx kctx.Context) error {
+func (h *HTTPServer) Stop(ctx kctx.Context) kerr.Error {
 	// 关闭监听器
 	for _, v := range h.Listeners {
 		_ = v.Close()
@@ -128,5 +130,9 @@ func (h *HTTPServer) Stop(ctx kctx.Context) error {
 		_ = v.Release(ctx)
 	}
 	// 关闭http服务
-	return h.Serv.Shutdown()
+	err := h.Serv.Shutdown()
+	if err != nil {
+		return base.ServerShutdownError.Wrap(err)
+	}
+	return nil
 }
