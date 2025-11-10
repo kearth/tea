@@ -1,8 +1,6 @@
 package httpserver
 
 import (
-	"fmt"
-
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/server"
@@ -11,36 +9,6 @@ import (
 // HTTPRouter 实现 HTTP 路由接口
 var _ server.Router = (*HTTPRouter)(nil)
 
-// Method HTTP 方法
-type Method string
-
-const (
-	// HTTPRouterName HTTP 路由名称
-	HTTPRouterName = "HTTPRouter"
-
-	// HTTP 方法
-	GET    Method = "GET"
-	POST   Method = "POST"
-	PUT    Method = "PUT"
-	DELETE Method = "DELETE"
-	ALL    Method = "ALL"
-)
-
-// 注册 HTTP 路由
-var _ = server.RegisterRouter(HTTPRouterName, &HTTPRouter{
-	Unit:         container.NewUnit(HTTPRouterName).SetRole(container.RoleRouter),
-	groupsPrefix: "/",
-	binds:        []any{},
-	middlewares:  []Middleware{},
-	groups:       []*Group{},
-})
-
-// Request HTTP 请求
-type Request = ghttp.Request
-
-// Middleware HTTP 中间件
-type Middleware = func(r *Request)
-
 // HTTPRouter HTTP 路由
 type HTTPRouter struct {
 	container.Unit
@@ -48,13 +16,6 @@ type HTTPRouter struct {
 	binds        []any
 	middlewares  []Middleware
 	groups       []*Group
-}
-
-// Group 路由组
-type Group struct {
-	prefix      string
-	binds       map[string]any
-	middlewares []Middleware
 }
 
 // Register 注册路由
@@ -107,15 +68,4 @@ func (r *HTTPRouter) NewGroup(prefix string) *Group {
 	}
 	r.groups = append(r.groups, g)
 	return g
-}
-
-// Use 添加中间件
-func (r *Group) Use(middleware ...Middleware) {
-	r.middlewares = append(r.middlewares, middleware...)
-}
-
-// Bind 注册路由
-func (r *Group) Bind(method Method, path string, object any) {
-	key := fmt.Sprintf("%s:%s", method, path)
-	r.binds[key] = object
 }

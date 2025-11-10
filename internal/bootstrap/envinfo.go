@@ -16,7 +16,6 @@ import (
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/klib/kerr"
 	"github.com/kearth/klib/klog"
-	"github.com/kearth/klib/kutil"
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/env"
@@ -72,12 +71,19 @@ func (e *EnvInfo) Setup(ctx kctx.Context) kerr.Error {
 	e.ServerName = cfg.MustGet(ctx, "server.name", "tea").String()
 	e.ServerVersion = cfg.MustGet(ctx, "server.version", "1.0.0").String()
 	e.RootDir = cfg.MustGet(ctx, "server.root_dir", gfile.Pwd()).String()
+	if e.RootDir == "." || e.RootDir == "" || e.RootDir == "/" {
+		e.RootDir = gfile.Pwd()
+	}
 	e.ResourcesDir = cfg.MustGet(ctx, "server.resources_dir", "./resources").String()
 	e.Mode = cfg.MustGet(ctx, "server.mode", base.EnvModeNormal).String()
-	e.IP = cfg.MustGet(ctx, "server.ip", "").String()
-	e.Port = cfg.MustGet(ctx, "server.port", 8080).Int()
-	e.Host = cfg.MustGet(ctx, "server.host", "localhost").String()
-	e.Address = kutil.If[string](e.IP != "", fmt.Sprintf("%s:%d", e.IP, e.Port), fmt.Sprintf("%s:%d", e.Host, e.Port))
+	// 调试模式
+	if e.Mode != base.EnvModeDebug {
+		e.Mode = base.EnvModeNormal
+	}
+	e.IP = cfg.MustGet(ctx, "server.ip", base.DefaultIP).String()
+	e.Port = cfg.MustGet(ctx, "server.port", base.DefaultPort).Int()
+	e.Address = fmt.Sprintf("%s:%d", e.IP, e.Port)
+	e.ServerType = cfg.MustGet(ctx, "server.server_type", base.ServerTypeHTTP).String()
 	e.SystemVersion = e.getSystemVersion(ctx)
 	e.OS = runtime.GOOS
 	e.Arch = runtime.GOARCH
@@ -86,19 +92,20 @@ func (e *EnvInfo) Setup(ctx kctx.Context) kerr.Error {
 	e.PID = os.Getpid()
 
 	klog.Print(ctx, "======================================== Env Info =========================================")
-	klog.Print(ctx, fmt.Sprintf("Version:         [ %v ]", e.Version))
-	klog.Print(ctx, fmt.Sprintf("Mode:            [ %v ]", e.Mode))
-	klog.Print(ctx, fmt.Sprintf("OS:              [ %v ]", e.OS))
-	klog.Print(ctx, fmt.Sprintf("OSVersion:       [ %s ]", e.SystemVersion))
-	klog.Print(ctx, fmt.Sprintf("Arch:            [ %v ]", e.Arch))
-	klog.Print(ctx, fmt.Sprintf("CPU:             [ %d ]", e.CPU))
-	klog.Print(ctx, fmt.Sprintf("Hostname:        [ %s ]", e.Hostname))
-	klog.Print(ctx, fmt.Sprintf("Pid:             [ %d ]", e.PID))
-	klog.Print(ctx, fmt.Sprintf("RootDir:         [ %s ]", e.RootDir))
-	klog.Print(ctx, fmt.Sprintf("ResourcesDir:    [ %s ]", e.ResourcesDir))
-	klog.Print(ctx, fmt.Sprintf("ServerVersion:   [ %s ]", e.ServerVersion))
-	klog.Print(ctx, fmt.Sprintf("Server:          [ %s ]", gstr.UcFirst(e.ServerName)))
-	klog.Print(ctx, fmt.Sprintf("Listening on:    [ %s ]", e.Address))
+	klog.Print(ctx, fmt.Sprintf("FrameworkVersion:         [ %v ]", e.Version))
+	klog.Print(ctx, fmt.Sprintf("Mode:                     [ %v ]", e.Mode))
+	klog.Print(ctx, fmt.Sprintf("OS:                       [ %v ]", e.OS))
+	klog.Print(ctx, fmt.Sprintf("OSVersion:                [ %s ]", e.SystemVersion))
+	klog.Print(ctx, fmt.Sprintf("Arch:                     [ %v ]", e.Arch))
+	klog.Print(ctx, fmt.Sprintf("CPU:                      [ %d ]", e.CPU))
+	klog.Print(ctx, fmt.Sprintf("Hostname:                 [ %s ]", e.Hostname))
+	klog.Print(ctx, fmt.Sprintf("Pid:                      [ %d ]", e.PID))
+	klog.Print(ctx, fmt.Sprintf("RootDir:                  [ %s ]", e.RootDir))
+	klog.Print(ctx, fmt.Sprintf("ResourcesDir:             [ %s ]", e.ResourcesDir))
+	klog.Print(ctx, fmt.Sprintf("ServerVersion:            [ %s ]", e.ServerVersion))
+	klog.Print(ctx, fmt.Sprintf("ServerName:               [ %s ]", gstr.UcFirst(e.ServerName)))
+	klog.Print(ctx, fmt.Sprintf("ServerType:               [ %s ]", e.ServerType))
+	klog.Print(ctx, fmt.Sprintf("Listening:                [ %s ]", e.Address))
 	env.Init(&e.Env)
 	return nil
 }

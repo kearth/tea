@@ -16,7 +16,6 @@ type Env struct {
 	OS            string
 	Port          int    `json:"port"`
 	IP            string `json:"ip"`
-	Host          string `json:"host"`
 	Address       string
 	Arch          string
 	SystemVersion string
@@ -25,6 +24,7 @@ type Env struct {
 	Hostname      string
 	RootDir       string `json:"root_dir"`
 	ResourcesDir  string `json:"resources_dir"`
+	ServerType    string `json:"server_type"`
 	Cfg           *gcfg.Config
 }
 
@@ -86,11 +86,6 @@ func GetIP() string {
 	return Instance().IP
 }
 
-// GetHost 获取主机名
-func GetHost() string {
-	return Instance().Host
-}
-
 // GetServerName 获取服务器名称
 func GetServerName() string {
 	return Instance().ServerName
@@ -119,4 +114,9 @@ func GetResourcesDir() string {
 // GetCfg 获取配置信息
 func Cfg() *gcfg.Config {
 	return Instance().Cfg
+}
+
+// GetServerType 获取服务器类型
+func GetServerType() string {
+	return Instance().ServerType
 }

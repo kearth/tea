@@ -17,65 +17,34 @@ import (
 // Server 服务接口
 var _ server.Server = (*HTTPServer)(nil)
 
-// HTTPConfig HTTP服务配置
-type HTTPConfig struct {
-	Router    server.Router     `json:"router"`    // 路由
-	Resources []server.Resource `json:"resources"` // 资源
-	Listeners []server.Listener `json:"listeners"` // 监听器
-}
-
 // HTTPServer HTTP服务
 type HTTPServer struct {
 	container.Unit
-	Serv      *ghttp.Server
-	Port      int               // 端口
-	Router    server.Router     // 路由
-	Resources []server.Resource // 资源
-	Listeners []server.Listener // 监听器
+	Serv   *ghttp.Server
+	Port   int           // 端口
+	Router server.Router // 路由
 }
 
 // New 创建实例
 func NewHTTPServer() *HTTPServer {
-	unit := container.NewUnit("HTTPServer")
-	unit.SetRole(container.RoleServer)
 	return &HTTPServer{
-		Unit: unit,
+		Unit: container.NewUnit(server.HTTPServerName).SetRole(container.RoleServer),
 		Serv: g.Server(),
 	}
 }
 
 // Register 注册服务包
 func (s *HTTPServer) Setup(ctx kctx.Context) kerr.Error {
-	server.RegisterServer(base.DefaultServer, s)
-	return nil
-}
-
-// Parse 解析配置
-func (h *HTTPConfig) Parse(ctx kctx.Context) error {
-	routerName := env.Cfg().MustGet(ctx, "server.router", "HTTPRouter").String()
-	h.Router = server.GetRouter(routerName)
-	listenerName := env.Cfg().MustGet(ctx, "server.listeners").Strings()
-	for _, l := range listenerName {
-		h.Listeners = append(h.Listeners, server.GetListener(l))
-	}
-	resourceName := env.Cfg().MustGet(ctx, "server.resources").Strings()
-	for _, r := range resourceName {
-		h.Resources = append(h.Resources, server.GetResource(r))
-	}
+	// 注册服务
+	server.RegisterServer(server.HTTPServerName, s)
 	return nil
 }
 
 // Set 设置服务
 func (h *HTTPServer) Init(ctx kctx.Context) kerr.Error {
 	h.Port = env.Port()
-	cfg := &HTTPConfig{}
-	err := cfg.Parse(ctx)
-	if err != nil {
-		return base.ConfigParseError.Wrap(err)
-	}
-	h.Router = cfg.Router
-	h.Resources = cfg.Resources
-	h.Listeners = cfg.Listeners
+	h.Router = server.GetRouter(ctx, env.GetServerType())
+	h.Router.Register(h) // 注册路由
 	return nil
 }
 
@@ -84,12 +53,12 @@ func (h *HTTPServer) Start(ctx kctx.Context) kerr.Error {
 	// 服务配置
 	var config ghttp.ServerConfig
 
+	// 全局返回值
+	oa := h.Serv.GetOpenApi()
+	oa.Config.CommonResponse = base.Output{}
+	oa.Config.CommonResponseDataField = "Data"
 	// debug模式
 	if env.IsDebug() {
-		// 全局返回值
-		oa := h.Serv.GetOpenApi()
-		oa.Config.CommonResponse = base.Output{}
-		oa.Config.CommonResponseDataField = "Data"
 		config = ghttp.ServerConfig{
 			Graceful:          true,                       // 优雅重启
 			PProfEnabled:      true,                       // 开启pprof
@@ -112,27 +81,20 @@ func (h *HTTPServer) Start(ctx kctx.Context) kerr.Error {
 		}
 	}
 
-	_ = h.Serv.SetConfig(config) // 设置配置
-	h.Router.Register(h)         // 注册路由
-	h.Serv.SetPort(h.Port)       // 端口设置
-	h.Serv.Run()                 // 启动服务
+	h.Serv.SetConfig(config) // 设置配置
+	h.Serv.SetPort(h.Port)   // 端口设置
+	h.Serv.Run()             // 启动服务
 	return nil
 }
 
 // Stop 停止服务
 func (h *HTTPServer) Stop(ctx kctx.Context) kerr.Error {
-	// 关闭监听器
-	for _, v := range h.Listeners {
-		_ = v.Close()
-	}
-	// 释放资源
-	for _, v := range h.Resources {
-		_ = v.Release(ctx)
-	}
 	// 关闭http服务
-	err := h.Serv.Shutdown()
-	if err != nil {
-		return base.ServerShutdownError.Wrap(err)
+	if h.Serv.Status() == ghttp.ServerStatusRunning {
+		err := h.Serv.Shutdown()
+		if err != nil {
+			return base.ServerShutdownError.Wrap(err)
+		}
 	}
 	return nil
 }

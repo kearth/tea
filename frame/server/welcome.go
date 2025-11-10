@@ -1,0 +1,474 @@
+package server
+
+var (
+	welcome string = glmTemplate
+)
+
+// GLMTemplate GLM欢迎页面模板
+var glmTemplate = `
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tea Framework - Brew Your Next Go Web App</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration & Custom Styles -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#FDF8F3', 100: '#F6EEE1', 200: '#E8DCC8', 500: '#8C6E42', 600: '#7A5F3A', 700: '#5D4037', 800: '#4E342E', 900: '#3E2723' },
+                        accent: '#A67C52',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .bg-gradient-radial {
+                background-image: radial-gradient(circle at 20% 80%, rgba(140, 110, 66, 0.1) 0%, transparent 50%),
+                                  radial-gradient(circle at 80% 20%, rgba(166, 124, 82, 0.1) 0%, transparent 50%),
+                                  radial-gradient(circle at 40% 40%, rgba(232, 220, 200, 0.2) 0%, transparent 50%);
+            }
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">
+
+    <!-- 顶部导航栏 -->
+    <header class="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <span class="text-primary-700 dark:text-primary-400 text-2xl font-bold flex items-center">
+                        <i class="fa-solid fa-leaf mr-2"></i>Tea Framework
+                    </span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#features" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Features</a>
+                    <a href="#quickstart" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Quick Start</a>
+                    <a href="#example" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Example</a>
+                    <a href="https://github.com/tea-framework/tea" target="_blank" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                        <i class="fa-brands fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        Get Started
+                    </a>
+                </nav>
+
+                <!-- Mobile & Dark Mode Controls -->
+                <div class="flex items-center space-x-4">
+                    <!-- Dark Mode Toggle -->
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block text-yellow-400"></i>
+                    </button>
+                    <!-- Mobile Menu Button -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-900 border-t dark:border-gray-700">
+            <div class="px-4 py-2 space-y-2">
+                <a href="#features" onclick="toggleMobileMenu()" class="block py-2 hover:text-primary-600">Features</a>
+                <a href="#quickstart" onclick="toggleMobileMenu()" class="block py-2 hover:text-primary-600">Quick Start</a>
+                <a href="#example" onclick="toggleMobileMenu()" class="block py-2 hover:text-primary-600">Example</a>
+                <a href="#" class="block bg-primary-600 text-white text-center py-2 rounded-lg mt-2">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区 -->
+    <main class="pt-16">
+        <!-- 英雄区域 -->
+        <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-radial">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-accent/10 dark:from-gray-900 dark:via-gray-900 dark:to-primary-900/20"></div>
+            <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-primary-900 dark:text-primary-100 mb-6 leading-tight animate-fade-in text-shadow">
+                    Brew Your Next <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent">Go Web App</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-10 animate-fade-in" style="animation-delay: 0.2s;">
+                    Tea Framework offers a perfect blend of simplicity, performance, and elegance. Craft scalable backends with a delightful developer experience.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in" style="animation-delay: 0.4s;">
+                    <a href="#quickstart" class="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                        <i class="fas fa-rocket mr-2"></i> Get Started in Seconds
+                    </a>
+                    <a href="https://github.com/tea-framework/tea" target="_blank" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-primary-700 dark:text-primary-400 border-2 border-primary-300 dark:border-primary-600 px-8 py-4 rounded-xl text-lg font-semibold transition-all">
+                        <i class="fa-brands fa-github mr-2"></i> View on GitHub
+                    </a>
+                </div>
+                <div class="mt-12 animate-float">
+                    <i class="fa-solid fa-leaf text-6xl text-primary-300 dark:text-primary-700 opacity-50"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- 特性区域 -->
+        <section id="features" class="py-20 lg:py-28 bg-gray-50 dark:bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-primary-900 dark:text-primary-100 mb-4">Why Choose Tea?</h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Designed for developers who value clean code and rapid development.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 特性 1 -->
+                    <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                        <div class="bg-gradient-to-br from-primary-100 to-accent/20 dark:from-primary-900/30 dark:to-accent/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-layer-group text-primary-600 dark:text-primary-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-primary-900 dark:text-primary-100 mb-3">Clean Architecture</h3>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Promotes a clear separation of concerns, making your codebase maintainable, testable, and scalable from day one.
+                        </p>
+                    </div>
+                    
+                    <!-- 特性 2 -->
+                    <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                        <div class="bg-gradient-to-br from-primary-100 to-accent/20 dark:from-primary-900/30 dark:to-accent/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-bolt text-primary-600 dark:text-primary-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-primary-900 dark:text-primary-100 mb-3">Blazing Fast</h3>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Built on top of Gin, Tea leverages Go's performance to handle thousands of concurrent requests with minimal latency.
+                        </p>
+                    </div>
+                    
+                    <!-- 特性 3 -->
+                    <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                        <div class="bg-gradient-to-br from-primary-100 to-accent/20 dark:from-primary-900/30 dark:to-accent/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-puzzle-piece text-primary-600 dark:text-primary-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-primary-900 dark:text-primary-100 mb-3">Extensible & Modular</h3>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Easily extend with middleware, custom handlers, and seamlessly integrate with your favorite Go libraries.
+                        </p>
+                    </div>
+
+                    <!-- 特性 4 -->
+                    <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                        <div class="bg-gradient-to-br from-primary-100 to-accent/20 dark:from-primary-900/30 dark:to-accent/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-heart text-primary-600 dark:text-primary-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-primary-900 dark:text-primary-100 mb-3">Developer First</h3>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Intuitive API design, comprehensive documentation, and a gentle learning curve for developers of all levels.
+                        </p>
+                    </div>
+
+                    <!-- 特性 5 -->
+                    <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                        <div class="bg-gradient-to-br from-primary-100 to-accent/20 dark:from-primary-900/30 dark:to-accent/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-shield-halved text-primary-600 dark:text-primary-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-primary-900 dark:text-primary-100 mb-3">Secure by Default</h3>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Comes with built-in protections against common web vulnerabilities like CSRF, XSS, and SQL Injection.
+                        </p>
+                    </div>
+
+                    <!-- 特性 6 -->
+                    <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                        <div class="bg-gradient-to-br from-primary-100 to-accent/20 dark:from-primary-900/30 dark:to-accent/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-gear text-primary-600 dark:text-primary-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-primary-900 dark:text-primary-100 mb-3">Rich Tooling</h3>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Includes a powerful CLI for project scaffolding, hot-reloading in development, and easy production builds.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 快速开始区域 -->
+        <section id="quickstart" class="py-20 lg:py-28 bg-white dark:bg-gray-900">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-primary-900 dark:text-primary-100 mb-4">Quick Start</h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-300">Get your Tea application up and running in less than a minute.</p>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- Step 1 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-10 h-10 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                        <div class="flex-grow">
+                            <h3 class="text-xl font-semibold mb-2">Install Tea CLI</h3>
+                            <div class="bg-gray-900 dark:bg-black rounded-lg p-4 relative group">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                                    <i class="fas fa-copy mr-1"></i> Copy
+                                </button>
+                                <pre class="text-green-400"><code>go install github.com/tea-framework/tea/cmd/tea@latest</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-10 h-10 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                        <div class="flex-grow">
+                            <h3 class="text-xl font-semibold mb-2">Create a New Project</h3>
+                            <div class="bg-gray-900 dark:bg-black rounded-lg p-4 relative group">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                                    <i class="fas fa-copy mr-1"></i> Copy
+                                </button>
+                                <pre class="text-green-400"><code>tea new my-awesome-app && cd my-awesome-app</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-10 h-10 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                        <div class="flex-grow">
+                            <h3 class="text-xl font-semibold mb-2">Run the Development Server</h3>
+                            <div class="bg-gray-900 dark:bg-black rounded-lg p-4 relative group">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                                    <i class="fas fa-copy mr-1"></i> Copy
+                                </button>
+                                <pre class="text-green-400"><code>tea run</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-12 text-center bg-primary-50 dark:bg-primary-900/20 rounded-xl p-6">
+                    <p class="text-lg">That's it! Your server is now running at <a href="http://localhost:8080" target="_blank" class="font-mono text-primary-600 dark:text-primary-400 hover:underline">http://localhost:8080</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 示例代码区域 -->
+        <section id="example" class="py-20 lg:py-28 bg-gray-50 dark:bg-gray-800">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-primary-900 dark:text-primary-100 mb-4">Simple & Expressive Code</h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-300">See how easy it is to define routes and handlers.</p>
+                </div>
+                
+                <div class="bg-gray-900 dark:bg-black rounded-2xl shadow-2xl overflow-hidden">
+                    <!-- 代码标签栏 -->
+                    <div class="bg-gray-800 px-6 py-3 flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                            <span class="ml-4 text-gray-400 text-sm font-mono">main.go</span>
+                        </div>
+                        <button onclick="copyCode(this)" class="text-gray-400 hover:text-white transition-colors text-sm">
+                            <i class="fas fa-copy mr-1"></i> Copy Code
+                        </button>
+                    </div>
+                    
+                    <!-- 代码内容 -->
+                    <div class="p-6 overflow-x-auto">
+                        <pre class="text-gray-300 text-sm md:text-base leading-relaxed"><code><span class="text-purple-400">package</span> <span class="text-white">main</span>
+
+<span class="text-purple-400">import</span> (
+    <span class="text-green-400">"github.com/gin-gonic/gin"</span>
+    <span class="text-green-400">"github.com/tea-framework/tea"</span> <span class="text-gray-500">// Tea's core package</span>
+)
+
+<span class="text-purple-400">func</span> <span class="text-yellow-400">main</span>() {
+    <span class="text-gray-500">// Initialize Tea with default middleware (logger, recovery)</span>
+    <span class="text-white">r</span> := <span class="text-yellow-400">tea</span>.<span class="text-yellow-400">Default</span>()
+
+    <span class="text-gray-500">// Define a simple GET route</span>
+    <span class="text-white">r</span>.<span class="text-yellow-400">GET</span>(<span class="text-green-400">"/"</span>, <span class="text-purple-400">func</span>(<span class="text-white">c</span> *<span class="text-yellow-400">gin</span>.<span class="text-white">Context</span>) {
+        <span class="text-white">c</span>.<span class="text-yellow-400">JSON</span>(<span class="text-orange-400">200</span>, <span class="text-yellow-400">gin</span>.<span class="text-white">H</span>{
+            <span class="text-green-400">"message"</span>: <span class="text-green-400">"Welcome to Tea Framework!"</span>,
+        })
+    })
+
+    <span class="text-gray-500">// Define a route with a parameter</span>
+    <span class="text-white">r</span>.<span class="text-yellow-400">GET</span>(<span class="text-green-400">"/user/:name"</span>, <span class="text-purple-400">func</span>(<span class="text-white">c</span> *<span class="text-yellow-400">gin</span>.<span class="text-white">Context</span>) {
+        <span class="text-white">name</span> := <span class="text-white">c</span>.<span class="text-yellow-400">Param</span>(<span class="text-green-400">"name"</span>)
+        <span class="text-white">c</span>.<span class="text-yellow-400">String</span>(<span class="text-orange-400">200</span>, <span class="text-green-400">"Hello %s"</span>, <span class="text-white">name</span>)
+    })
+
+    <span class="text-gray-500">// Start the server on port 8080</span>
+    <span class="text-white">r</span>.<span class="text-yellow-400">Run</span>(<span class="text-green-400">":8080"</span>)
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-primary-900 dark:bg-black text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <span class="text-2xl font-bold flex items-center">
+                        <i class="fa-solid fa-leaf mr-2"></i>Tea Framework
+                    </span>
+                    <p class="text-primary-300 mt-2">Brewed with <i class="fas fa-heart text-red-400"></i> by Gophers, for Gophers.</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="https://github.com/tea-framework/tea" target="_blank" class="text-primary-300 hover:text-white transition-colors">
+                        <i class="fa-brands fa-github text-2xl"></i>
+                    </a>
+                    <a href="#" target="_blank" class="text-primary-300 hover:text-white transition-colors">
+                        <i class="fa-brands fa-twitter text-2xl"></i>
+                    </a>
+                    <a href="#" target="_blank" class="text-primary-300 hover:text-white transition-colors">
+                        <i class="fa-solid fa-book text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <hr class="border-primary-700 my-8">
+            
+            <div class="text-center text-primary-400">
+                <p>© 2025 Tea Framework. All rights reserved. | <a href="#" class="hover:text-white">Privacy Policy</a> | <a href="#" class="hover:text-white">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+
+        // Initial theme check
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 10) {
+                navbar.classList.add('shadow-lg');
+            } else {
+                navbar.classList.remove('shadow-lg');
+            }
+        });
+
+        // Copy code to clipboard
+        function copyCode(button) {
+            const codeBlock = button.closest('.bg-gray-900, .dark\\:bg-black').querySelector('code');
+            const textToCopy = codeBlock.textContent;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+                button.classList.add('text-green-400');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('text-green-400');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
+`
+
+// GPTTemplate GPT欢迎页面模板
+var gptTemplate = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tea Framework ☕</title>
+<style>
+    body {
+        background: linear-gradient(120deg, #f3f3f3, #d8e3f0);
+        font-family: "Segoe UI", Roboto, sans-serif;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+    h1 {
+        font-size: 3em;
+        margin-bottom: 0.3em;
+    }
+    .subtitle {
+        color: #666;
+        font-size: 1.2em;
+    }
+    .tagline {
+        margin-top: 2em;
+        font-size: 1em;
+        color: #999;
+    }
+    .tea {
+        font-size: 5em;
+        animation: steam 2s infinite ease-in-out alternate;
+    }
+    @keyframes steam {
+        from { opacity: 0.4; transform: translateY(0px); }
+        to { opacity: 1; transform: translateY(-10px); }
+    }
+</style>
+</head>
+<body>
+    <div class="tea">🫖</div>
+    <h1>Welcome to Tea Framework</h1>
+    <div class="subtitle">Drink a cup of tea, and work will be done.</div>
+</body>
+</html>
+`
+
+// GetWelcome 获取欢迎页面模板
+func GetWelcome() string {
+	return welcome
+}

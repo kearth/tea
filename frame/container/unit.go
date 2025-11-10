@@ -16,6 +16,7 @@ import (
 type Role string
 
 const (
+	RoleFramework Role = "Framework"
 	RoleComponent Role = "Component"
 	RoleModule    Role = "Module"
 	RoleRouter    Role = "Router"

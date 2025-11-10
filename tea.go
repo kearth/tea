@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	version = "0.0.6"
+	version = "0.0.7"
 )
 
 // Version 获取版本号
@@ -15,7 +15,7 @@ func Version() string {
 }
 
 // Drink 喝茶
-func Drink() {
+func Drink(ctx kctx.Context, load func()) {
 	// 启动框架
-	tea.New(version).Run(kctx.New())
+	tea.New(version, load).Run(ctx)
 }

@@ -8,7 +8,9 @@ import (
 	"github.com/kearth/klib/klog"
 	"github.com/kearth/tea/frame/base"
 	"github.com/kearth/tea/frame/container"
+	"github.com/kearth/tea/frame/env"
 	"github.com/kearth/tea/frame/server"
+	"github.com/kearth/tea/frame/server/httpserver"
 )
 
 var (
@@ -47,25 +49,33 @@ func LoadInstance() *Load {
 
 // Setup
 func (l *Load) Setup(ctx kctx.Context) kerr.Error {
-	// Load
-	unit := container.NewUnit("Load")
-	unit.SetRole(container.RoleComponent)
-	l.Unit = unit
+	l.Unit = container.NewUnit("Load").SetRole(container.RoleComponent)
+	return nil
+}
 
+func (l *Load) Run(ctx kctx.Context) error {
 	var err error
+	var s server.Server
 	// 解析步骤
-	s := server.GetServers()
-	for _, serv := range s {
-		for _, step := range []Step{
-			NewStep("Init", serv.Init),
-			NewStep("Starting", serv.Start),
-			NewStep("Stopping", serv.Stop),
-		} {
-			klog.Print(ctx, fmt.Sprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Step][%s] success >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", step.Name()))
-			if err = step.Run(ctx); err != nil {
-				klog.Print(ctx, fmt.Sprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Step][%s] error:%e >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", step.Name(), err))
-				return base.StepError.Wrap(err)
-			}
+	switch env.GetServerType() {
+	case base.ServerTypeHTTP:
+		fallthrough
+	default:
+		err = httpserver.NewHTTPServer().Setup(ctx)
+		if err != nil {
+			return base.ServerSetupError.Wrap(err)
+		}
+		s = server.GetServer(server.HTTPServerName)
+	}
+	for _, step := range []Step{
+		NewStep("Init", s.Init),
+		NewStep("Starting", s.Start),
+		NewStep("Stopping", s.Stop),
+	} {
+		klog.Print(ctx, fmt.Sprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Step][%s] success >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", step.Name()))
+		if err = step.Run(ctx); err != nil {
+			klog.Print(ctx, fmt.Sprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Step][%s] error:%e >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", step.Name(), err))
+			return base.StepError.Wrap(err)
 		}
 	}
 	return nil

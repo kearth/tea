@@ -3,7 +3,7 @@ package base
 import "github.com/kearth/klib/kerr"
 
 var (
-	configPath = "./conf/tea.toml" // 配置文件路径
+	configPath = "./config/tea.toml" // 配置文件路径
 )
 
 // SetConfigPath 设置配置文件路径
@@ -17,11 +17,11 @@ func GetConfigPath() string {
 }
 
 const (
-	DefaultServer = "default" // 默认服务器
-)
+	ServerTypeHTTP = "http" // HTTP服务器
 
-const (
-	DefaultID     = "-1"     // 默认ID
+	DefaultPort = 9106      // 默认端口
+	DefaultIP   = "0.0.0.0" // 默认IP
+
 	EnvModeNormal = "normal" // 正常模式
 	EnvModeDebug  = "debug"  // 调试模式
 
@@ -49,4 +49,5 @@ var (
 	StepError             = kerr.New(600006, "Step error").WithDisplay("步骤错误")
 	ServerShutdownError   = kerr.New(600007, "Server shutdown error").WithDisplay("服务器关闭错误")
 	ConfigParseError      = kerr.New(600008, "Config parse error").WithDisplay("配置解析错误")
+	ServerSetupError      = kerr.New(600009, "Server setup error").WithDisplay("服务器设置错误")
 )

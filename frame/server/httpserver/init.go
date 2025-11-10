@@ -1,0 +1,34 @@
+package httpserver
+
+import (
+	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/kearth/tea/frame/container"
+	"github.com/kearth/tea/frame/server"
+)
+
+// Method HTTP 方法
+type Method string
+
+// Request HTTP 请求
+type Request = ghttp.Request
+
+const (
+
+	// HTTP 方法
+	GET    Method = "GET"
+	POST   Method = "POST"
+	PUT    Method = "PUT"
+	DELETE Method = "DELETE"
+	ALL    Method = "ALL"
+)
+
+func init() {
+	// 注册 HTTP 路由
+	server.RegisterRouter(server.HTTPRouterName, &HTTPRouter{
+		Unit:         container.NewUnit(server.HTTPRouterName).SetRole(container.RoleRouter),
+		groupsPrefix: "/",
+		binds:        []any{},
+		middlewares:  []Middleware{},
+		groups:       []*Group{},
+	})
+}
