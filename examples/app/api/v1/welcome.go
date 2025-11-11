@@ -5,16 +5,15 @@ package v1
  */
 
 import (
-	"fmt"
-
 	"github.com/kearth/tea/frame/server"
 	"github.com/kearth/tea/frame/server/httpserver"
 )
 
-type Welcome struct {
-}
+// Welcome 欢迎页
+type Welcome struct{}
 
 func (w *Welcome) Welcome(r *httpserver.Request) {
 	r.Header.Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprint(r.Response.Writer, server.GetWelcome())
+	// fmt.Fprint(r.Response.Writer, server.GetWelcome())
+	r.Response.Write(server.GetWelcome())
 }

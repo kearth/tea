@@ -5,7 +5,13 @@ var out OutputFormat = &Output{}
 
 // OutputFormat 输出格式接口
 type OutputFormat interface {
-	Output() any
+	SetCode(code int)
+	SetMsg(msg string)
+	SetData(data any)
+}
+
+func Response() OutputFormat {
+	return out
 }
 
 // Output 输出结构体
@@ -15,6 +21,14 @@ type Output struct {
 	Data any    `json:"data" dc:"输出数据"`             // 输出数据
 }
 
-func (o *Output) Output() any {
-	return o
+func (o *Output) SetCode(code int) {
+	o.Code = code
+}
+
+func (o *Output) SetMsg(msg string) {
+	o.Msg = msg
+}
+
+func (o *Output) SetData(data any) {
+	o.Data = data
 }

@@ -53,12 +53,12 @@ func (h *HTTPServer) Start(ctx kctx.Context) kerr.Error {
 	// 服务配置
 	var config ghttp.ServerConfig
 
-	// 全局返回值
-	oa := h.Serv.GetOpenApi()
-	oa.Config.CommonResponse = base.Output{}
-	oa.Config.CommonResponseDataField = "Data"
 	// debug模式
 	if env.IsDebug() {
+		// 全局返回值
+		oa := h.Serv.GetOpenApi()
+		oa.Config.CommonResponse = base.Output{}
+		oa.Config.CommonResponseDataField = "Data"
 		config = ghttp.ServerConfig{
 			Graceful:          true,                       // 优雅重启
 			PProfEnabled:      true,                       // 开启pprof
@@ -82,7 +82,6 @@ func (h *HTTPServer) Start(ctx kctx.Context) kerr.Error {
 	}
 
 	h.Serv.SetConfig(config) // 设置配置
-	h.Serv.SetPort(h.Port)   // 端口设置
 	h.Serv.Run()             // 启动服务
 	return nil
 }

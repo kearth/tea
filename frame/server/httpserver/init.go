@@ -15,11 +15,16 @@ type Request = ghttp.Request
 const (
 
 	// HTTP 方法
-	GET    Method = "GET"
-	POST   Method = "POST"
-	PUT    Method = "PUT"
-	DELETE Method = "DELETE"
-	ALL    Method = "ALL"
+	GET     Method = "GET"
+	POST    Method = "POST"
+	PUT     Method = "PUT"
+	DELETE  Method = "DELETE"
+	HEAD    Method = "HEAD"
+	OPTIONS Method = "OPTIONS"
+	TRACE   Method = "TRACE"
+	CONNECT Method = "CONNECT"
+	PATCH   Method = "PATCH"
+	ALL     Method = "ALL"
 )
 
 func init() {

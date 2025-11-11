@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/kearth/klib/kctx"
+	"github.com/kearth/klib/kerr"
 	"github.com/kearth/klib/klog"
 	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/internal/bootstrap"
@@ -30,31 +31,32 @@ func (t *Tea) Run(ctx kctx.Context) {
 	// 初始化日志
 	klog.Init()
 	// 开始
-	klog.Print(ctx, "********************************* Tea Framework Begin *************************************")
-	klog.Print(ctx, "*  TTTTT  EEEEE   AAA   FFFFF  RRRR    AAA   M   M  EEEEE  W   W   OOO    RRRR   K   K    *")
-	klog.Print(ctx, "*    T    E      A   A  F      R   R  A   A  M M M  E      W   W  O   O   R   R  K  K     *")
-	klog.Print(ctx, "*    T    EEE    AAAAA  FFFFF  RRR    AAAAA  M M M  EEE    W W W  O   O   RRR    KKK      *")
-	klog.Print(ctx, "*    T    E      A   A  F      R  R   A   A  M   M  E      W W W  O   O   R  R   K  K     *")
-	klog.Print(ctx, "*    T    EEEEE  A   A  F      R   R  A   A  M   M  EEEEE  W   W   OOO    R   R  K   K    *")
-	klog.Print(ctx, "*******************************************************************************************")
+	klog.ColorPrint(ctx, klog.Green, "********************************* Tea Framework Begin *************************************")
+	klog.ColorPrint(ctx, klog.Green, "*  TTTTT  EEEEE   AAA   FFFFF  RRRR    AAA   M   M  EEEEE  W   W   OOO    RRRR   K   K    *")
+	klog.ColorPrint(ctx, klog.Green, "*    T    E      A   A  F      R   R  A   A  M M M  E      W   W  O   O   R   R  K  K     *")
+	klog.ColorPrint(ctx, klog.Green, "*    T    EEE    AAAAA  FFFFF  RRR    AAAAA  M M M  EEE    W W W  O   O   RRR    KKK      *")
+	klog.ColorPrint(ctx, klog.Green, "*    T    E      A   A  F      R  R   A   A  M   M  E      W W W  O   O   R  R   K  K     *")
+	klog.ColorPrint(ctx, klog.Green, "*    T    EEEEE  A   A  F      R   R  A   A  M   M  EEEEE  W   W   OOO    R   R  K   K    *")
+	klog.ColorPrint(ctx, klog.Green, "*******************************************************************************************")
 	// 安装服务单元
 	if err := t.SetupUnit(ctx); err != nil {
 		klog.Error(ctx, err.Error())
 		return
 	}
-	klog.Print(ctx, "********************************** Tea Framework End **************************************")
+	klog.ColorPrint(ctx, klog.Green, "********************************** Tea Framework End **************************************")
 }
 
 func (t *Tea) PrintSucc(ctx kctx.Context, u container.Unit) {
-	klog.Print(ctx, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s] success <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name()))
+	klog.ColorPrint(ctx, klog.Yellow, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s][%s] success <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name(), u.Cost()))
 }
 
 func (t *Tea) PrintError(ctx kctx.Context, u container.Unit, err error) {
-	klog.Print(ctx, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s] error:%e <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name(), err))
+	klog.ColorPrint(ctx, klog.Red, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s][%s] error:%e <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name(), u.Cost(), err))
 }
 
 func (t *Tea) PrintPanic(ctx kctx.Context, u container.Unit, err interface{}) {
-	klog.Error(ctx, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s] panic:%v <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name(), err))
+	klog.ColorPrint(ctx, klog.HiRed, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s][%s] panic:%v <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name(), u.Cost(), err))
+	klog.Panic(ctx, err)
 }
 
 // SetupUnit 安装服务单元
@@ -67,27 +69,50 @@ func (t *Tea) SetupUnit(ctx kctx.Context) error {
 	}()
 
 	//  初始化环境
-	if err := bootstrap.Env().SetVersion(t.Version).Setup(ctx); err != nil {
-		t.PrintError(ctx, bootstrap.Env(), err)
+	envInstance := bootstrap.Env()
+	envInstance.SetFn(func(ctx kctx.Context, input ...any) (output any, err kerr.Error) {
+		return nil, envInstance.SetVersion(t.Version).Setup(ctx)
+	})
+	if _, err := envInstance.Call(ctx); err != nil {
+		t.PrintError(ctx, envInstance, err)
 		return err // 发生错误时停止
 	}
-	t.PrintSucc(ctx, bootstrap.Env())
+	t.PrintSucc(ctx, envInstance)
 
-	// 加载自定义初始化
-	if t.Load != nil {
-		t.Load()
+	var nu container.Unit
+	units := t.NeedLoadUnits()
+	for _, u := range units {
+		nu = u
+		nu.SetFn(func(ctx kctx.Context, input ...any) (output any, err kerr.Error) {
+			return nil, nu.Setup(ctx)
+		})
+		if _, err := nu.Call(ctx); err != nil {
+			t.PrintError(ctx, nu, err)
+			return err // 发生错误时停止
+		}
+		t.PrintSucc(ctx, nu)
 	}
 
 	// 初始化加载器
-	units := t.NeedLoadUnits()
-	for _, u := range units {
-		if err := u.Setup(ctx); err != nil {
-			t.PrintError(ctx, u, err)
-			return err // 发生错误时停止
+	loadInstance := bootstrap.LoadInstance()
+	loadInstance.SetFn(func(ctx kctx.Context, input ...any) (output any, err kerr.Error) {
+		defer func() {
+			// 捕获异常
+			if err := recover(); err != nil {
+				t.PrintPanic(ctx, loadInstance, err)
+			}
+		}()
+		// 加载自定义初始化
+		if t.Load != nil {
+			t.Load()
 		}
-		t.PrintSucc(ctx, u)
+		return nil, loadInstance.Setup(ctx)
+	})
+	if _, err := loadInstance.Call(ctx); err != nil {
+		t.PrintError(ctx, loadInstance, err)
+		return err // 发生错误时停止
 	}
-
+	t.PrintSucc(ctx, loadInstance)
 	bootstrap.LoadInstance().Run(ctx)
 	return nil
 }
@@ -95,6 +120,5 @@ func (t *Tea) SetupUnit(ctx kctx.Context) error {
 // NeedLoadUnits 需要加载的服务单元
 func (t *Tea) NeedLoadUnits() []container.Unit {
 	units := []container.Unit{}
-	units = append(units, bootstrap.LoadInstance()) // 加载器
 	return units
 }

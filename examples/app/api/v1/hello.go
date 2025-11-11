@@ -9,8 +9,7 @@ import (
 )
 
 // Hello
-type Hello struct {
-}
+type Hello struct{}
 
 // HelloReq 请求参数
 type HelloReq struct {

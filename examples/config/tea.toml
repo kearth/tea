@@ -1,7 +1,7 @@
 # Tea Framework 
 # 服务器配置
 [server]
-name = "tea"               # 服务器名称
+name = "Tea Demo"          # 服务器名称
 version = "1.0.0"          # 服务器版本
 mode = "debug"             # 服务器运行模式 - debug, normal
 ip = "127.0.0.1"           # 服务器IP地址

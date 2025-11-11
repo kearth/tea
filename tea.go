@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	version = "0.0.7"
+	version = "0.0.8"
 )
 
 // Version 获取版本号

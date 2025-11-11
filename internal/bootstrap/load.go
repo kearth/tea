@@ -14,7 +14,9 @@ import (
 )
 
 var (
-	loadInstance = &Load{}
+	loadInstance = &Load{
+		Unit: container.NewUnit("Load").SetRole(container.RoleComponent),
+	}
 )
 
 // Step 步骤
@@ -49,8 +51,15 @@ func LoadInstance() *Load {
 
 // Setup
 func (l *Load) Setup(ctx kctx.Context) kerr.Error {
-	l.Unit = container.NewUnit("Load").SetRole(container.RoleComponent)
 	return nil
+}
+
+func (l *Load) PrintSuccess(ctx kctx.Context, step Step) {
+	klog.ColorPrint(ctx, klog.Yellow, fmt.Sprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Step][%s][%s] success >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", step.Name(), step.Cost()))
+}
+
+func (l *Load) PrintError(ctx kctx.Context, step Step, err error) {
+	klog.ColorPrint(ctx, klog.Red, fmt.Sprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Step][%s][%s] error:%e >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", step.Name(), step.Cost(), err))
 }
 
 func (l *Load) Run(ctx kctx.Context) error {
@@ -69,14 +78,21 @@ func (l *Load) Run(ctx kctx.Context) error {
 	}
 	for _, step := range []Step{
 		NewStep("Init", s.Init),
-		NewStep("Starting", s.Start),
+		NewStep("Running", s.Start),
 		NewStep("Stopping", s.Stop),
 	} {
-		klog.Print(ctx, fmt.Sprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Step][%s] success >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", step.Name()))
-		if err = step.Run(ctx); err != nil {
-			klog.Print(ctx, fmt.Sprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Step][%s] error:%e >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", step.Name(), err))
+		step.SetFn(func(ctx kctx.Context, input ...any) (output any, err kerr.Error) {
+			if sErr := step.Run(ctx); sErr != nil {
+				return nil, base.StepError.Wrap(sErr)
+			}
+			return nil, nil
+		})
+
+		if _, err = step.Call(ctx); err != nil {
+			l.PrintError(ctx, step, err)
 			return base.StepError.Wrap(err)
 		}
+		l.PrintSuccess(ctx, step)
 	}
 	return nil
 }
