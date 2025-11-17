@@ -6,8 +6,8 @@ import (
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/klib/kerr"
 	"github.com/kearth/klib/klog"
+	"github.com/kearth/klib/kunit"
 	"github.com/kearth/tea/frame/base"
-	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/env"
 	"github.com/kearth/tea/frame/server"
 	"github.com/kearth/tea/frame/server/httpserver"
@@ -15,19 +15,19 @@ import (
 
 var (
 	loadInstance = &Load{
-		Unit: container.NewUnit("Load").SetRole(container.RoleComponent),
+		Unit: kunit.NewUnit("Load").SetRole(kunit.RoleComponent),
 	}
 )
 
 // Step 步骤
 type Step struct {
-	container.Unit
+	kunit.Unit
 	s func(ctx kctx.Context) kerr.Error
 }
 
 // NewStep 创建步骤
 func NewStep(name string, s func(ctx kctx.Context) kerr.Error) Step {
-	unit := container.NewUnit(name)
+	unit := kunit.NewUnit(name)
 	return Step{
 		Unit: unit,
 		s:    s,
@@ -41,7 +41,7 @@ func (s Step) Run(ctx kctx.Context) error {
 
 // Load 加载器
 type Load struct {
-	container.Unit
+	kunit.Unit
 }
 
 // LoadInstance

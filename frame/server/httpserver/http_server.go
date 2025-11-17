@@ -8,8 +8,8 @@ import (
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/klib/kerr"
 	"github.com/kearth/klib/klog"
+	"github.com/kearth/klib/kunit"
 	"github.com/kearth/tea/frame/base"
-	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/env"
 	"github.com/kearth/tea/frame/server"
 )
@@ -19,7 +19,7 @@ var _ server.Server = (*HTTPServer)(nil)
 
 // HTTPServer HTTP服务
 type HTTPServer struct {
-	container.Unit
+	kunit.Unit
 	Serv   *ghttp.Server
 	Port   int           // 端口
 	Router server.Router // 路由
@@ -28,7 +28,7 @@ type HTTPServer struct {
 // New 创建实例
 func NewHTTPServer() *HTTPServer {
 	return &HTTPServer{
-		Unit: container.NewUnit(server.HTTPServerName).SetRole(container.RoleServer),
+		Unit: kunit.NewUnit(server.HTTPServerName).SetRole(kunit.RoleServer),
 		Serv: g.Server(),
 	}
 }

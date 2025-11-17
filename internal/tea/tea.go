@@ -6,13 +6,13 @@ import (
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/klib/kerr"
 	"github.com/kearth/klib/klog"
-	"github.com/kearth/tea/frame/container"
+	"github.com/kearth/klib/kunit"
 	"github.com/kearth/tea/internal/bootstrap"
 )
 
 // Tea 茶
 type Tea struct {
-	container.Unit
+	kunit.Unit
 	Version string // 版本号
 	Load    func()
 }
@@ -21,7 +21,7 @@ type Tea struct {
 func New(version string, load func()) *Tea {
 	return &Tea{
 		Version: version,
-		Unit:    container.NewUnit("Tea").SetRole(container.RoleFramework),
+		Unit:    kunit.NewUnit("Tea").SetRole(kunit.RoleFramework),
 		Load:    load,
 	}
 }
@@ -46,17 +46,21 @@ func (t *Tea) Run(ctx kctx.Context) {
 	klog.ColorPrint(ctx, klog.Green, "********************************** Tea Framework End **************************************")
 }
 
-func (t *Tea) PrintSucc(ctx kctx.Context, u container.Unit) {
+func (t *Tea) PrintSucc(ctx kctx.Context, u kunit.Unit) {
 	klog.ColorPrint(ctx, klog.Yellow, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s][%s] success <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name(), u.Cost()))
 }
 
-func (t *Tea) PrintError(ctx kctx.Context, u container.Unit, err error) {
+func (t *Tea) PrintError(ctx kctx.Context, u kunit.Unit, err error) {
 	klog.ColorPrint(ctx, klog.Red, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s][%s] error:%e <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name(), u.Cost(), err))
 }
 
-func (t *Tea) PrintPanic(ctx kctx.Context, u container.Unit, err interface{}) {
+func (t *Tea) PrintPanic(ctx kctx.Context, u kunit.Unit, err interface{}) {
 	klog.ColorPrint(ctx, klog.HiRed, fmt.Sprintf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [%s][%s][%s] panic:%v <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", u.Role(), u.Name(), u.Cost(), err))
 	klog.Panic(ctx, err)
+}
+
+func (t *Tea) PrintUserDefine(ctx kctx.Context) {
+	klog.ColorPrint(ctx, klog.Magenta, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< User Define Load <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 }
 
 // SetupUnit 安装服务单元
@@ -79,7 +83,7 @@ func (t *Tea) SetupUnit(ctx kctx.Context) error {
 	}
 	t.PrintSucc(ctx, envInstance)
 
-	var nu container.Unit
+	var nu kunit.Unit
 	units := t.NeedLoadUnits()
 	for _, u := range units {
 		nu = u
@@ -104,7 +108,9 @@ func (t *Tea) SetupUnit(ctx kctx.Context) error {
 		}()
 		// 加载自定义初始化
 		if t.Load != nil {
+			t.PrintUserDefine(ctx)
 			t.Load()
+			t.PrintUserDefine(ctx)
 		}
 		return nil, loadInstance.Setup(ctx)
 	})
@@ -118,7 +124,7 @@ func (t *Tea) SetupUnit(ctx kctx.Context) error {
 }
 
 // NeedLoadUnits 需要加载的服务单元
-func (t *Tea) NeedLoadUnits() []container.Unit {
-	units := []container.Unit{}
+func (t *Tea) NeedLoadUnits() []kunit.Unit {
+	units := []kunit.Unit{}
 	return units
 }

@@ -31,6 +31,10 @@ github.com/grokify/html-strip-tags-go v0.1.0 h1:03UrQLjAny8xci+R+qjCce/MYnpNXCtg
 github.com/grokify/html-strip-tags-go v0.1.0/go.mod h1:ZdzgfHEzAfz9X6Xe5eBLVblWIxXfYSQ40S/VKrAOGpc=
 github.com/kearth/klib v0.0.5 h1:6R5r95vUKK3HsDSkoFOWV4fl/LsKTIuyLUZDmk+hnMQ=
 github.com/kearth/klib v0.0.5/go.mod h1:e640DX7o4z+Ouhd4gkpE+cFljY+1NmUNmy0xBBgG61c=
+github.com/kearth/klib v0.1.1 h1:V871UT4gxlNS0cK8ex2mfeu1LArQqfOCjJdrlSIAHUU=
+github.com/kearth/klib v0.1.1/go.mod h1:e640DX7o4z+Ouhd4gkpE+cFljY+1NmUNmy0xBBgG61c=
+github.com/kearth/klib v0.2.5 h1:zEbllMA/oWLSa9g5P4RQWc05HKbVQK6fcI9jG62wwo8=
+github.com/kearth/klib v0.2.5/go.mod h1:e640DX7o4z+Ouhd4gkpE+cFljY+1NmUNmy0xBBgG61c=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=

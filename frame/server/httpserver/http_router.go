@@ -2,7 +2,7 @@ package httpserver
 
 import (
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/kearth/tea/frame/container"
+	"github.com/kearth/klib/kunit"
 	"github.com/kearth/tea/frame/server"
 )
 
@@ -11,7 +11,7 @@ var _ server.Router = (*HTTPRouter)(nil)
 
 // HTTPRouter HTTP 路由
 type HTTPRouter struct {
-	container.Unit
+	kunit.Unit
 	groupsPrefix string
 	binds        []any
 	middlewares  []Middleware

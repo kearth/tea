@@ -76,6 +76,11 @@ func IsUnknown() bool {
 	return Instance().OS == base.OSUnknown
 }
 
+// GetOS 获取操作系统
+func GetOS() string {
+	return Instance().OS
+}
+
 // GetPort 获取端口
 func Port() int {
 	return Instance().Port

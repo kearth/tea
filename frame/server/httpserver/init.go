@@ -2,7 +2,7 @@ package httpserver
 
 import (
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/kearth/tea/frame/container"
+	"github.com/kearth/klib/kunit"
 	"github.com/kearth/tea/frame/server"
 )
 
@@ -30,7 +30,7 @@ const (
 func init() {
 	// 注册 HTTP 路由
 	server.RegisterRouter(server.HTTPRouterName, &HTTPRouter{
-		Unit:         container.NewUnit(server.HTTPRouterName).SetRole(container.RoleRouter),
+		Unit:         kunit.NewUnit(server.HTTPRouterName).SetRole(kunit.RoleRouter),
 		groupsPrefix: "/",
 		binds:        []any{},
 		middlewares:  []Middleware{},

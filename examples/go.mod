@@ -9,7 +9,7 @@ toolchain go1.24.3
 replace github.com/kearth/tea => ../../tea
 
 require (
-	github.com/kearth/klib v0.0.5
+	github.com/kearth/klib v0.2.5
 	github.com/kearth/tea v0.0.0-00010101000000-000000000000
 )
 

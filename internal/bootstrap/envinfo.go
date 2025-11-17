@@ -16,8 +16,8 @@ import (
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/klib/kerr"
 	"github.com/kearth/klib/klog"
+	"github.com/kearth/klib/kunit"
 	"github.com/kearth/tea/frame/base"
-	"github.com/kearth/tea/frame/container"
 	"github.com/kearth/tea/frame/env"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
@@ -30,13 +30,13 @@ const (
 var (
 	// 实例
 	envInfoInstance = &EnvInfo{
-		Unit: container.NewUnit(EnvName).SetRole(container.RoleComponent),
+		Unit: kunit.NewUnit(EnvName).SetRole(kunit.RoleComponent),
 	}
 )
 
 // 环境
 type EnvInfo struct {
-	container.Unit
+	kunit.Unit
 	env.Env
 }
 

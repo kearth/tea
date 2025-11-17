@@ -22,7 +22,7 @@ type HelloRes struct {
 }
 
 // Say 打招呼
-func (c *Hello) Say(ctx context.Context, h *HelloReq) (*HelloRes, error) {
+func (c *Hello) Hello(ctx context.Context, h *HelloReq) (*HelloRes, error) {
 	return &HelloRes{
 		Message: "hello " + h.Name,
 	}, nil

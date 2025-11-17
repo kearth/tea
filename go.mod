@@ -5,7 +5,7 @@ go 1.24.0
 toolchain go1.24.3
 
 require (
-	github.com/kearth/klib v0.0.5
+	github.com/kearth/klib v0.2.5
 	golang.org/x/text v0.30.0
 )
 
