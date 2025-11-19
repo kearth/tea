@@ -73,11 +73,12 @@ func (h *HTTPServer) Start(ctx kctx.Context) kerr.Error {
 		}
 	} else {
 		config = ghttp.ServerConfig{
-			Graceful:   true,                       // 优雅重启
-			Address:    fmt.Sprintf(":%d", h.Port), // 设置监听端口
-			Logger:     klog.Logger(),              // 设置日志
-			LogStdout:  true,                       // 输出日志到控制台
-			ErrorStack: true,                       // 打印错误堆栈
+			Graceful:      true,                       // 优雅重启
+			Address:       fmt.Sprintf(":%d", h.Port), // 设置监听端口
+			Logger:        klog.Logger(),              // 设置日志
+			LogStdout:     true,                       // 输出日志到控制台
+			ErrorStack:    true,                       // 打印错误堆栈
+			DumpRouterMap: true,                       // 打印路由信息
 		}
 	}
 

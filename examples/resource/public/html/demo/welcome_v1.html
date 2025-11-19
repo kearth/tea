@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tea Framework ☕</title>
+    <style>
+        body {
+            background: linear-gradient(120deg, #f3f3f3, #d8e3f0);
+            font-family: "Segoe UI", Roboto, sans-serif;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 0.3em;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .tagline {
+            margin-top: 2em;
+            font-size: 1em;
+            color: #999;
+        }
+
+        .tea {
+            font-size: 5em;
+            animation: steam 2s infinite ease-in-out alternate;
+        }
+
+        @keyframes steam {
+            from {
+                opacity: 0.4;
+                transform: translateY(0px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="tea">🫖</div>
+    <h1>Welcome to Tea Framework</h1>
+    <div class="subtitle">Drink a cup of tea, and work will be done.</div>
+</body>
+
+</html>

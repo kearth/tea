@@ -1,14 +1,15 @@
 package main
 
 import (
-	"example/local/app/infra/log"
-	"example/local/app/infra/structs"
 	"example/local/app/router"
 
 	"github.com/kearth/klib/kctx"
 	"github.com/kearth/klib/klog"
 	"github.com/kearth/tea"
 )
+
+// Loader 加载器接口
+type Loader func(ctx kctx.Context) error
 
 /*******************************
  * 框架入口
@@ -23,8 +24,7 @@ func main() {
 	// 启动框架
 	tea.Drink(ctx, func() {
 		// 启动服务器
-		for _, loader := range []structs.Loader{
-			log.LoadLogger,
+		for _, loader := range []Loader{
 			router.LoadRouter,
 		} {
 			if err := loader(ctx); err != nil {
