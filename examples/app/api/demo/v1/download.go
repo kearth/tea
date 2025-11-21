@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"example/local/app/infra/out"
+
 	"github.com/kearth/tea/frame/env"
 	"github.com/kearth/tea/frame/server/httpserver"
 )
@@ -11,7 +13,7 @@ import (
 
 type File struct{}
 
-// Download 下载文件
+// Image 下载图片
 func (c *File) Image(r *httpserver.Request) {
-	r.Response.ServeFileDownload(env.GetResourcesDir() + "/public/image/demo/tea.png")
+	out.FileResponse(r, env.GetResourcesDir()+"/public/image/demo/tea.png")
 }

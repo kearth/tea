@@ -59,13 +59,13 @@ func (r *HTTPRouter) AddBind(bindObject ...any) {
 	r.binds = append(r.binds, bindObject...)
 }
 
-// NewGroup 创建路由组
-func (r *HTTPRouter) NewGroup(prefix string) *Group {
+// Group 创建路由组
+func (r *HTTPRouter) Group(prefix string, f func(group *Group)) {
 	g := &Group{
 		prefix:      prefix,
 		binds:       map[string]any{},
 		middlewares: []Middleware{},
 	}
+	f(g)
 	r.groups = append(r.groups, g)
-	return g
 }

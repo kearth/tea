@@ -1,35 +1,15 @@
 package main
 
 import (
-	"example/local/app/router"
+	"example/local/app/load"
 
 	"github.com/kearth/klib/kctx"
-	"github.com/kearth/klib/klog"
 	"github.com/kearth/tea"
 )
 
-// Loader 加载器接口
-type Loader func(ctx kctx.Context) error
-
 /*******************************
  * 框架入口
- * @author: kearth
- * 这是一个示例
  *******************************/
 func main() {
-
-	// 创建上下文
-	ctx := kctx.New()
-
-	// 启动框架
-	tea.Drink(ctx, func() {
-		// 启动服务器
-		for _, loader := range []Loader{
-			router.LoadRouter,
-		} {
-			if err := loader(ctx); err != nil {
-				klog.Panic(ctx, err)
-			}
-		}
-	})
+	tea.Drink(kctx.New(), load.LoadAll)
 }

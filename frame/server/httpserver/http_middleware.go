@@ -5,6 +5,7 @@ import (
 	"mime"
 	"net/http"
 
+	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -14,6 +15,17 @@ import (
 
 // Middleware HTTP 中间件
 type Middleware = func(r *Request)
+
+type logFormat struct {
+	Status   int                 `json:"status"`
+	Method   string              `json:"method"`
+	Path     string              `json:"path"`
+	Proto    string              `json:"proto"`
+	Duration string              `json:"duration"`
+	RemoteIP string              `json:"remote_ip"`
+	Headers  map[string][]string `json:"headers"`
+	Response any                 `json:"response"`
+}
 
 const (
 	contentTypeEventStream  = "text/event-stream"
@@ -27,6 +39,8 @@ func MiddlewareHandlerResponse(r *Request) {
 
 	// There's custom buffer content, it then exits current handler.
 	if r.Response.BufferLength() > 0 || r.Response.Writer.BytesWritten() > 0 {
+		f := LogFormat(r, map[string]any{})
+		klog.Info(r.Context(), f)
 		return
 	}
 
@@ -70,10 +84,11 @@ func MiddlewareHandlerResponse(r *Request) {
 	}
 
 	o := base.Response()
+	// TODO 这里可以根据业务场景自定义响应格式
 	o.SetCode(code.Code())
 	o.SetMsg(msg)
 	o.SetData(res)
-	f := fmt.Sprintf("%d %s %s", r.Response.Status, r.URL.Path, o.String())
+	f := LogFormat(r, o)
 	klog.Info(r.Context(), f)
 	r.Response.WriteJson(o)
 }
@@ -83,13 +98,21 @@ func MiddlewareHandlerCORS(r *Request) {
 	ghttp.MiddlewareCORS(r)
 }
 
-// MiddlewareLog HTTP 中间件 - 日志处理
-func MiddlewareLog(r *Request) {
-	r.Middleware.Next()
-	errStr := ""
-	if err := r.GetError(); err != nil {
-		errStr = err.Error()
+// LogFormat 日志格式
+func LogFormat(r *Request, content any) string {
+	ns := r.LeaveTime.Sub(r.EnterTime).Nanoseconds()
+	ms := ns / 1000000
+	lf := logFormat{
+		Status:   r.Response.Status,
+		Method:   r.Request.Method,
+		Path:     r.URL.Path,
+		Proto:    r.Proto,
+		Duration: fmt.Sprintf("%d ms", ms),
+		RemoteIP: r.GetRemoteIp(),
+		Headers:  r.Header,
+		Response: content,
 	}
-	f := fmt.Sprintf("%d %s %s", r.Response.Status, r.URL.Path, errStr)
-	klog.Info(r.Context(), f)
+
+	str, _ := gjson.EncodeString(lf)
+	return str
 }

@@ -1,4 +1,4 @@
-package v2
+package v1
 
 import (
 	"example/local/app/infra/out"
@@ -8,9 +8,10 @@ import (
 	"github.com/kearth/tea/frame/server/httpserver"
 )
 
-type Welcome struct{}
+// Stream 页面 - 流响应
+type Stream struct{}
 
-func (w *Welcome) Welcome(r *httpserver.Request) {
-	html := gfile.GetContents(env.GetResourcesDir() + "/public/html/demo/welcome_v2.html")
+func (w *Stream) Chat(r *httpserver.Request) {
+	html := gfile.GetContents(env.GetResourcesDir() + "/public/html/demo/stream.html")
 	out.HTMLResponse(r, html)
 }

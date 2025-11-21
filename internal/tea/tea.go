@@ -14,11 +14,11 @@ import (
 type Tea struct {
 	kunit.Unit
 	Version string // 版本号
-	Load    func()
+	Load    func(kctx.Context)
 }
 
 // New
-func New(version string, load func()) *Tea {
+func New(version string, load func(ctx kctx.Context)) *Tea {
 	return &Tea{
 		Version: version,
 		Unit:    kunit.NewUnit("Tea").SetRole(kunit.RoleFramework),
@@ -109,7 +109,7 @@ func (t *Tea) SetupUnit(ctx kctx.Context) error {
 		// 加载自定义初始化
 		if t.Load != nil {
 			t.PrintUserDefine(ctx)
-			t.Load()
+			t.Load(ctx)
 			t.PrintUserDefine(ctx)
 		}
 		return nil, loadInstance.Setup(ctx)

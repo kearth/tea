@@ -7,6 +7,25 @@ import (
 	"github.com/kearth/tea/frame/base"
 )
 
+type Config struct {
+	Server string `json:"server"`
+	Log    string `json:"log"`
+	Var    string `json:"var"`
+}
+
+type LogConfig struct {
+	Path                string   `json:"path"`
+	File                string   `json:"file"`
+	Prefix              string   `json:"prefix"`
+	Level               string   `json:"level"`
+	TimeFormat          string   `json:"time_format"`
+	CtxKeys             []string `json:"ctx_keys"`
+	Header              bool     `json:"header"`
+	Stdout              bool     `json:"stdout"`
+	StdoutColorDisabled bool     `json:"stdout_color_disabled"`
+	WriterColorEnable   bool     `json:"writer_color_enable"`
+}
+
 // 环境
 type Env struct {
 	Version       string
@@ -26,6 +45,7 @@ type Env struct {
 	ResourcesDir  string `json:"resources_dir"`
 	ServerType    string `json:"server_type"`
 	Cfg           *gcfg.Config
+	Var           map[string]any
 }
 
 var instance *Env
@@ -39,6 +59,16 @@ func Init(e *Env) {
 // Instance 用于懒加载环境信息
 func Instance() *Env {
 	return instance
+}
+
+func GetVar(key string, def ...any) *Var {
+	if v, ok := Instance().Var[key]; ok {
+		return &Var{v: v}
+	}
+	if len(def) > 0 {
+		return &Var{v: def[0]}
+	}
+	return &Var{v: nil}
 }
 
 // IsDebug 是否调试模式

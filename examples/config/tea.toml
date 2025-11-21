@@ -1,20 +1,6 @@
 # Tea Framework 
-# 服务器配置
-[server]
-name = "Tea Demo"          # 服务器名称
-version = "1.0.0"          # 服务器版本
-mode = "normal"            # 服务器运行模式 - debug, normal
-ip = "127.0.0.1"           # 服务器IP地址
-port = 9106                # 服务器端口号
-root_dir = "."             # 服务器根目录
-resources_dir = "resource" # 服务器资源目录
-server_type = "http"       # 服务器类型 -  默认 http
-
-# 服务器配置
+# 配置
 [config]
-
-# 服务器变量
-[var]
-
-# 日志配置
-[log]
+server = "server.toml"
+log = "log.toml"
+var = "var.toml"

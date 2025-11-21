@@ -3,7 +3,7 @@ package base
 import "github.com/kearth/klib/kerr"
 
 var (
-	configPath = "./config/tea.toml" // 配置文件路径
+	configPath = "./config/" // 配置文件路径
 )
 
 // SetConfigPath 设置配置文件路径
@@ -37,6 +37,7 @@ const (
 	OSOpenBSD   = "openbsd"   // OpenBSD
 	OSUnknown   = "unknown"   // 未知系统
 
+	ConfigName = "tea.toml" // 默认配置文件名
 )
 
 // Base error definitions
@@ -50,4 +51,5 @@ var (
 	ServerShutdownError   = kerr.New(600007, "Server shutdown error").WithDisplay("服务器关闭错误")
 	ConfigParseError      = kerr.New(600008, "Config parse error").WithDisplay("配置解析错误")
 	ServerSetupError      = kerr.New(600009, "Server setup error").WithDisplay("服务器设置错误")
+	ConfigKeyNotExists    = kerr.New(600010, "Config key not exists").WithDisplay("配置键不存在")
 )

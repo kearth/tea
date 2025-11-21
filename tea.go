@@ -15,7 +15,7 @@ func Version() string {
 }
 
 // Drink 喝茶
-func Drink(ctx kctx.Context, load func()) {
+func Drink(ctx kctx.Context, load func(ctx kctx.Context)) {
 	// 启动框架
 	tea.New(version, load).Run(ctx)
 }
