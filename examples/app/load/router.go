@@ -26,8 +26,12 @@ func LoadRouter(ctx kctx.Context) (string, error) {
 
 // HttpRouterRegister 注册 HTTP 路由
 func HttpRouterRegister(hr *httpserver.HTTPRouter) {
+
 	// 全局中间件
 	hr.AddMiddleware(httpserver.MiddlewareHandlerResponse)
+
+	// 静态文件路由
+	hr.AddStaticPath("/tailwind.css", "css/demo/tailwind.css")
 
 	// API 路由组
 	hr.Group("/api/demo", func(group *httpserver.Group) {

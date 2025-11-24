@@ -129,7 +129,7 @@ func (e *EnvInfo) Setup(ctx kctx.Context) kerr.Error {
 	if e.RootDir == "." || e.RootDir == "" || e.RootDir == "/" {
 		e.RootDir = gfile.Pwd()
 	}
-	e.ResourcesDir = serverCfg.MustGet(ctx, "server.resources_dir", "./resources").String()
+	e.ResourcesDir = gfile.Join(e.RootDir, serverCfg.MustGet(ctx, "server.resources_dir", "./resource").String())
 	e.Mode = serverCfg.MustGet(ctx, "server.mode", base.EnvModeNormal).String()
 	// 调试模式
 	if e.Mode != base.EnvModeDebug {

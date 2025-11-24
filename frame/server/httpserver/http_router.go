@@ -2,7 +2,9 @@ package httpserver
 
 import (
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/kearth/klib/kunit"
+	"github.com/kearth/tea/frame/env"
 	"github.com/kearth/tea/frame/server"
 )
 
@@ -16,10 +18,13 @@ type HTTPRouter struct {
 	binds        []any
 	middlewares  []Middleware
 	groups       []*Group
+	staticPaths  map[string]string
+	staticRoot   string
 }
 
 // Register 注册路由
 func (h *HTTPRouter) Register(s server.Server) {
+	h.staticRoot = env.GetResourcesDir()
 	if hs, ok := s.(*HTTPServer); ok {
 		hs.Serv.Group(h.groupsPrefix, func(group *ghttp.RouterGroup) {
 			if len(h.middlewares) > 0 {
@@ -27,6 +32,9 @@ func (h *HTTPRouter) Register(s server.Server) {
 			}
 			if len(h.binds) > 0 {
 				group.Bind(h.binds...)
+			}
+			if len(h.staticPaths) > 0 {
+				group.Map(bindStaticFile(h.staticRoot, h.staticPaths))
 			}
 			if len(h.groups) > 0 {
 				for _, gr := range h.groups {
@@ -42,6 +50,21 @@ func (h *HTTPRouter) Register(s server.Server) {
 			}
 		})
 	}
+}
+
+// SetStaticRoot 设置静态文件根目录
+func (r *HTTPRouter) SetStaticRoot(root string) {
+	if gfile.IsDir(root) {
+		r.staticRoot = root
+	}
+}
+
+// AddStaticPath 添加静态文件路由
+func (r *HTTPRouter) AddStaticPath(uri, file string) {
+	if r.staticPaths == nil {
+		r.staticPaths = map[string]string{}
+	}
+	r.staticPaths[uri] = file
 }
 
 // SetGroupsPrefix 设置路由组前缀

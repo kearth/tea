@@ -84,7 +84,6 @@ func MiddlewareHandlerResponse(r *Request) {
 	}
 
 	o := base.Response()
-	// TODO 这里可以根据业务场景自定义响应格式
 	o.SetCode(code.Code())
 	o.SetMsg(msg)
 	o.SetData(res)
