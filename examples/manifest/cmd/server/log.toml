@@ -1,0 +1,12 @@
+# 日志配置
+[log]
+path = "log/"                       # 日志文件路径
+file = "{Y-m-d}.log"                # 日志文件名
+prefix = "tea"                      # 日志前缀
+level = "all"                       # 日志级别
+time_format = "2006-01-02 15:04:05" # 日志时间格式
+ctxKeys = []                        # 上下文变量键列表
+header = true                       # 是否记录请求头
+stdout = true                       # 是否输出到标准输出
+stdout_color_disabled = false       # 关闭终端的颜色打印。默认开启
+writer_color_enable = false         # 日志文件是否带上颜色。默认false，表示不带颜色

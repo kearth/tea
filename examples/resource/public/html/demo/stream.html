@@ -24,7 +24,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-y: auto;
         }
 
         /* 布局样式 */
@@ -48,10 +48,6 @@
 
         .flex-1 {
             flex: 1;
-        }
-
-        .overflow-hidden {
-            overflow: hidden;
         }
 
         main {
@@ -322,7 +318,7 @@
         <!-- 侧边栏 -->
 
         <!-- 主聊天区域 -->
-        <main class="flex-1 flex flex-col overflow-hidden">
+        <main class="flex-1 flex flex-col">
             <!-- 聊天消息区域 -->
             <div id="chat-messages" class="flex-1 overflow-y-auto p-4 md:p-8 scrollbar-hide">
                 <!-- 欢迎消息 -->
@@ -341,33 +337,22 @@
                     </div>
                 </div>
 
-                <!-- 用户消息 -->
-                <div class="max-w-3xl mx-auto mb-8 message-appear">
-                    <div class="flex gap-4 justify-end">
-                        <div class="bg-primary rounded-lg px-4 py-3 text-white">
-                            <p>北京有哪些名胜古迹呢</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-primary flex-shrink-0 flex-center text-white">
-                            <svg class="icon-user" viewBox="0 0 16 16">
-                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
             <!-- 输入区域 -->
             <div class="border-t border-neutral-light p-4 bg-white backdrop-blur-sm">
                 <div class="max-w-3xl mx-auto">
                     <form id="chat-form" class="relative">
-                        <textarea id="message-input" placeholder="输入你的消息..."
-                            class="w-full bg-white border border-neutral-light rounded-lg px-4 py-3 pr-12 focus:outline-none focus:border-primary transition-colors resize-none h-16 text-text-primary"></textarea>
+                        <textarea id="message-input" placeholder="请输入......"
+                            class="w-full bg-white border border-neutral-light rounded-lg px-4 py-3 pr-12 focus:outline-none focus:border-primary transition-colors resize-none h-16 text-text-primary overflow-hidden">北京有哪些名胜古迹呢</textarea>
                         <button type="submit"
                             class="absolute right-3 bottom-3 w-8 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors">
-                            <svg class="icon-send" viewBox="0 0 16 16">
-                                <path
-                                    d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z" />
+                            <svg class="icon-send" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="#000000" stroke-linecap="round" stroke-linejoin="round"
+                                id="Send--Streamline-Tabler" height="24" width="24">
+                                <path d="M10 14 21 3" stroke-width="2"></path>
+                                <path d="m21 3 -6.5 18a0.55 0.55 0 0 1 -1 0L10 14l-7 -3.5a0.55 0.55 0 0 1 0 -1L21 3"
+                                    stroke-width="2"></path>
                             </svg>
                         </button>
                     </form>
@@ -404,31 +389,61 @@
         const messageInput = document.getElementById('message-input');
         const chatMessages = document.getElementById('chat-messages');
 
+        // 添加调试日志，确认元素是否正确获取
+        console.log('chatForm:', chatForm);
+        console.log('messageInput:', messageInput);
+        console.log('chatMessages:', chatMessages);
+
         chatForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const message = messageInput.value.trim();
-            if (!message) return;
+            // 确保正确获取消息输入框的值
+            const currentInput = document.getElementById('message-input');
+            const message = currentInput ? currentInput.value.trim() : '';
+            if (!message) {
+                return;
+            }
 
             // 添加用户消息
             addUserMessage(message);
 
             // 清空输入框
-            messageInput.value = '';
-            adjustTextareaHeight();
+            if (currentInput) {
+                currentInput.value = '';
+                adjustTextareaHeight();
+            }
 
             // 显示正在输入状态
             showTypingIndicator();
 
-            // 模拟AI回复延迟
-            setTimeout(() => {
-                // 移除正在输入状态
-                removeTypingIndicator();
+            // 立即发送stream请求
+            removeTypingIndicator();
 
-                // 添加AI回复
-                addAiResponse(getSampleResponse(message));
-            }, 1500);
+            // 添加AI回复（发送stream请求）
+            addAiResponse(message);
         });
+
+        // 页面加载后2秒自动触发表单提交
+        setTimeout(() => {
+            const autoSubmitForm = document.getElementById('chat-form');
+            const autoInput = document.getElementById('message-input');
+            // 只有当表单存在且输入框有内容时才自动提交
+            if (autoSubmitForm && autoInput && autoInput.value.trim()) {
+                console.log('页面加载2秒后自动触发表单提交');
+                autoSubmitForm.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
+        }, 2000);
+
+        // 也为按钮添加点击事件监听器作为备选
+        const submitButton = chatForm.querySelector('button[type="submit"]');
+        console.log('submitButton:', submitButton);
+        if (submitButton) {
+            submitButton.addEventListener('click', function (e) {
+                console.log('按钮点击事件被触发!');
+                // 触发表单提交
+                chatForm.dispatchEvent(new Event('submit'));
+            });
+        }
 
         // 调整文本框高度
         messageInput.addEventListener('input', adjustTextareaHeight);
@@ -557,15 +572,75 @@
                         reader.read().then(({ done, value }) => {
                             if (done) {
                                 console.log('Stream complete');
+                                // 最后一次完整解析，确保所有内容都被正确渲染
+                                const finalHtml = parseMarkdown(accumulatedResponse);
+                                responseTextElement.innerHTML = finalHtml;
                                 return;
                             }
 
                             // 解码新的流数据块
                             const chunk = decoder.decode(value, { stream: true });
-                            accumulatedResponse += chunk;
 
-                            // 更新UI显示
-                            responseTextElement.textContent = accumulatedResponse;
+                            // 解析JSON格式的响应 - 优化处理data:前缀格式
+                            try {
+                                // 处理可能的不完整JSON或多个JSON对象
+                                const cleanChunk = chunk.trim();
+
+                                // 处理可能包含多个data:块的情况
+                                const dataBlocks = cleanChunk.split('data:');
+
+                                for (let block of dataBlocks) {
+                                    block = block.trim();
+                                    if (block) { // 跳过空块
+                                        try {
+                                            // 尝试解析每个data块中的JSON
+                                            const parsedData = JSON.parse(block);
+
+                                            // 验证数据格式并提取text字段
+                                            if (parsedData.type === 'text' && parsedData.text !== undefined) {
+                                                accumulatedResponse += parsedData.text;
+
+                                                // 使用Markdown解析函数处理响应内容
+                                                const htmlContent = parseMarkdown(accumulatedResponse);
+                                                responseTextElement.innerHTML = htmlContent;
+                                            }
+                                        } catch (jsonError) {
+                                            // 单个块解析失败，尝试提取可能的JSON对象
+                                            try {
+                                                const jsonObjects = extractJsonObjects(block);
+
+                                                if (jsonObjects.length > 0) {
+                                                    // 处理找到的每个JSON对象
+                                                    for (const jsonStr of jsonObjects) {
+                                                        try {
+                                                            const parsedObj = JSON.parse(jsonStr);
+                                                            if (parsedObj.type === 'text' && parsedObj.text !== undefined) {
+                                                                accumulatedResponse += parsedObj.text;
+                                                            }
+                                                        } catch (objError) {
+                                                            // 忽略单个对象解析错误
+                                                        }
+                                                    }
+
+                                                    // 如果有有效的内容被添加，更新UI
+                                                    if (jsonObjects.length > 0) {
+                                                        const htmlContent = parseMarkdown(accumulatedResponse);
+                                                        responseTextElement.innerHTML = htmlContent;
+                                                    }
+                                                }
+                                            } catch (extractError) {
+                                                // 忽略提取错误，继续处理下一个块
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (e) {
+                                // 静默失败，确保流式传输不中断
+                                console.warn('Error processing stream chunk:', e);
+                            }
+
+                            // 自动滚动到底部
+                            responseTextElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
                             // 继续读取流
                             readStream();
@@ -596,17 +671,195 @@
             }
         }
 
-        // 生成示例回复
-        function getSampleResponse(message) {
-            const responses = [
-                "感谢你的提问！关于这个问题，我可以为你提供一些详细的信息和建议。",
-                "你提出的这个问题很有深度。让我从几个方面来为你解答。",
-                "我理解你的需求了。根据我的分析，以下是一些可能的解决方案。",
-                "这个问题很有趣！让我整理一下思路，为你提供一个全面的回答。",
-                "谢谢你的消息。关于这个话题，我可以分享一些实用的信息和技巧。"
-            ];
+        // 从字符串中提取有效的JSON对象
+        function extractJsonObjects(text) {
+            const result = [];
+            let braceCount = 0;
+            let startIndex = -1;
+            let inString = false;
+            let escapeNext = false;
 
-            return responses[Math.floor(Math.random() * responses.length)];
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+
+                // 处理字符串内的情况
+                if (char === '"' && !escapeNext) {
+                    inString = !inString;
+                }
+
+                // 处理转义字符
+                if (char === '\\') {
+                    escapeNext = !escapeNext;
+                } else {
+                    escapeNext = false;
+                }
+
+                // 不在字符串内时处理括号
+                if (!inString) {
+                    if (char === '{') {
+                        braceCount++;
+                        if (braceCount === 1) {
+                            startIndex = i;
+                        }
+                    } else if (char === '}') {
+                        braceCount--;
+                        if (braceCount === 0 && startIndex !== -1) {
+                            // 找到一个完整的JSON对象
+                            const jsonStr = text.substring(startIndex, i + 1);
+                            result.push(jsonStr);
+                            startIndex = -1;
+                        } else if (braceCount < 0) {
+                            // 括号不匹配，重置
+                            braceCount = 0;
+                            startIndex = -1;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        // 增强的Markdown解析函数
+        function parseMarkdown(text) {
+            // 预处理：处理文本中可能存在的特殊格式问题
+            let processedText = text;
+
+            // 预处理1: 在---、***、___等分割线前添加换行符，确保它们能被正确识别
+            processedText = processedText.replace(/([^\n])---([^\n])/g, '$1\n---\n$2');
+            processedText = processedText.replace(/([^\n])\*\*\*([^\n])/g, '$1\n***\n$2');
+            processedText = processedText.replace(/([^\n])___([^\n])/g, '$1\n___\n$2');
+
+            // 预处理2: 在标题标记前添加换行符，确保标题能被正确识别
+            processedText = processedText.replace(/([^\n#])\s*(#{1,6})\s+/g, '$1\n$2 ');
+
+            // 预处理3: 在列表项前添加换行符
+            processedText = processedText.replace(/([^\n-])\s*-\s+/g, '$1\n- ');
+            // 预处理4: 在数字列表项前添加换行符
+            processedText = processedText.replace(/([^\n\d])\s*(\d+)\.\s+/g, '$1\n$2. ');
+
+            // 转义HTML特殊字符
+            let html = processedText
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+
+            // 解析Markdown语法 - 按照优先级顺序处理
+            // 1. 代码块（最高优先级）
+            html = html.replace(/```([\s\S]*?)```/g, function (match, code) {
+                return `<pre><code>${code}</code></pre>`;
+            });
+
+            // 2. 行内代码
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+            // 3. 标题 - 更宽松的匹配，允许不在行首的标题
+            html = html.replace(/(^|\n)(#{1,6})\s+([^\n]+)/g, function (match, newline, hashes, content) {
+                const level = hashes.length;
+                return `${newline}<h${level}>${content}</h${level}>`;
+            });
+
+            // 4. 链接
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+            // 5. 粗体和斜体组合 (先处理粗体)
+            html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+
+            // 6. 斜体
+            html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            html = html.replace(/_([^_]+)_/g, '<em>$1</em>');
+
+            // 7. 列表项处理
+            // 先将连续的无序列表项分组
+            const unorderedListGroups = [];
+            let currentUnorderedList = [];
+            // 将连续的有序列表项分组
+            const orderedListGroups = [];
+            let currentOrderedList = [];
+            
+            const lines = html.split('\n');
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                // 处理无序列表项
+                if (line.startsWith('- ')) {
+                    // 如果当前正在处理有序列表，先保存
+                    if (currentOrderedList.length > 0) {
+                        orderedListGroups.push(currentOrderedList);
+                        currentOrderedList = [];
+                    }
+                    currentUnorderedList.push(line);
+                } 
+                // 处理有序列表项（数字. 格式）
+                else if (line.match(/^\d+\.\s/)) {
+                    // 如果当前正在处理无序列表，先保存
+                    if (currentUnorderedList.length > 0) {
+                        unorderedListGroups.push(currentUnorderedList);
+                        currentUnorderedList = [];
+                    }
+                    currentOrderedList.push(line);
+                } 
+                else {
+                    // 保存当前列表
+                    if (currentUnorderedList.length > 0) {
+                        unorderedListGroups.push(currentUnorderedList);
+                        currentUnorderedList = [];
+                    }
+                    if (currentOrderedList.length > 0) {
+                        orderedListGroups.push(currentOrderedList);
+                        currentOrderedList = [];
+                    }
+                }
+            }
+            
+            // 保存剩余的列表
+            if (currentUnorderedList.length > 0) {
+                unorderedListGroups.push(currentUnorderedList);
+            }
+            if (currentOrderedList.length > 0) {
+                orderedListGroups.push(currentOrderedList);
+            }
+
+            // 替换无序列表项
+            for (const group of unorderedListGroups) {
+                const listHtml = group.map(item => `<li>${item.substring(2)}</li>`).join('');
+                const groupText = group.join('\n');
+                html = html.replace(groupText, `<ul>${listHtml}</ul>`);
+            }
+            
+            // 替换有序列表项
+            for (const group of orderedListGroups) {
+                // 提取数字后的内容，去掉数字和点
+                const listHtml = group.map(item => {
+                    const content = item.replace(/^\d+\.\s+/, '');
+                    return `<li>${content}</li>`;
+                }).join('');
+                const groupText = group.join('\n');
+                html = html.replace(groupText, `<ol>${listHtml}</ol>`);
+            }
+
+            // 8. 处理水平分割线 - 更宽松的匹配，不仅限于行首
+            html = html.replace(/(^|\n)\s*[-*_]{3,}\s*(\n|$)/g, '$1<hr>$2');
+
+            // 9. 段落处理 - 避免在已有的HTML标签内创建段落
+            // 先分割文本为段落，再为每段添加p标签
+            const paragraphs = html.split('\n\n');
+            const formattedParagraphs = paragraphs.map(paragraph => {
+                // 如果段落已经以HTML标签开始，不添加p标签
+                if (paragraph.trim().match(/^\s*<[a-z]/i)) {
+                    return paragraph;
+                }
+                return `<p>${paragraph}</p>`;
+            });
+            html = formattedParagraphs.join('');
+
+            // 10. 保留换行符，但避免过多的br标签
+            html = html.replace(/\n/g, '<br>');
+
+            return html;
         }
 
         // HTML转义，防止XSS
@@ -624,6 +877,18 @@
 
         // 初始滚动到底部
         scrollToBottom();
+
+        // 2秒后自动发送消息
+        setTimeout(() => {
+            const message = messageInput.value.trim();
+            if (message) {
+                // 模拟点击发送按钮
+                const sendButton = chatForm.querySelector('button[type="submit"]');
+                if (sendButton) {
+                    sendButton.click();
+                }
+            }
+        }, 2000);
     </script>
 </body>
 
