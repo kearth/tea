@@ -305,7 +305,7 @@
         .icon-send {
             width: 16px;
             height: 16px;
-            fill: currentColor;
+            fill: white;
         }
     </style>
 
@@ -348,8 +348,8 @@
                         <button type="submit"
                             class="absolute right-3 bottom-3 w-8 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors">
                             <svg class="icon-send" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="#000000" stroke-linecap="round" stroke-linejoin="round"
-                                id="Send--Streamline-Tabler" height="24" width="24">
+                                stroke-linecap="round" stroke-linejoin="round" id="Send--Streamline-Tabler" height="24"
+                                width="24">
                                 <path d="M10 14 21 3" stroke-width="2"></path>
                                 <path d="m21 3 -6.5 18a0.55 0.55 0 0 1 -1 0L10 14l-7 -3.5a0.55 0.55 0 0 1 0 -1L21 3"
                                     stroke-width="2"></path>
@@ -737,6 +737,8 @@
             processedText = processedText.replace(/([^\n-])\s*-\s+/g, '$1\n- ');
             // 预处理4: 在数字列表项前添加换行符
             processedText = processedText.replace(/([^\n\d])\s*(\d+)\.\s+/g, '$1\n$2. ');
+            // 预处理5: 在子列表项（•开头）前添加换行符
+            processedText = processedText.replace(/([^\n•])\s*•\s+/g, '$1\n• ');
 
             // 转义HTML特殊字符
             let html = processedText
@@ -772,64 +774,57 @@
             html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
             html = html.replace(/_([^_]+)_/g, '<em>$1</em>');
 
-            // 7. 列表项处理
-            // 先将连续的无序列表项分组
+            // 7. 列表项处理 - 支持嵌套列表和缩进
+            // 1. 首先处理子列表项（•开头），为它们添加适当的缩进样式
+            html = html.replace(/(^|\n)\s*•\s+([^\n]+)/g, '$1<div style="margin-left: 2em;">• $2</div>');
+
+            // 2. 处理无序列表项（-开头）
             const unorderedListGroups = [];
             let currentUnorderedList = [];
-            // 将连续的有序列表项分组
-            const orderedListGroups = [];
-            let currentOrderedList = [];
-            
             const lines = html.split('\n');
 
+            // 找出所有无序列表项
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
-                // 处理无序列表项
                 if (line.startsWith('- ')) {
-                    // 如果当前正在处理有序列表，先保存
-                    if (currentOrderedList.length > 0) {
-                        orderedListGroups.push(currentOrderedList);
-                        currentOrderedList = [];
-                    }
                     currentUnorderedList.push(line);
-                } 
-                // 处理有序列表项（数字. 格式）
-                else if (line.match(/^\d+\.\s/)) {
-                    // 如果当前正在处理无序列表，先保存
+                } else {
                     if (currentUnorderedList.length > 0) {
                         unorderedListGroups.push(currentUnorderedList);
                         currentUnorderedList = [];
-                    }
-                    currentOrderedList.push(line);
-                } 
-                else {
-                    // 保存当前列表
-                    if (currentUnorderedList.length > 0) {
-                        unorderedListGroups.push(currentUnorderedList);
-                        currentUnorderedList = [];
-                    }
-                    if (currentOrderedList.length > 0) {
-                        orderedListGroups.push(currentOrderedList);
-                        currentOrderedList = [];
                     }
                 }
             }
-            
-            // 保存剩余的列表
             if (currentUnorderedList.length > 0) {
                 unorderedListGroups.push(currentUnorderedList);
-            }
-            if (currentOrderedList.length > 0) {
-                orderedListGroups.push(currentOrderedList);
             }
 
             // 替换无序列表项
             for (const group of unorderedListGroups) {
                 const listHtml = group.map(item => `<li>${item.substring(2)}</li>`).join('');
                 const groupText = group.join('\n');
-                html = html.replace(groupText, `<ul>${listHtml}</ul>`);
+                html = html.replace(groupText, `<ul style="list-style-position: outside; margin-left: 1.5em; padding-left: 0;">${listHtml}</ul>`);
             }
-            
+
+            // 3. 处理有序列表项（数字. 格式）
+            const orderedListGroups = [];
+            let currentOrderedList = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line.match(/^\d+\.\s/)) {
+                    currentOrderedList.push(line);
+                } else {
+                    if (currentOrderedList.length > 0) {
+                        orderedListGroups.push(currentOrderedList);
+                        currentOrderedList = [];
+                    }
+                }
+            }
+            if (currentOrderedList.length > 0) {
+                orderedListGroups.push(currentOrderedList);
+            }
+
             // 替换有序列表项
             for (const group of orderedListGroups) {
                 // 提取数字后的内容，去掉数字和点
@@ -838,7 +833,7 @@
                     return `<li>${content}</li>`;
                 }).join('');
                 const groupText = group.join('\n');
-                html = html.replace(groupText, `<ol>${listHtml}</ol>`);
+                html = html.replace(groupText, `<ol style="list-style-position: outside; margin-left: 1.5em; padding-left: 0;">${listHtml}</ol>`);
             }
 
             // 8. 处理水平分割线 - 更宽松的匹配，不仅限于行首
