@@ -13,6 +13,9 @@ help:
 	@echo "  make update-minor  - 自增次版本号 (y)"
 	@echo "  make update-patch  - 自增修订版本号 (z)"
 	@echo "  make build-tf      - 构建tf工具二进制文件"
+	@echo "  make git-add       - 添加所有修改的文件到Git暂存区"
+	@echo "  make git-commit    - 使用当前版本号作为提交信息"
+	@echo "  make git-all       - 组合添加并提交操作"
 	@echo "  make help          - 显示帮助信息"
 
 # 显示当前版本号
@@ -68,3 +71,23 @@ build-tf:
 	@echo "正在构建tf工具二进制文件..."
 	@cd cli/cmd/tf && go build -o ../../../bin/tf main.go
 	@echo "tf工具构建成功! 二进制文件位于: $(PWD)/bin/tf"
+
+# 添加所有修改的文件到Git暂存区
+git-add:
+	@echo "正在添加所有修改的文件到Git暂存区..."
+	@git add .
+	@echo "添加完成！"
+
+# 使用当前版本号作为提交信息
+git-commit:
+	@echo "正在提交更改..."
+	@CURRENT_VERSION=$$(grep -o 'version = "[0-9\\.]*"' tea.go | grep -o '[0-9\\.]*'); \
+	git commit -m "$$CURRENT_VERSION"
+	@echo "提交完成！"
+
+# 组合添加并提交操作
+git-all:
+	@echo "执行添加并提交操作..."
+	@$(MAKE) git-add
+	@$(MAKE) git-commit
+	@echo "所有操作完成！"
