@@ -1,6 +1,0 @@
-# Tea Framework 
-# 配置
-[config]
-server = "server.toml"
-log = "log.toml"
-var = "var.toml"

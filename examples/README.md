@@ -1,22 +1,145 @@
 
 
-| 目录/文件名称 | 说明       | 描述                                                                               |
-| ------------- | ---------- | ---------------------------------------------------------------------------------- |
-| api           | 对外接口   | 对外提供服务的输入/输出数据结构定义。考虑到版本管理需要，往往以api/xxx/v1...存在。 |
-| script        | 工具脚本   | 存放项目开发工具、脚本等内容。例如，CLI工具的配置，各种shell/bat脚本等文件。       |
-| internal      | 内部逻辑   | 业务逻辑存放目录。通过Golang internal特性对外部隐藏可见性。                        |
-| - lib         | 内部库     | 通用方法、全局对象、外部对象初始化等                                               |
-| - consts      | 常量定义   | 项目所有常量定义。                                                                 |
-| - controller  | 接口处理   | 接收/解析用户输入参数的入口/接口层。                                               |
-| - dao         | 数据访问   | 数据访问对象，这是一层抽象对象，用于和底层数据库交互，仅包含最基础的 CURD 方法     |
-| - model       | 结构模型   | 数据结构管理模块，管理数据实体对象，以及输入与输出数据结构定义。                   |
-| - service     | 业务接口   | 用于业务模块解耦的接口定义层。具体的接口实现在logic中进行注入。                    |
-| resource      | 静态资源   | 静态资源文件。这些文件往往可以通过 资源打包/镜像编译 的形式注入到发布文件中。      |
-| deploy        | 部署文件   | 编译、部署、运行相关的文件                                                         |
-| go.mod        | 依赖管理   | 使用Go Module包管理的依赖描述文件。                                                |
-| main.go       | 入口文件   | 程序入口文件。                                                                     |
-| config        | 配置管理   | 配置文件存放目录。                                                                 |
-| tmp           | 临时文件   | 临时文件存放目录。                                                                 |
-| data          | 数据文件   | 存放数据文件，例如一些字典                                                         |
-| log           | 日志文件   | 存放日志文件。                                                                     |
-| bin           | 编译后文件 | 存放编译后的可执行文件。                                                           |
+# Tea Framework Examples
+
+## 项目简介
+
+本目录包含 Tea Framework 的完整示例项目，展示了如何使用 Tea Framework 构建 Web 应用。Tea Framework 是一个基于 Go 语言的轻量级 Web 框架，提供了简洁的 API 和丰富的功能。
+
+## 目录结构
+
+```
+examples/
+├── app/                    # 应用程序代码
+│   ├── api/                # API 接口实现
+│   │   └── demo/           # 示例 API
+│   ├── infra/              # 基础设施层
+│   │   ├── ecode/          # 错误码定义
+│   │   ├── out/            # 输出工具
+│   │   └── structs/        # 数据结构
+│   ├── load/               # 加载器
+│   └── page/               # 页面处理
+│       └── demo/           # 示例页面
+├── config/                 # 配置文件
+│   ├── server.toml         # 服务器配置
+│   ├── log.toml            # 日志配置
+│   └── var.toml            # 变量配置
+├── manifest/               # 应用清单
+│   ├── cmd/                # 命令入口
+│   │   └── server/         # 服务器入口
+│   │       ├── main.go     # 主函数
+│   │       ├── server.toml # 命令特定配置
+│   │       └── var.toml    # 命令特定变量
+│   └── bin/                # 编译输出目录
+├── resource/               # 资源文件
+│   ├── css/                # CSS 样式
+│   ├── public/             # 公共静态资源
+│   │   ├── html/           # HTML 页面
+│   │   └── file/           # 示例文件
+│   └── template/           # 模板文件
+├── go.mod                  # Go 模块文件
+├── go.sum                  # 依赖校验文件
+└── README.md               # 项目说明文件
+```
+
+## 功能说明
+
+### 1. API 接口示例
+
+框架提供了简洁的 API 接口定义和处理方式，支持 RESTful API 开发。示例包含：
+
+- **Hello API**: 简单的问候接口，展示基本的请求响应处理
+- **文件下载 API**: 展示如何处理文件下载
+- **流式响应 API**: 展示如何实现 SSE (Server-Sent Events) 流式响应
+
+### 2. 页面处理示例
+
+框架支持 HTML 页面渲染，示例包含：
+
+- **Welcome 页面**: 展示基本的 HTML 页面渲染
+- **Stream 页面**: 展示与流式 API 交互的前端实现
+
+### 3. 中间件支持
+
+框架提供了灵活的中间件机制，示例中使用了响应处理中间件。
+
+### 4. 静态文件服务
+
+支持静态文件路由配置，可轻松提供 CSS、JavaScript 等静态资源。
+
+### 5. 配置管理
+
+使用 TOML 格式的配置文件，支持环境变量和配置覆盖。
+
+## 快速开始
+
+### 1. 安装依赖
+
+```bash
+go mod tidy
+```
+
+### 2. 运行示例
+
+```bash
+cd examples
+cd manifest/cmd/server
+go run main.go
+```
+
+或直接运行：
+
+```bash
+cd examples
+tea run
+```
+
+### 3. 访问示例
+
+启动服务后，可以访问以下地址：
+
+- 欢迎页面: http://localhost:9106/page/demo/v2/welcome
+- 流式示例: http://localhost:9106/page/demo/v1/stream
+- API 接口: http://localhost:9106/api/demo/v1/say (POST)
+
+## 如何扩展
+
+### 添加新的 API
+
+1. 在 `app/api/` 目录下创建新的 API 处理函数
+2. 在 `app/load/router.go` 中注册新的路由
+
+### 添加新的页面
+
+1. 在 `app/page/` 目录下创建新的页面处理函数
+2. 在 `resource/public/html/` 目录下创建对应的 HTML 文件
+3. 在 `app/load/router.go` 中注册新的路由
+
+### 自定义中间件
+
+在 `app/load/router.go` 中使用 `AddMiddleware` 方法添加自定义中间件。
+
+## 配置说明
+
+主要配置文件位于 `config/server.toml`，包含以下关键配置：
+
+```toml
+# 服务配置
+[server]
+name = "Tea Demo"          # 服务器名称
+version = "1.0.0"          # 服务器版本
+mode = "normal"            # 服务器运行模式 - debug, normal
+ip = "127.0.0.1"           # 服务器IP地址
+port = 9106                # 服务器端口号
+root_dir = "."             # 服务器根目录
+resources_dir = "resource" # 服务器资源目录
+server_type = "http"       # 服务器类型 - 默认 http
+```
+
+## 框架版本
+
+当前示例使用的 Tea Framework 版本为 0.0.9。
+
+## 许可证
+
+请参考项目根目录的许可证文件。
