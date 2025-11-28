@@ -6,17 +6,19 @@ all: help
 # 帮助信息
 help:
 	@echo "Tea Framework 命令列表:"
-	@echo "  make run-example   - 运行示例项目"
-	@echo "  make stop-example  - 停止示例项目（如果正在运行）"
-	@echo "  make show-version  - 显示当前框架版本号"
-	@echo "  make update-major  - 自增主版本号 (x)"
-	@echo "  make update-minor  - 自增次版本号 (y)"
-	@echo "  make update-patch  - 自增修订版本号 (z)"
-	@echo "  make build-tf      - 构建tf工具二进制文件"
-	@echo "  make git-add       - 添加所有修改的文件到Git暂存区"
-	@echo "  make git-commit    - 使用当前版本号作为提交信息"
-	@echo "  make git-all       - 组合添加并提交操作"
-	@echo "  make help          - 显示帮助信息"
+	@echo "  make run-example       - 运行示例项目"
+	@echo "  make stop-example      - 停止示例项目（如果正在运行）"
+	@echo "  make show-version      - 显示当前框架版本号"
+	@echo "  make update-major      - 自增主版本号 (x)"
+	@echo "  make update-minor      - 自增次版本号 (y)"
+	@echo "  make update-patch      - 自增修订版本号 (z)"
+	@echo "  make build-tf          - 构建tf工具二进制文件"
+	@echo "  make git-add           - 添加所有修改的文件到Git暂存区"
+	@echo "  make git-commit        - 使用当前版本号作为提交信息"
+	@echo "  make git-all           - 组合添加并提交操作"
+	@echo "  make git-tag           - 为当前提交创建与版本号相同的标签"
+	@echo "  make git-tag-and-push  - 创建标签并推送到远程仓库"
+	@echo "  make help              - 显示帮助信息"
 
 # 显示当前版本号
 show-version:
@@ -95,3 +97,35 @@ git-all:
 	@$(MAKE) git-add
 	@$(MAKE) git-commit
 	@echo "所有操作完成！"
+
+# 为当前提交创建与版本号相同的标签
+git-tag:
+	@echo "创建Git标签..."
+	@CURRENT_VERSION=$$(grep -o 'version = "[0-9\\.]*"' tea.go | grep -o '[0-9\\.]*'); \
+	if git tag -l "$$CURRENT_VERSION" > /dev/null 2>&1; then \
+	  echo "标签 $$CURRENT_VERSION 已存在！"; \
+	  echo "使用 make git-tag -f 覆盖现有标签"; \
+	else \
+	  git tag "$$CURRENT_VERSION"; \
+	  echo "标签 $$CURRENT_VERSION 创建成功！"; \
+	  echo "使用 make git-tag-and-push 推送标签到远程仓库"; \
+	fi
+
+# 强制创建标签（覆盖现有标签）
+git-tag-force:
+	@echo "强制创建Git标签..."
+	@CURRENT_VERSION=$$(grep -o 'version = "[0-9\\.]*"' tea.go | grep -o '[0-9\\.]*'); \
+	git tag -f "$$CURRENT_VERSION"; \
+	echo "标签 $$CURRENT_VERSION 创建成功（已覆盖）！"
+
+# 创建标签并推送到远程仓库
+git-tag-and-push:
+	@echo "创建标签并推送..."
+	@CURRENT_VERSION=$$(grep -o 'version = "[0-9\\.]*"' tea.go | grep -o '[0-9\\.]*'); \
+	if git tag -l "$$CURRENT_VERSION" > /dev/null 2>&1; then \
+	  git push origin "$$CURRENT_VERSION"; \
+	else \
+	  git tag "$$CURRENT_VERSION"; \
+	  git push origin "$$CURRENT_VERSION"; \
+	fi; \
+	echo "标签 $$CURRENT_VERSION 已推送至远程仓库！"
