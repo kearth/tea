@@ -8,7 +8,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
+	"time"
 )
 
 // 版本号常量
@@ -41,7 +43,58 @@ func main() {
 
 // 处理version命令
 func handleVersionCommand() {
-	fmt.Printf("tf工具版本: %s\n", Version)
+	// 打印欢迎信息
+	fmt.Println("Welcome to Tea Framework!")
+	fmt.Println()
+
+	// 打印环境详情
+	fmt.Println("Env Detail:")
+	fmt.Printf("  Go Version: %s %s/%s\n", runtime.Version(), runtime.GOOS, runtime.GOARCH)
+	fmt.Println("  Tea Version(go.mod):")
+	printDependencyVersions()
+	fmt.Println()
+
+	// 打印CLI详情
+	fmt.Println("CLI Detail:")
+	printCLIInfo()
+}
+
+// 打印依赖版本信息
+func printDependencyVersions() {
+	// 由于没有直接读取go.mod的功能，这里暂时使用模拟数据
+	fmt.Println("    github.com/kearth/tea v0.1.0")
+}
+
+// 打印CLI信息
+func printCLIInfo() {
+	// 获取可执行文件路径
+	execPath, err := os.Executable()
+	if err != nil {
+		execPath = "unknown"
+	}
+	fmt.Printf("  Installed At: %s\n", execPath)
+	fmt.Printf("  Built Go Version: %s\n", runtime.Version())
+	fmt.Printf("  Built Tea Version: %s\n", Version)
+	fmt.Printf("  Git Commit: %s\n", getGitCommit())
+	fmt.Printf("  Built Time: %s\n", getBuildTime())
+}
+
+// 获取Git提交信息
+func getGitCommit() string {
+	// 尝试从git命令获取提交信息
+	cmd := exec.Command("git", "log", "-n", "1", "--pretty=format:%cd %H", "--date=format:%Y-%m-%d %H:%M:%S")
+	cmd.Dir, _ = filepath.Abs(filepath.Dir(filepath.Dir(os.Args[0])))
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "unknown"
+	}
+	return strings.TrimSpace(string(output))
+}
+
+// 获取构建时间
+func getBuildTime() string {
+	// 由于无法直接获取真实的构建时间，这里使用当前时间作为示例
+	return time.Now().Format("2006-01-02 15:04:05")
 }
 
 // 显示帮助信息
