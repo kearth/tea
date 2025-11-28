@@ -82,8 +82,12 @@ git-add:
 git-commit:
 	@echo "正在提交更改..."
 	@CURRENT_VERSION=$$(grep -o 'version = "[0-9\\.]*"' tea.go | grep -o '[0-9\\.]*'); \
-	git commit -m "$$CURRENT_VERSION"
-	@echo "提交完成！"
+	if git diff --staged --quiet; then \
+	  echo "没有任何更改需要提交！"; \
+	else \
+	  git commit -m "$$CURRENT_VERSION"; \
+	  echo "提交完成！"; \
+	fi
 
 # 组合添加并提交操作
 git-all:
