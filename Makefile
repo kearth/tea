@@ -76,6 +76,7 @@ build-tf:
 	@echo "当前tea版本: v$(VERSION)"
 	@cd cli/cmd/tf && go build -ldflags="-X main.BuildGoVersion=$$(go version | awk '{print $$3}') -X main.BuildTeaVersion=v$(VERSION) -X 'main.BuildGitCommit=$$(git log -n 1 --pretty=format:"%cd %H" --date=format:"%Y-%m-%d %H:%M:%S")' -X 'main.BuildTime=$$(date +"%Y-%m-%d %H:%M:%S")'" -o ../../../cli/bin/tf main.go
 	@echo "tf工具构建成功! 二进制文件位于: $(PWD)/cli/bin/tf"
+	@echo "可用命令: version, init, update, help"
 
 # 添加所有修改的文件到Git暂存区
 git-add:
@@ -124,11 +125,10 @@ git-tag-force:
 # 创建标签并推送到远程仓库
 git-tag-and-push:
 	@echo "创建标签并推送..."
-	@CURRENT_VERSION=$$(grep -o 'version = "[0-9\\.]*"' tea.go | grep -o '[0-9\\.]*'); \
-	if git tag -l "$$CURRENT_VERSION" > /dev/null 2>&1; then \
-	  git push origin "$$CURRENT_VERSION"; \
-	else \
-	  git tag "$$CURRENT_VERSION"; \
-	  git push origin "$$CURRENT_VERSION"; \
-	fi; \
-	echo "标签 $$CURRENT_VERSION 已推送至远程仓库！"
+	@CURRENT_VERSION=$$(grep -o 'version = "[0-9\\.]*"' tea.go | grep -o '[0-9\\.]*') && \
+	TAG_NAME=v$$CURRENT_VERSION && \
+	echo "尝试创建标签: $$TAG_NAME" && \
+	git tag "$$TAG_NAME" 2>/dev/null && echo "标签创建成功: $$TAG_NAME" || echo "标签创建失败，可能已存在: $$TAG_NAME" && \
+	echo "尝试推送到远程仓库..." && \
+	git push origin "$$TAG_NAME" 2>/dev/null && echo "标签推送成功: $$TAG_NAME" || echo "标签推送失败: $$TAG_NAME" && \
+	git tag | grep "$$TAG_NAME"
