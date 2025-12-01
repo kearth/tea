@@ -14,9 +14,34 @@ Tea是一个轻量级、高性能的Go语言Web框架，专为快速构建HTTP�
 
 ## 安装
 
+### 安装框架库
+
 ```bash
 go get github.com/kearth/tea
 ```
+
+### 安装命令行工具 (tf)
+
+```bash
+go install github.com/kearth/tea/cli/cmd/tf@latest
+```
+
+安装完成后，您可以通过以下命令验证tf工具是否正确安装：
+
+```bash
+tf version
+```
+
+### 使用tf工具初始化项目
+
+```bash
+tf init myproject
+```
+
+参数说明：
+- `<name>`: 项目名称（必需）
+- `--output, -o`: 输出目录（可选，默认为当前目录下的项目名称）
+- `--module, -m`: Go模块路径（可选，默认为'example.com/' + 项目名称）
 
 ## 快速开始
 

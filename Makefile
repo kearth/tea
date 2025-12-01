@@ -1,5 +1,8 @@
 # Tea Framework Makefile
 
+# 定义当前版本号
+VERSION := $(shell grep -o 'version = "[0-9\\.]*"' tea.go | grep -o '[0-9\\.]*')
+
 # 默认目标
 all: help
 
@@ -22,8 +25,7 @@ help:
 
 # 显示当前版本号
 show-version:
-	@echo "当前框架版本号:"
-	@grep -o 'version = "[0-9\\.]*"' tea.go | grep -o '[0-9\\.]*'
+	@echo "当前tea版本: v$(VERSION)"
 
 # 运行示例项目
 run-example: stop-example
@@ -71,8 +73,9 @@ update-patch:
 # 构建tf工具二进制文件
 build-tf:
 	@echo "正在构建tf工具二进制文件..."
-	@cd cli/cmd/tf && go build -o ../../../bin/tf main.go
-	@echo "tf工具构建成功! 二进制文件位于: $(PWD)/bin/tf"
+	@echo "当前tea版本: v$(VERSION)"
+	@cd cli/cmd/tf && go build -ldflags="-X main.BuildGoVersion=$$(go version | awk '{print $$3}') -X main.BuildTeaVersion=v$(VERSION) -X 'main.BuildGitCommit=$$(git log -n 1 --pretty=format:"%cd %H" --date=format:"%Y-%m-%d %H:%M:%S")' -X 'main.BuildTime=$$(date +"%Y-%m-%d %H:%M:%S")'" -o ../../../cli/bin/tf main.go
+	@echo "tf工具构建成功! 二进制文件位于: $(PWD)/cli/bin/tf"
 
 # 添加所有修改的文件到Git暂存区
 git-add:

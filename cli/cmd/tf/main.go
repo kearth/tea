@@ -18,6 +18,18 @@ const (
 	Version = "v0.1.0"
 )
 
+// 构建时注入的信息
+var (
+	// BuildGoVersion 将在构建时通过 ldflags 注入
+	BuildGoVersion = runtime.Version() // 默认使用运行时版本，构建时会被覆盖
+	// BuildTeaVersion 将在构建时通过 ldflags 注入，存储编译时tea库的版本
+	BuildTeaVersion = Version // 默认使用当前定义的版本，构建时会被覆盖
+	// BuildGitCommit 将在构建时通过 ldflags 注入，存储构建时的git提交信息
+	BuildGitCommit = "unknown" // 默认值，构建时会被覆盖
+	// BuildTime 将在构建时通过 ldflags 注入，存储构建时间
+	BuildTime = time.Now().Format("2006-01-02 15:04:05") // 默认使用当前时间，构建时会被覆盖
+)
+
 func main() {
 	// 如果没有提供参数，显示帮助信息
 	if len(os.Args) == 1 {
@@ -44,14 +56,14 @@ func main() {
 // 处理version命令
 func handleVersionCommand() {
 	// 打印欢迎信息
+	fmt.Println()
 	fmt.Println("Welcome to Tea Framework!")
 	fmt.Println()
 
 	// 打印环境详情
 	fmt.Println("Env Detail:")
 	fmt.Printf("  Go Version: %s %s/%s\n", runtime.Version(), runtime.GOOS, runtime.GOARCH)
-	fmt.Println("  Tea Version(go.mod):")
-	printDependencyVersions()
+	fmt.Printf("  Tea Framework Version(go.mod):%s\n", printDependencyVersions())
 	fmt.Println()
 
 	// 打印CLI详情
@@ -60,9 +72,25 @@ func handleVersionCommand() {
 }
 
 // 打印依赖版本信息
-func printDependencyVersions() {
-	// 由于没有直接读取go.mod的功能，这里暂时使用模拟数据
-	fmt.Println("    github.com/kearth/tea v0.1.0")
+func printDependencyVersions() string {
+	var out string
+	// 使用go list命令检查本地是否安装了tea模块及版本
+	cmd := exec.Command("go", "list", "-m", "github.com/kearth/tea@latest")
+	output, err := cmd.CombinedOutput()
+	versionInfo := strings.TrimSpace(string(output))
+
+	if err != nil || versionInfo == "" {
+		versionInfo = "未安装"
+	}
+
+	// 解析输出，提取模块路径和版本
+	parts := strings.Fields(versionInfo)
+	if len(parts) >= 2 {
+		out = fmt.Sprintf(" %s", parts[1])
+	} else {
+		out = fmt.Sprintf(" %s", versionInfo)
+	}
+	return out
 }
 
 // 打印CLI信息
@@ -73,28 +101,10 @@ func printCLIInfo() {
 		execPath = "unknown"
 	}
 	fmt.Printf("  Installed At: %s\n", execPath)
-	fmt.Printf("  Built Go Version: %s\n", runtime.Version())
-	fmt.Printf("  Built Tea Version: %s\n", Version)
-	fmt.Printf("  Git Commit: %s\n", getGitCommit())
-	fmt.Printf("  Built Time: %s\n", getBuildTime())
-}
-
-// 获取Git提交信息
-func getGitCommit() string {
-	// 尝试从git命令获取提交信息
-	cmd := exec.Command("git", "log", "-n", "1", "--pretty=format:%cd %H", "--date=format:%Y-%m-%d %H:%M:%S")
-	cmd.Dir, _ = filepath.Abs(filepath.Dir(filepath.Dir(os.Args[0])))
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return "unknown"
-	}
-	return strings.TrimSpace(string(output))
-}
-
-// 获取构建时间
-func getBuildTime() string {
-	// 由于无法直接获取真实的构建时间，这里使用当前时间作为示例
-	return time.Now().Format("2006-01-02 15:04:05")
+	fmt.Printf("  Built Go Version: %s\n", BuildGoVersion)
+	fmt.Printf("  Built Tea Version: %s\n", BuildTeaVersion)
+	fmt.Printf("  Git Commit: %s\n", BuildGitCommit)
+	fmt.Printf("  Built Time: %s\n", BuildTime)
 }
 
 // 显示帮助信息
@@ -180,12 +190,34 @@ func initProject(projectName, destDir, modulePath string) error {
 		return fmt.Errorf("无法获取可执行文件路径: %v", err)
 	}
 
-	// 从可执行文件路径计算到examples目录的路径
-	// 可执行文件位于bin/tf，需要回到tea目录，然后进入examples
-	srcDir := filepath.Join(filepath.Dir(filepath.Dir(execPath)), "examples")
-	srcDir, err = filepath.Abs(srcDir)
-	if err != nil {
-		return fmt.Errorf("无法解析examples目录路径: %v", err)
+	// 构建源目录路径的多种可能位置
+	// 尝试多种路径组合，确保在本地开发和go install安装时都能找到examples目录
+	srcDirs := []string{
+		// 开发环境路径: bin/tf -> tea/examples
+		filepath.Join(filepath.Dir(filepath.Dir(execPath)), "examples"),
+		// tea目录下的examples
+		filepath.Join(filepath.Dir(filepath.Dir(filepath.Dir(execPath))), "tea", "examples"),
+		// 相对当前工作目录的路径
+		filepath.Join(".", "examples"),
+		// 从用户目录开始寻找tea/examples
+		filepath.Join(os.Getenv("HOME"), "zhipu", "private", "tea", "examples"),
+	}
+
+	// 查找有效的examples目录
+	srcDir := ""
+	for _, dir := range srcDirs {
+		absDir, err := filepath.Abs(dir)
+		if err == nil {
+			if _, err := os.Stat(absDir); !os.IsNotExist(err) {
+				srcDir = absDir
+				break
+			}
+		}
+	}
+
+	// 如果没有找到examples目录，报错
+	if srcDir == "" {
+		return fmt.Errorf("无法找到examples目录，请确保安装了tea框架或者将tf工具放在正确的位置")
 	}
 
 	// 检查源目录是否存在
