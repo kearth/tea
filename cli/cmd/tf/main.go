@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"time"
 )
 
 // 版本号常量
@@ -21,13 +20,13 @@ const (
 // 构建时注入的信息
 var (
 	// BuildGoVersion 将在构建时通过 ldflags 注入
-	BuildGoVersion = runtime.Version() // 默认使用运行时版本，构建时会被覆盖
+	BuildGoVersion = "go1.24.3"
 	// BuildTeaVersion 将在构建时通过 ldflags 注入，存储编译时tea库的版本
-	BuildTeaVersion = Version // 默认使用当前定义的版本，构建时会被覆盖
+	BuildTeaVersion = "v0.4.0"
 	// BuildGitCommit 将在构建时通过 ldflags 注入，存储构建时的git提交信息
-	BuildGitCommit = "unknown" // 默认值，构建时会被覆盖
+	BuildGitCommit = "2025-12-01 17:10:00 09954fda1c69e703ca0e51d2798d1b18d06bb3a4"
 	// BuildTime 将在构建时通过 ldflags 注入，存储构建时间
-	BuildTime = time.Now().Format("2006-01-02 15:04:05") // 默认使用当前时间，构建时会被覆盖
+	BuildTime = "2025-12-01 17:32:29"
 )
 
 func main() {
@@ -487,7 +486,7 @@ func updateTF() error {
 	if _, err := exec.LookPath("go"); err != nil {
 		return fmt.Errorf("无法找到go命令: %v", err)
 	}
-	
+
 	// 获取GOPATH环境变量
 	goPath := os.Getenv("GOPATH")
 	if goPath == "" {
@@ -498,7 +497,7 @@ func updateTF() error {
 		}
 		goPath = filepath.Join(home, "go")
 	}
-	
+
 	// 构建go install安装的二进制文件路径
 	installedPath := filepath.Join(goPath, "bin", "tf")
 	if runtime.GOOS == "windows" {

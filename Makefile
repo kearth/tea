@@ -74,7 +74,18 @@ update-patch:
 build-tf:
 	@echo "正在构建tf工具二进制文件..."
 	@echo "当前tea版本: v$(VERSION)"
-	@cd cli/cmd/tf && go build -ldflags="-X main.BuildGoVersion=$$(go version | awk '{print $$3}') -X main.BuildTeaVersion=v$(VERSION) -X 'main.BuildGitCommit=$$(git log -n 1 --pretty=format:"%cd %H" --date=format:"%Y-%m-%d %H:%M:%S")' -X 'main.BuildTime=$$(date +"%Y-%m-%d %H:%M:%S")'" -o ../../../cli/bin/tf main.go
+	@(cd cli/cmd/tf && \
+	cp main.go main.go.backup && \
+	BUILD_TIME=$$(date +'%Y-%m-%d %H:%M:%S') && \
+	sed -i '' "s/var BuildTime = .*/var BuildTime = \"$$BUILD_TIME\"/" main.go && \
+	GOV=$$(go version | awk '{print $$3}') && \
+	sed -i '' "s/var BuildGoVersion = .*/var BuildGoVersion = \"$$GOV\"/" main.go && \
+	sed -i '' "s/var BuildTeaVersion = .*/var BuildTeaVersion = \"v$(VERSION)\"/" main.go && \
+	GIT=$$(git log -n 1 --pretty=format:'%cd %H' --date=format:'%Y-%m-%d %H:%M:%S') && \
+	sed -i '' "s/var BuildGitCommit = .*/var BuildGitCommit = \"$$GIT\"/" main.go && \
+	go build -o ../../../cli/bin/tf main.go && \
+	mv main.go.backup main.go)
+
 	@echo "tf工具构建成功! 二进制文件位于: $(PWD)/cli/bin/tf"
 	@echo "可用命令: version, init, update, help"
 
@@ -100,6 +111,8 @@ git-all:
 	@echo "执行添加并提交操作..."
 	@$(MAKE) git-add
 	@$(MAKE) git-commit
+	@echo "执行推送操作..."
+	@git push origin HEAD && echo "推送成功！" || echo "推送失败！"
 	@echo "所有操作完成！"
 
 # 为当前提交创建与版本号相同的标签
