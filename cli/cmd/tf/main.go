@@ -190,6 +190,9 @@ func handleInitCommand() {
 
 // 初始化项目
 func initProject(projectName, destDir, modulePath string) error {
+	if destDir == "" {
+		destDir = projectName
+	}
 	// 源目录（examples目录）
 	// 获取当前可执行文件的路径
 	execPath, err := os.Executable()
@@ -206,8 +209,6 @@ func initProject(projectName, destDir, modulePath string) error {
 		filepath.Join(filepath.Dir(filepath.Dir(filepath.Dir(execPath))), "tea", "examples"),
 		// 相对当前工作目录的路径
 		filepath.Join(".", "examples"),
-		// 从用户目录开始寻找tea/examples
-		filepath.Join(os.Getenv("HOME"), "zhipu", "private", "tea", "examples"),
 	}
 
 	// 查找有效的examples目录
@@ -267,6 +268,11 @@ func copyDir(src, dest, modulePath string) error {
 
 		// 跳过go.mod和go.sum文件
 		if filepath.Base(path) == "go.mod" || filepath.Base(path) == "go.sum" {
+			return nil
+		}
+
+		// 跳过log目录
+		if filepath.Base(path) == "log" {
 			return nil
 		}
 
