@@ -45,6 +45,8 @@ func main() {
 		handleInitCommand()
 	case "update":
 		handleUpdateCommand()
+	case "run":
+		handleRunCommand()
 	case "help":
 		showHelp()
 	default:
@@ -52,6 +54,35 @@ func main() {
 		showHelp()
 		os.Exit(1)
 	}
+}
+
+func handleRunCommand() {
+	// 创建子命令的flag集
+	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
+
+	// 定义run命令的flag
+	port := runCmd.Int("port", 9106, "服务器端口（可选，默认为9106）")
+	addr := runCmd.String("addr", "localhost", "服务器地址（可选，默认为'localhost'）")
+
+	// 解析run命令的flag
+	runCmd.Parse(os.Args[2:])
+
+	// 判断当前是不是在项目根目录
+	// 判断方法: 检查是否存在manifest/cmd/server/main.go文件
+	if _, err := os.Stat(filepath.Join(".", "manifest", "cmd", "server", "main.go")); os.IsNotExist(err) {
+		fmt.Println("错误: 请在项目根目录下运行run命令")
+		os.Exit(1)
+	}
+
+	// 构建并运行服务器
+	cmd := exec.Command("go", "run", filepath.Join("manifest", "cmd", "server", "main.go"), fmt.Sprintf("--port=%d", *port), fmt.Sprintf("--addr=%s", *addr))
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Start(); err != nil {
+		fmt.Printf("错误: 启动服务器失败 - %v\n", err)
+		os.Exit(1)
+	}
+
 }
 
 // 处理version命令
@@ -111,7 +142,7 @@ func printCLIInfo() {
 // 显示帮助信息
 func showHelp() {
 	fmt.Println("tf工具使用说明:")
-	fmt.Println("  tf version       显示工具版本号")
+	fmt.Println("  tf version        显示工具版本号")
 	fmt.Println("  tf init <name>    初始化新项目")
 	fmt.Println("  tf update         更新tf工具和框架")
 	fmt.Println("  tf help           显示帮助信息")
@@ -125,6 +156,11 @@ func showHelp() {
 	fmt.Println("  --tf              仅更新tf工具")
 	fmt.Println("  --framework       仅更新tea框架")
 	fmt.Println("  (默认同时更新tf工具和tea框架)")
+	fmt.Println()
+	fmt.Println("run命令参数:")
+	fmt.Println("  --port, -p        服务器端口（可选，默认为9106）")
+	fmt.Println("  --addr, -a        服务器地址（可选，默认为'localhost'）")
+
 }
 
 // 处理init命令
@@ -434,9 +470,10 @@ func handleUpdateCommand() {
 	tfOnly := *tfFlag
 	frameworkOnly := *frameworkFlag
 	for _, arg := range os.Args {
-		if arg == "--tf" {
+		switch arg {
+		case "--tf":
 			tfOnly = true
-		} else if arg == "--framework" {
+		case "--framework":
 			frameworkOnly = true
 		}
 	}
@@ -474,10 +511,9 @@ func handleUpdateCommand() {
 
 // 更新tf工具
 func updateTF() error {
-	// 获取可执行文件路径
-	execPath, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("无法获取tf工具路径: %v", err)
+	// 验证go命令是否可用
+	if _, err := exec.LookPath("go"); err != nil {
+		return fmt.Errorf("无法找到go命令: %v", err)
 	}
 
 	fmt.Println("使用go install安装最新版本的tf工具...")
@@ -488,66 +524,20 @@ func updateTF() error {
 		return fmt.Errorf("安装失败: %v\n输出: %s", err, output)
 	}
 
-	// 验证go命令是否可用
-	if _, err := exec.LookPath("go"); err != nil {
-		return fmt.Errorf("无法找到go命令: %v", err)
-	}
-
-	// 获取GOPATH环境变量
-	goPath := os.Getenv("GOPATH")
-	if goPath == "" {
-		// 如果GOPATH未设置，使用默认值
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return fmt.Errorf("无法获取用户主目录: %v", err)
-		}
-		goPath = filepath.Join(home, "go")
-	}
-
-	// 构建go install安装的二进制文件路径
-	installedPath := filepath.Join(goPath, "bin", "tf")
-	if runtime.GOOS == "windows" {
-		installedPath += ".exe"
-	}
-
-	// 检查安装的新版本文件是否存在
-	if _, err := os.Stat(installedPath); os.IsNotExist(err) {
-		return fmt.Errorf("安装后的tf工具文件不存在: %s", installedPath)
-	}
-
-	// 备份旧版本
-	backupPath := execPath + ".bak"
-	if err := os.Rename(execPath, backupPath); err != nil {
-		return fmt.Errorf("无法备份当前版本: %v", err)
-	}
-
-	// 复制新版本到原位置
-	newContent, err := os.ReadFile(installedPath)
-	if err != nil {
-		// 恢复备份
-		os.Rename(backupPath, execPath)
-		return fmt.Errorf("无法读取新版本: %v", err)
-	}
-
-	if err := os.WriteFile(execPath, newContent, 0755); err != nil {
-		// 恢复备份
-		os.Rename(backupPath, execPath)
-		return fmt.Errorf("无法写入新版本: %v", err)
-	}
-
-	// 设置可执行权限
-	if err := os.Chmod(execPath, 0755); err != nil {
-		return fmt.Errorf("无法设置执行权限: %v", err)
-	}
-
-	// 清理备份
-	os.Remove(backupPath)
-
 	return nil
 }
 
 // 更新tea框架
 func updateFramework() error {
+	if _, err := exec.LookPath("go"); err != nil {
+		return fmt.Errorf("无法找到go命令: %v", err)
+	}
+
+	// 判断当前目录是否有 go.mod 文件
+	if _, err := os.Stat("go.mod"); os.IsNotExist(err) {
+		return fmt.Errorf("当前目录没有 go.mod 文件，无法更新tea框架")
+	}
+
 	// 使用go get更新tea框架到最新版本
 	fmt.Println("下载最新版本的tea框架...")
 	cmd := exec.Command("go", "get", "-u", "github.com/kearth/tea@latest")
@@ -557,11 +547,11 @@ func updateFramework() error {
 	}
 
 	// 执行go mod tidy确保依赖正确
-	fmt.Println("整理依赖...")
+	fmt.Println("更新依赖...")
 	tidyCmd := exec.Command("go", "mod", "tidy")
 	output, err = tidyCmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("依赖整理失败: %v\n输出: %s", err, output)
+		return fmt.Errorf("依赖更新失败: %v\n输出: %s", err, output)
 	}
 
 	return nil

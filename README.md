@@ -35,7 +35,7 @@ tf version
 ### 使用tf工具初始化项目
 
 ```bash
-tf init myproject
+tf init your-project-name -o your-project-dir -m your-module-name
 ```
 
 参数说明：

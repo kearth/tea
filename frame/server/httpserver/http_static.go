@@ -13,6 +13,8 @@ var customMimeMap = map[string]string{
 	".yml":  "application/yaml; charset=utf-8",
 	".toml": "application/toml; charset=utf-8",
 	".json": "application/json; charset=utf-8",
+	".js":   "application/javascript; charset=utf-8",
+	".css":  "text/css; charset=utf-8",
 }
 
 // bindStaticFile 绑定静态文件

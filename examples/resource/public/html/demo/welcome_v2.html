@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tea Framework - Brew Your Next Go Web App</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom Tailwind CSS -->
+    <script src="/tailwindcss.js"></script>
     <!-- Tailwind CSS -->
     <link href="/tailwind.css" rel="stylesheet">
 
@@ -126,14 +127,14 @@
             <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h1
                     class="text-5xl md:text-6xl lg:text-7xl font-bold text-primary-900 dark:text-primary-100 mb-6 leading-tight animate-fade-in text-shadow">
-                    Brew Your Next <span
-                        class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent">Go Web
-                        App</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent">
+                        Tea Framework
+                    </span>
                 </h1>
                 <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-10 animate-fade-in"
                     style="animation-delay: 0.2s;">
-                    Tea Framework offers a perfect blend of simplicity, performance, and elegance. Craft scalable
-                    backends with a delightful developer experience.
+                    Go web apps that feel like a cup of good tea:
+                    clear, warm, and never overcomplicated.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in"
                     style="animation-delay: 0.4s;">
@@ -186,8 +187,8 @@
                         </div>
                         <h3 class="text-2xl font-semibold text-primary-900 dark:text-primary-100 mb-3">Blazing Fast</h3>
                         <p class="text-gray-600 dark:text-gray-400">
-                            Built on top of Gin, Tea leverages Go's performance to handle thousands of concurrent
-                            requests with minimal latency.
+                            Built on GoFrame's high-performance HTTP server, Tea leverages Go's concurrency to handle
+                            thousands of requests with minimal latency.
                         </p>
                     </div>
 
@@ -228,11 +229,12 @@
                             class="bg-gradient-to-br from-primary-100 to-accent/20 dark:from-primary-900/30 dark:to-accent/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-shield-halved text-primary-600 dark:text-primary-400 text-2xl"></i>
                         </div>
-                        <h3 class="text-2xl font-semibold text-primary-900 dark:text-primary-100 mb-3">Secure by Default
+                        <h3 class="text-2xl font-semibold text-primary-900 dark:text-primary-100 mb-3">Secure
+                            Foundations
                         </h3>
                         <p class="text-gray-600 dark:text-gray-400">
-                            Comes with built-in protections against common web vulnerabilities like CSRF, XSS, and SQL
-                            Injection.
+                            Provides unified error handling and middleware hooks to build robust protections against
+                            common vulnerabilities like CSRF and XSS.
                         </p>
                     </div>
 
@@ -258,8 +260,7 @@
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-4xl font-bold text-primary-900 dark:text-primary-100 mb-4">Quick Start</h2>
-                    <p class="text-xl text-gray-600 dark:text-gray-300">Get your Tea application up and running in less
-                        than a minute.</p>
+                    <p class="text-xl text-gray-600 dark:text-gray-300">Get your Tea app running in under a minute.</p>
                 </div>
 
                 <div class="space-y-6">
@@ -269,14 +270,14 @@
                             class="flex-shrink-0 w-10 h-10 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold">
                             1</div>
                         <div class="flex-grow">
-                            <h3 class="text-xl font-semibold mb-2">Install Tea CLI</h3>
+                            <h3 class="text-xl font-semibold mb-2">Install Tea CLI (tf)</h3>
                             <div class="bg-gray-900 dark:bg-black rounded-lg p-4 relative group">
                                 <button onclick="copyCode(this)"
                                     class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
                                     <i class="fas fa-copy mr-1"></i> Copy
                                 </button>
                                 <pre
-                                    class="text-green-400"><code>go install github.com/tea-framework/tea/cmd/tea@latest</code></pre>
+                                    class="text-green-400"><code>go install github.com/kearth/tea/cli/cmd/tf@latest</code></pre>
                             </div>
                         </div>
                     </div>
@@ -294,7 +295,7 @@
                                     <i class="fas fa-copy mr-1"></i> Copy
                                 </button>
                                 <pre
-                                    class="text-green-400"><code>tea new my-awesome-app && cd my-awesome-app</code></pre>
+                                    class="text-green-400"><code>tf init your-project-name -o your-project-dir -m your-module-name</code></pre>
                             </div>
                         </div>
                     </div>
@@ -311,15 +312,14 @@
                                     class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
                                     <i class="fas fa-copy mr-1"></i> Copy
                                 </button>
-                                <pre class="text-green-400"><code>tea run</code></pre>
+                                <pre class="text-green-400"><code>tf run</code></pre>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="mt-12 text-center bg-primary-50 dark:bg-primary-900/20 rounded-xl p-6">
-                    <p class="text-lg">That's it! Your server is now running at <a href="http://localhost:8080"
-                            target="_blank"
-                            class="font-mono text-primary-600 dark:text-primary-400 hover:underline">http://localhost:8080</a>
+                    <p class="text-lg">That's it! Your server is now running at
+                        <span class="font-mono text-primary-600 dark:text-primary-400 ">http://0.0.0.0:9106/</span>
                     </p>
                 </div>
             </div>
@@ -329,10 +329,10 @@
         <section id="example" class="py-20 lg:py-28 bg-gray-50 dark:bg-gray-800">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold text-primary-900 dark:text-primary-100 mb-4">Simple & Expressive Code
+                    <h2 class="text-4xl font-bold text-primary-900 dark:text-primary-100 mb-4">One Line, One Cup of Tea
                     </h2>
-                    <p class="text-xl text-gray-600 dark:text-gray-300">See how easy it is to define routes and
-                        handlers.</p>
+                    <p class="text-xl text-gray-600 dark:text-gray-300">Minimal syntax. Maximum expressiveness.
+                    </p>
                 </div>
 
                 <div class="bg-gray-900 dark:bg-black rounded-2xl shadow-2xl overflow-hidden">
@@ -355,29 +355,19 @@
                         <pre class="text-gray-300 text-sm md:text-base leading-relaxed"><code><span class="text-purple-400">package</span> <span class="text-white">main</span>
 
 <span class="text-purple-400">import</span> (
-    <span class="text-green-400">"github.com/gin-gonic/gin"</span>
-    <span class="text-green-400">"github.com/tea-framework/tea"</span> <span class="text-gray-500">// Tea's core package</span>
+    <span class="text-green-400">"example/local/app/load"</span>
+
+    <span class="text-green-400">"github.com/kearth/klib/kctx"</span>
+    <span class="text-green-400">"github.com/kearth/tea"</span>
 )
 
 <span class="text-purple-400">func</span> <span class="text-yellow-400">main</span>() {
-    <span class="text-gray-500">// Initialize Tea with default middleware (logger, recovery)</span>
-    <span class="text-white">r</span> := <span class="text-yellow-400">tea</span>.<span class="text-yellow-400">Default</span>()
 
-    <span class="text-gray-500">// Define a simple GET route</span>
-    <span class="text-white">r</span>.<span class="text-yellow-400">GET</span>(<span class="text-green-400">"/"</span>, <span class="text-purple-400">func</span>(<span class="text-white">c</span> *<span class="text-yellow-400">gin</span>.<span class="text-white">Context</span>) {
-        <span class="text-white">c</span>.<span class="text-yellow-400">JSON</span>(<span class="text-orange-400">200</span>, <span class="text-yellow-400">gin</span>.<span class="text-white">H</span>{
-            <span class="text-green-400">"message"</span>: <span class="text-green-400">"Welcome to Tea Framework!"</span>,
-        })
-    })
+    <span class="text-gray-500">/*******************************</span>
+    <span class="text-gray-500">* 框架入口</span>
+    <span class="text-gray-500">*******************************/</span>
+    <span class="text-yellow-400">tea</span>.<span class="text-white">Drink</span>(<span class="text-yellow-400">kctx</span>.<span class="text-white">New()</span>, <span class="text-yellow-400">load</span>.<span class="text-white">LoadAll</span>)
 
-    <span class="text-gray-500">// Define a route with a parameter</span>
-    <span class="text-white">r</span>.<span class="text-yellow-400">GET</span>(<span class="text-green-400">"/user/:name"</span>, <span class="text-purple-400">func</span>(<span class="text-white">c</span> *<span class="text-yellow-400">gin</span>.<span class="text-white">Context</span>) {
-        <span class="text-white">name</span> := <span class="text-white">c</span>.<span class="text-yellow-400">Param</span>(<span class="text-green-400">"name"</span>)
-        <span class="text-white">c</span>.<span class="text-yellow-400">String</span>(<span class="text-orange-400">200</span>, <span class="text-green-400">"Hello %s"</span>, <span class="text-white">name</span>)
-    })
-
-    <span class="text-gray-500">// Start the server on port 8080</span>
-    <span class="text-white">r</span>.<span class="text-yellow-400">Run</span>(<span class="text-green-400">":8080"</span>)
 }</code></pre>
                     </div>
                 </div>
@@ -393,8 +383,10 @@
                     <span class="text-2xl font-bold flex items-center">
                         <i class="fa-solid fa-leaf mr-2"></i>Tea Framework
                     </span>
-                    <p class="text-primary-300 mt-2">Brewed with <i class="fas fa-heart text-red-400"></i> by Gophers,
-                        for Gophers.</p>
+                    <p class="text-primary-300 mt-2">Steeped with <span class="inline-block animate-bounce"> <i
+                                class="fas fa-heart text-red-400"></i></span>
+                        by
+                        Gophers, for Gophers. </p>
                 </div>
 
                 <div class="flex space-x-6">
@@ -403,15 +395,20 @@
 
             <hr class="border-primary-700 my-8">
 
-            <div class="text-center text-primary-400">
-                <p>© 2025 Tea Framework. All rights reserved. | <a href="#" class="hover:text-white">Privacy Policy</a>
-                    | <a href="#" class="hover:text-white">Terms of Service</a></p>
+            <div class="text-center text-primary-400 Year">
+                <p>© 2024-{{ .Year }} </p>
             </div>
         </div>
     </footer>
 
     <!-- JavaScript for Interactivity -->
     <script>
+
+        // .Year 替换成当前年份 © 2024-{{ .Year }}  
+        year = new Date().getFullYear();
+        document.querySelector('.Year').textContent = "© 2024-" + year + " Tea Framework. All rights reserved.";
+
+
         // Dark Mode Toggle
         function toggleDarkMode() {
             document.documentElement.classList.toggle('dark');
@@ -439,23 +436,57 @@
             }
         });
 
-        // Copy code to clipboard
-        function copyCode(button) {
-            const codeBlock = button.closest('.bg-gray-900, .dark\\:bg-black').querySelector('code');
-            const textToCopy = codeBlock.textContent;
+        async function copyCode(button) {
+            // 1. 先找到要复制的代码
+            const codeBlock = button.closest('.bg-gray-900, .dark\\:bg-black')
+                .querySelector('code');
+            if (!codeBlock) return;
 
-            navigator.clipboard.writeText(textToCopy).then(() => {
+            const textToCopy = codeBlock.textContent.trim();
+
+            // 2. 新的终极复制方案（兼容 HTTPS / HTTP / localhost / 文件协议）
+            async function copy(text) {
+                // 优先用现代 clipboard API（HTTPS 或 localhost 才可用）
+                if (navigator.clipboard && window.isSecureContext) {
+                    return navigator.clipboard.writeText(text);
+                }
+
+                // fallback：老古董方案（100% 可用）
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.select();
+
+                try {
+                    document.execCommand('copy');   // 虽然被标记 deprecated，但 2025 年仍然全浏览器支持
+                    return Promise.resolve();
+                } catch (err) {
+                    return Promise.reject(err);
+                } finally {
+                    document.body.removeChild(textarea);
+                }
+            }
+
+            // 3. 执行复制 + UI 反馈
+            try {
+                await copy(textToCopy);
+
                 const originalHTML = button.innerHTML;
                 button.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
-                button.classList.add('text-green-400');
+                button.classList.add('text-green-400', 'font-medium');
 
                 setTimeout(() => {
                     button.innerHTML = originalHTML;
-                    button.classList.remove('text-green-400');
+                    button.classList.remove('text-green-400', 'font-medium');
                 }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
+            } catch (err) {
+                console.error('复制失败:', err);
+                button.innerHTML = 'Failed';
+                setTimeout(() => button.innerHTML = originalHTML, 2000);
+            }
         }
     </script>
 </body>

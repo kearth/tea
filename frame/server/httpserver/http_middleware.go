@@ -1,9 +1,9 @@
 package httpserver
 
 import (
-	"fmt"
 	"mime"
 	"net/http"
+	"time"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/errors/gcode"
@@ -99,14 +99,12 @@ func MiddlewareHandlerCORS(r *Request) {
 
 // LogFormat 日志格式
 func LogFormat(r *Request, content any) string {
-	ns := r.LeaveTime.Sub(r.EnterTime).Nanoseconds()
-	ms := ns / 1000000
 	lf := logFormat{
 		Status:   r.Response.Status,
 		Method:   r.Request.Method,
 		Path:     r.URL.Path,
 		Proto:    r.Proto,
-		Duration: fmt.Sprintf("%d ms", ms),
+		Duration: time.Since(r.EnterTime.Time).String(),
 		RemoteIP: r.GetRemoteIp(),
 		Headers:  r.Header,
 		Response: content,

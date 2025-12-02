@@ -87,7 +87,6 @@ build-tf:
 	go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.BuildGoVersion=$(GOV)' -X 'main.BuildTeaVersion=v$(VERSION)' -X 'main.BuildGitCommit=$(GIT_COMMIT)'" -o ../../../cli/bin/tf main.go)
 
 	@echo "tf工具构建成功! 二进制文件位于: $(PWD)/cli/bin/tf"
-	@echo "可用命令: version, init, update, help"
 
 # 添加所有修改的文件到Git暂存区
 git-add:

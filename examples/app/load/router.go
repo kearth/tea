@@ -32,6 +32,7 @@ func HttpRouterRegister(hr *httpserver.HTTPRouter) {
 
 	// 静态文件路由
 	hr.AddStaticPath("/tailwind.css", "css/demo/tailwind.css")
+	hr.AddStaticPath("/tailwindcss.js", "js/demo/tailwindcss.js")
 
 	// API 路由组
 	hr.Group("/api/demo", func(group *httpserver.Group) {

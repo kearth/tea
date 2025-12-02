@@ -129,7 +129,7 @@ tea run
 name = "Tea Demo"          # 服务器名称
 version = "1.0.0"          # 服务器版本
 mode = "normal"            # 服务器运行模式 - debug, normal
-ip = "127.0.0.1"           # 服务器IP地址
+ip = "0.0.0.0"           # 服务器IP地址
 port = 9106                # 服务器端口号
 root_dir = "."             # 服务器根目录
 resources_dir = "resource" # 服务器资源目录
