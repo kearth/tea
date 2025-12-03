@@ -82,6 +82,18 @@ GIT_COMMIT_ESC := $(subst /,\/,${GIT_COMMIT})
 GOV_ESC := $(subst /,\/,${GOV})
 VERSION_ESC := $(subst /,\/,${VERSION})
 
+# 生成 build_info.yaml 的内容（这里用 heredoc 写法，最清晰）
+define BUILD_INFO_YAML
+# Build information for Tea Framework CLI tool
+# This file is auto-generated during build process
+build_info:
+  build_time: "$(BUILD_TIME_ESC)"
+  build_go_version: "$(GOV_ESC)"
+  build_tea_version: "$(VERSION_ESC)"
+  build_git_commit: "$(GIT_COMMIT)"
+endef
+export BUILD_INFO_YAML   # 让 $$BUILD_INFO_YAML 在子 shell 中可用
+
 # 构建tf工具
 build-tf:
 	@echo "正在构建tf工具二进制文件..."
@@ -90,20 +102,14 @@ build-tf:
 	@echo "Git提交: $(GIT_COMMIT)"
 	@echo "Go版本: $(GOV)"
 	@# 备份原始build.yaml文件
-	@cp cli/cmd/tf/build.yaml cli/cmd/tf/build.yaml.bak
-	@# 生成包含实际构建信息的build.yaml文件
-	@sed -i '' "s/BUILD_TIME_PLACEHOLDER/$(BUILD_TIME_ESC)/g" cli/cmd/tf/build.yaml
-	@sed -i '' "s/GOV_PLACEHOLDER/$(GOV_ESC)/g" cli/cmd/tf/build.yaml
-	@sed -i '' "s/VERSION_PLACEHOLDER/$(VERSION_ESC)/g" cli/cmd/tf/build.yaml
-	@sed -i '' "s/GIT_COMMIT_PLACEHOLDER/$(GIT_COMMIT_ESC)/g" cli/cmd/tf/build.yaml
-	@# 构建二进制文件
-	@go build -o cli/bin/tf cli/cmd/tf/main.go
-	@# 复制生成的build.yaml到输出目录
-	@cp cli/cmd/tf/build.yaml cli/bin/
-	@# 恢复原始build.yaml文件
-	@mv cli/cmd/tf/build.yaml.bak cli/cmd/tf/build.yaml
-	@echo "tf工具构建成功! 二进制文件位于: $(PWD)/cli/bin/tf"
-	@$(PWD)/cli/bin/tf version
+	@echo "$$BUILD_INFO_YAML" > cli/cmd/tf/build.yaml
+	@echo "清除examples的log目录..."
+	@rm -rf examples/log
+	@echo "开始打包examples..."
+	@go run $(PWD)/cli/cmd/tf/main.go innerpack $(PWD)/examples
+	@echo "构建tf工具..."
+	@go run $(PWD)/cli/cmd/tf/main.go version
+
 
 # 添加所有修改的文件到Git暂存区
 git-add:

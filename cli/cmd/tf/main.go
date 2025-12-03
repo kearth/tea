@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"bytes"
+	"embed"
 	"flag"
 	"fmt"
 	"io"
@@ -11,12 +13,24 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/gogf/gf/v2/crypto/gaes"
+	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/os/gres"
 	"gopkg.in/yaml.v3"
 )
 
-// 版本号常量
-const (
-	Version = "v0.1.0"
+// 嵌入的build.yaml文件
+//
+//go:embed build.yaml
+var buildYamlFS embed.FS
+
+// 嵌入的data.bin文件
+//
+//go:embed data.bin
+var dataBinFS embed.FS
+
+var (
+	CryptoKey = []byte("9f3k8m2wvq5txr7jd4hb9ep1c6n0ygsa")
 )
 
 // BuildInfo 构建信息结构体
@@ -35,46 +49,45 @@ type BuildInfoData struct {
 // 构建时注入的信息
 var (
 	// BuildGoVersion 将从build.yaml读取
-	BuildGoVersion = "go1.24.3"
+	BuildGoVersion = "unknown"
 	// BuildTeaVersion 将从build.yaml读取，存储编译时tea库的版本
-	BuildTeaVersion = "v0.4.0"
+	BuildTeaVersion = "unknown"
 	// BuildGitCommit 将从build.yaml读取，存储构建时的git提交信息
-	BuildGitCommit = "2025-12-01 17:10:00 09954fda1c69e703ca0e51d2798d1b18d06bb3a4"
+	BuildGitCommit = "unknown"
 	// BuildTime 将从build.yaml读取，存储构建时间
-	BuildTime = "2025-12-01 17:32:29"
+	BuildTime = "unknown"
 )
+
+// loadExamples 加载 examples 目录下的所有文件
+func loadExamples() {
+	dataBinContent, err := dataBinFS.ReadFile("data.bin")
+	if err != nil {
+		fmt.Printf("警告: 无法读取嵌入的data.bin文件: %v\n", err)
+		return
+	}
+	binContent, err := gaes.Decrypt(dataBinContent, CryptoKey)
+	if err != nil {
+		panic(err)
+	}
+	if err := gres.Add(string(binContent)); err != nil {
+		panic(err)
+	}
+	// gres.Dump()
+}
 
 // loadBuildInfo 从build.yaml文件加载构建信息
 func loadBuildInfo() {
-	// 获取当前可执行文件所在目录
-	execPath, err := os.Executable()
-	if err != nil {
-		fmt.Printf("警告: 无法获取可执行文件路径: %v\n", err)
-		return
-	}
-	execDir := filepath.Dir(execPath)
 
-	// 尝试在可执行文件目录查找build.yaml
-	yamlPath := filepath.Join(execDir, "build.yaml")
-	if _, err := os.Stat(yamlPath); os.IsNotExist(err) {
-		// 如果找不到，尝试在当前工作目录查找
-		yamlPath = filepath.Join(".", "build.yaml")
-		if _, err := os.Stat(yamlPath); os.IsNotExist(err) {
-			// 找不到build.yaml文件，使用默认值
-			return
-		}
-	}
-
-	// 读取build.yaml文件内容
-	data, err := os.ReadFile(yamlPath)
+	// 从嵌入的文件系统读取build.yaml
+	yamlData, err := buildYamlFS.ReadFile("build.yaml")
 	if err != nil {
-		fmt.Printf("警告: 无法读取build.yaml文件: %v\n", err)
+		fmt.Printf("警告: 无法读取嵌入的build.yaml文件: %v\n", err)
 		return
 	}
 
 	// 解析yaml数据
 	var buildInfo BuildInfoData
-	if err := yaml.Unmarshal(data, &buildInfo); err != nil {
+	if err := yaml.Unmarshal(yamlData, &buildInfo); err != nil {
 		fmt.Printf("警告: 无法解析build.yaml文件: %v\n", err)
 		return
 	}
@@ -93,7 +106,7 @@ func main() {
 	// 如果没有提供参数，显示帮助信息
 	if len(os.Args) == 1 {
 		showHelp()
-		os.Exit(1)
+		return
 	}
 
 	// 处理子命令
@@ -107,15 +120,17 @@ func main() {
 		handleUpdateCommand()
 	case "run":
 		handleRunCommand()
+	case "innerpack":
+		PackExamples(os.Args[2])
 	case "help":
 		showHelp()
 	default:
 		fmt.Printf("未知命令: %s\n", cmd)
 		showHelp()
-		os.Exit(1)
 	}
 }
 
+// handleRunCommand 处理run命令
 func handleRunCommand() {
 	// 创建子命令的flag集
 	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
@@ -289,45 +304,6 @@ func initProject(projectName, destDir, modulePath string) error {
 	if destDir == "" {
 		destDir = projectName
 	}
-	// 源目录（examples目录）
-	// 获取当前可执行文件的路径
-	execPath, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("无法获取可执行文件路径: %v", err)
-	}
-
-	// 构建源目录路径的多种可能位置
-	// 尝试多种路径组合，确保在本地开发和go install安装时都能找到examples目录
-	srcDirs := []string{
-		// 开发环境路径: bin/tf -> tea/examples
-		filepath.Join(filepath.Dir(filepath.Dir(execPath)), "examples"),
-		// tea目录下的examples
-		filepath.Join(filepath.Dir(filepath.Dir(filepath.Dir(execPath))), "tea", "examples"),
-		// 相对当前工作目录的路径
-		filepath.Join(".", "examples"),
-	}
-
-	// 查找有效的examples目录
-	srcDir := ""
-	for _, dir := range srcDirs {
-		absDir, err := filepath.Abs(dir)
-		if err == nil {
-			if _, err := os.Stat(absDir); !os.IsNotExist(err) {
-				srcDir = absDir
-				break
-			}
-		}
-	}
-
-	// 如果没有找到examples目录，报错
-	if srcDir == "" {
-		return fmt.Errorf("无法找到examples目录，请确保安装了tea框架或者将tf工具放在正确的位置")
-	}
-
-	// 检查源目录是否存在
-	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
-		return fmt.Errorf("examples目录不存在: %s", srcDir)
-	}
 
 	// 检查目标目录是否已存在
 	if _, err := os.Stat(destDir); err == nil {
@@ -340,7 +316,7 @@ func initProject(projectName, destDir, modulePath string) error {
 	}
 
 	// 复制文件并替换模块路径
-	if err := copyDir(srcDir, destDir, modulePath); err != nil {
+	if err := copyDir(destDir, modulePath); err != nil {
 		// 如果复制失败，尝试清理已创建的目录
 		os.RemoveAll(destDir)
 		return err
@@ -350,46 +326,54 @@ func initProject(projectName, destDir, modulePath string) error {
 }
 
 // 复制目录内容并替换文件中的模块路径
-func copyDir(src, dest, modulePath string) error {
-	err := filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
+func copyDir(dest, modulePath string) error {
+	// 加载 examples 目录下的所有文件
+	loadExamples()
 
+	files := gres.ScanDir("examples", "*", true)
+	for _, file := range files {
 		// 计算相对路径
-		relPath, err := filepath.Rel(src, path)
+		relPath, err := filepath.Rel("examples", file.Name())
 		if err != nil {
 			return err
 		}
-
 		// 跳过go.mod和go.sum文件
-		if filepath.Base(path) == "go.mod" || filepath.Base(path) == "go.sum" {
-			return nil
+		if filepath.Base(relPath) == "go.mod" || filepath.Base(relPath) == "go.sum" {
+			continue
 		}
 
 		// 跳过log目录
-		if filepath.Base(path) == "log" {
-			return nil
+		if filepath.Base(relPath) == "log" || filepath.Ext(relPath) == ".log" {
+			continue
 		}
 
 		// 构建目标路径
 		destPath := filepath.Join(dest, relPath)
 
-		if info.IsDir() {
+		if file.FileInfo().IsDir() {
 			// 创建目标目录
-			return os.MkdirAll(destPath, info.Mode())
-		} else {
-			// 复制文件
-			if err := copyFile(path, destPath, modulePath); err != nil {
-				return fmt.Errorf("复制文件 %s 失败: %v", path, err)
-			}
+			os.MkdirAll(destPath, file.FileInfo().Mode())
+			continue
 		}
 
-		return nil
-	})
-
-	if err != nil {
-		return err
+		if filepath.Ext(destPath) == ".go" {
+			reader := bufio.NewReader(bytes.NewReader(file.Content()))
+			// 如果是Go文件，需要替换import语句中的"example/local"
+			destFile, err := os.Create(destPath)
+			if err != nil {
+				return err
+			}
+			defer destFile.Close()
+			if err := replaceImportPaths(reader, destFile, modulePath); err != nil {
+				return err
+			}
+		} else {
+			if err = file.Export(dest, gres.ExportOption{
+				RemovePrefix: "examples",
+			}); err != nil {
+				return fmt.Errorf("导出文件 %s 失败: %v", file.Name(), err)
+			}
+		}
 	}
 
 	// 生成新的go.mod文件
@@ -615,4 +599,31 @@ func updateFramework() error {
 	}
 
 	return nil
+}
+
+// PackExamples 打包 examples 目录下的所有文件
+func PackExamples(path string) {
+	binContent, err := gres.PackWithOption(path, gres.Option{})
+	if err != nil {
+		panic(err)
+	}
+	binContent, err = gaes.Encrypt(binContent, CryptoKey)
+	if err != nil {
+		panic(err)
+	}
+	if err := gfile.PutBytes("cli/cmd/tf/data.bin", binContent); err != nil {
+		panic(err)
+	}
+}
+
+// UnpackExamples 解包 examples 目录下的所有文件
+func UnpackExamples() {
+	binContent := gfile.GetBytes("data.bin")
+	binContent, err := gaes.Decrypt(binContent, CryptoKey)
+	if err != nil {
+		panic(err)
+	}
+	if err := gres.Add(string(binContent)); err != nil {
+		panic(err)
+	}
 }
