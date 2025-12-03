@@ -1,0 +1,11 @@
+# Build information for Tea Framework CLI tool
+# This file is auto-generated during build process
+build_info:
+  # Build time timestamp
+  build_time: "2025-12-03 10:43:08"
+  # Go version used for build
+  build_go_version: "go1.24.3"
+  # Tea framework version at build time
+  build_tea_version: "0.7.0"
+  # Git commit information at build time
+  build_git_commit: "2025-12-02 20:49:10 b617053f02a26c8d58aa7f2056662f6fd25fe62e"

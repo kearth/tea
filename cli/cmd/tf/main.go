@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 // 版本号常量
@@ -17,19 +19,77 @@ const (
 	Version = "v0.1.0"
 )
 
+// BuildInfo 构建信息结构体
+type BuildInfo struct {
+	BuildTime       string `yaml:"build_time"`
+	BuildGoVersion  string `yaml:"build_go_version"`
+	BuildTeaVersion string `yaml:"build_tea_version"`
+	BuildGitCommit  string `yaml:"build_git_commit"`
+}
+
+// BuildInfoData 解析yaml文件的根结构体
+type BuildInfoData struct {
+	BuildInfo BuildInfo `yaml:"build_info"`
+}
+
 // 构建时注入的信息
 var (
-	// BuildGoVersion 将在构建时通过 ldflags 注入
+	// BuildGoVersion 将从build.yaml读取
 	BuildGoVersion = "go1.24.3"
-	// BuildTeaVersion 将在构建时通过 ldflags 注入，存储编译时tea库的版本
+	// BuildTeaVersion 将从build.yaml读取，存储编译时tea库的版本
 	BuildTeaVersion = "v0.4.0"
-	// BuildGitCommit 将在构建时通过 ldflags 注入，存储构建时的git提交信息
+	// BuildGitCommit 将从build.yaml读取，存储构建时的git提交信息
 	BuildGitCommit = "2025-12-01 17:10:00 09954fda1c69e703ca0e51d2798d1b18d06bb3a4"
-	// BuildTime 将在构建时通过 ldflags 注入，存储构建时间
+	// BuildTime 将从build.yaml读取，存储构建时间
 	BuildTime = "2025-12-01 17:32:29"
 )
 
+// loadBuildInfo 从build.yaml文件加载构建信息
+func loadBuildInfo() {
+	// 获取当前可执行文件所在目录
+	execPath, err := os.Executable()
+	if err != nil {
+		fmt.Printf("警告: 无法获取可执行文件路径: %v\n", err)
+		return
+	}
+	execDir := filepath.Dir(execPath)
+
+	// 尝试在可执行文件目录查找build.yaml
+	yamlPath := filepath.Join(execDir, "build.yaml")
+	if _, err := os.Stat(yamlPath); os.IsNotExist(err) {
+		// 如果找不到，尝试在当前工作目录查找
+		yamlPath = filepath.Join(".", "build.yaml")
+		if _, err := os.Stat(yamlPath); os.IsNotExist(err) {
+			// 找不到build.yaml文件，使用默认值
+			return
+		}
+	}
+
+	// 读取build.yaml文件内容
+	data, err := os.ReadFile(yamlPath)
+	if err != nil {
+		fmt.Printf("警告: 无法读取build.yaml文件: %v\n", err)
+		return
+	}
+
+	// 解析yaml数据
+	var buildInfo BuildInfoData
+	if err := yaml.Unmarshal(data, &buildInfo); err != nil {
+		fmt.Printf("警告: 无法解析build.yaml文件: %v\n", err)
+		return
+	}
+
+	// 更新全局变量
+	BuildTime = buildInfo.BuildInfo.BuildTime
+	BuildGoVersion = buildInfo.BuildInfo.BuildGoVersion
+	BuildTeaVersion = buildInfo.BuildInfo.BuildTeaVersion
+	BuildGitCommit = buildInfo.BuildInfo.BuildGitCommit
+}
+
 func main() {
+	// 加载构建信息
+	loadBuildInfo()
+
 	// 如果没有提供参数，显示帮助信息
 	if len(os.Args) == 1 {
 		showHelp()

@@ -76,17 +76,34 @@ BUILD_TIME := $(shell date +'%Y-%m-%d %H:%M:%S')
 GIT_COMMIT := $(shell git log -n 1 --pretty=format:'%cd %H' --date=format:'%Y-%m-%d %H:%M:%S')
 GOV := $(shell go version | awk '{print $$3}')
 
+# 转义变量中的特殊字符，用于sed替换
+BUILD_TIME_ESC := $(subst /,\/,${BUILD_TIME})
+GIT_COMMIT_ESC := $(subst /,\/,${GIT_COMMIT})
+GOV_ESC := $(subst /,\/,${GOV})
+VERSION_ESC := $(subst /,\/,${VERSION})
+
 # 构建tf工具
 build-tf:
 	@echo "正在构建tf工具二进制文件..."
-	@echo "当前tea版本: v$(VERSION)"
+	@echo "当前tea版本: $(VERSION)"
 	@echo "构建时间: $(BUILD_TIME)"
 	@echo "Git提交: $(GIT_COMMIT)"
 	@echo "Go版本: $(GOV)"
-	@(cd cli/cmd/tf && \
-	go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.BuildGoVersion=$(GOV)' -X 'main.BuildTeaVersion=v$(VERSION)' -X 'main.BuildGitCommit=$(GIT_COMMIT)'" -o ../../../cli/bin/tf main.go)
-
+	@# 备份原始build.yaml文件
+	@cp cli/cmd/tf/build.yaml cli/cmd/tf/build.yaml.bak
+	@# 生成包含实际构建信息的build.yaml文件
+	@sed -i '' "s/BUILD_TIME_PLACEHOLDER/$(BUILD_TIME_ESC)/g" cli/cmd/tf/build.yaml
+	@sed -i '' "s/GOV_PLACEHOLDER/$(GOV_ESC)/g" cli/cmd/tf/build.yaml
+	@sed -i '' "s/VERSION_PLACEHOLDER/$(VERSION_ESC)/g" cli/cmd/tf/build.yaml
+	@sed -i '' "s/GIT_COMMIT_PLACEHOLDER/$(GIT_COMMIT_ESC)/g" cli/cmd/tf/build.yaml
+	@# 构建二进制文件
+	@go build -o cli/bin/tf cli/cmd/tf/main.go
+	@# 复制生成的build.yaml到输出目录
+	@cp cli/cmd/tf/build.yaml cli/bin/
+	@# 恢复原始build.yaml文件
+	@mv cli/cmd/tf/build.yaml.bak cli/cmd/tf/build.yaml
 	@echo "tf工具构建成功! 二进制文件位于: $(PWD)/cli/bin/tf"
+	@$(PWD)/cli/bin/tf version
 
 # 添加所有修改的文件到Git暂存区
 git-add:
