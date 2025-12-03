@@ -29,10 +29,6 @@ var buildYamlFS embed.FS
 //go:embed data.bin
 var dataBinFS embed.FS
 
-var (
-	CryptoKey = []byte("9f3k8m2wvq5txr7jd4hb9ep1c6n0ygsa")
-)
-
 // BuildInfo 构建信息结构体
 type BuildInfo struct {
 	BuildTime       string `yaml:"build_time"`
@@ -46,34 +42,29 @@ type BuildInfoData struct {
 	BuildInfo BuildInfo `yaml:"build_info"`
 }
 
-// 构建时注入的信息
-var (
-	// BuildGoVersion 将从build.yaml读取
-	BuildGoVersion = "unknown"
-	// BuildTeaVersion 将从build.yaml读取，存储编译时tea库的版本
-	BuildTeaVersion = "unknown"
-	// BuildGitCommit 将从build.yaml读取，存储构建时的git提交信息
-	BuildGitCommit = "unknown"
-	// BuildTime 将从build.yaml读取，存储构建时间
-	BuildTime = "unknown"
+// Constants 常量
+const (
+	// Unknown 未知值
+	Unknown = "unknown"
+	// DataBin 数据文件
+	DataBin = "data.bin"
 )
 
-// loadExamples 加载 examples 目录下的所有文件
-func loadExamples() {
-	dataBinContent, err := dataBinFS.ReadFile("data.bin")
-	if err != nil {
-		fmt.Printf("警告: 无法读取嵌入的data.bin文件: %v\n", err)
-		return
-	}
-	binContent, err := gaes.Decrypt(dataBinContent, CryptoKey)
-	if err != nil {
-		panic(err)
-	}
-	if err := gres.Add(string(binContent)); err != nil {
-		panic(err)
-	}
-	// gres.Dump()
-}
+// Vars 全局变量
+var (
+	// CryptoKey 用于加密/解密data.bin文件的密钥
+	CryptoKey = []byte("9f3k8m2wvq5txr7jd4hb9ep1c6n0ygsa")
+	// ExePath 将在运行时设置为可执行文件的路径
+	ExePath = Unknown
+	// BuildGoVersion 将从build.yaml读取
+	BuildGoVersion = Unknown
+	// BuildTeaVersion 将从build.yaml读取，存储编译时tea库的版本
+	BuildTeaVersion = Unknown
+	// BuildGitCommit 将从build.yaml读取，存储构建时的git提交信息
+	BuildGitCommit = Unknown
+	// BuildTime 将从build.yaml读取，存储构建时间
+	BuildTime = Unknown
+)
 
 // loadBuildInfo 从build.yaml文件加载构建信息
 func loadBuildInfo() {
@@ -109,17 +100,23 @@ func main() {
 		return
 	}
 
+	// 获取可执行文件路径
+	ExePath, _ = os.Executable()
+	if ExePath == "" {
+		ExePath = Unknown
+	}
+
 	// 处理子命令
 	cmd := os.Args[1]
 	switch cmd {
 	case "version":
-		handleVersionCommand()
+		HandleVersionCommand()
 	case "init":
 		handleInitCommand()
 	case "update":
-		handleUpdateCommand()
+		HandleUpdateCommand()
 	case "run":
-		handleRunCommand()
+		HandleRunCommand()
 	case "innerpack":
 		PackExamples(os.Args[2])
 	case "help":
@@ -130,38 +127,40 @@ func main() {
 	}
 }
 
-// handleRunCommand 处理run命令
-func handleRunCommand() {
+// ErrorPrintln 打印错误信息
+func ErrorPrintln(msg string) {
+	fmt.Printf("错误: %s\n", msg)
+}
+
+// HandleRunCommand 处理run命令
+func HandleRunCommand() {
 	// 创建子命令的flag集
 	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
-
-	// 定义run命令的flag
 	port := runCmd.Int("port", 9106, "服务器端口（可选，默认为9106）")
-	addr := runCmd.String("addr", "localhost", "服务器地址（可选，默认为'localhost'）")
-
-	// 解析run命令的flag
+	addr := runCmd.String("addr", "localhost", "服务器地址（可选，默认为'0.0.0.0'）")
 	runCmd.Parse(os.Args[2:])
 
 	// 判断当前是不是在项目根目录
 	// 判断方法: 检查是否存在manifest/cmd/server/main.go文件
-	if _, err := os.Stat(filepath.Join(".", "manifest", "cmd", "server", "main.go")); os.IsNotExist(err) {
-		fmt.Println("错误: 请在项目根目录下运行run命令")
+	runPath := filepath.Join(".", "manifest", "cmd", "server", "main.go")
+	if _, err := os.Stat(runPath); os.IsNotExist(err) {
+		ErrorPrintln("请在项目根目录下运行run命令!")
 		os.Exit(1)
 	}
 
 	// 构建并运行服务器
-	cmd := exec.Command("go", "run", filepath.Join("manifest", "cmd", "server", "main.go"), fmt.Sprintf("--port=%d", *port), fmt.Sprintf("--addr=%s", *addr))
+	cmd := exec.Command("go", "run", runPath, fmt.Sprintf("--port=%d", *port), fmt.Sprintf("--addr=%s", *addr))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	if err := cmd.Start(); err != nil {
-		fmt.Printf("错误: 启动服务器失败 - %v\n", err)
+	if err := cmd.Run(); err != nil {
+		ErrorPrintln(fmt.Sprintf("启动服务器失败 - %v", err))
 		os.Exit(1)
 	}
 
 }
 
 // 处理version命令
-func handleVersionCommand() {
+func HandleVersionCommand() {
 	// 打印欢迎信息
 	fmt.Println()
 	fmt.Println("Welcome to Tea Framework!")
@@ -175,7 +174,11 @@ func handleVersionCommand() {
 
 	// 打印CLI详情
 	fmt.Println("CLI Detail:")
-	printCLIInfo()
+	fmt.Printf("  Installed At: %s\n", ExePath)
+	fmt.Printf("  Built Go Version: %s\n", BuildGoVersion)
+	fmt.Printf("  Built Tea Version: %s\n", BuildTeaVersion)
+	fmt.Printf("  Git Commit: %s\n", BuildGitCommit)
+	fmt.Printf("  Built Time: %s\n", BuildTime)
 }
 
 // 打印依赖版本信息
@@ -187,7 +190,7 @@ func printDependencyVersions() string {
 	versionInfo := strings.TrimSpace(string(output))
 
 	if err != nil || versionInfo == "" {
-		versionInfo = "未安装"
+		versionInfo = Unknown
 	}
 
 	// 解析输出，提取模块路径和版本
@@ -200,22 +203,10 @@ func printDependencyVersions() string {
 	return out
 }
 
-// 打印CLI信息
-func printCLIInfo() {
-	// 获取可执行文件路径
-	execPath, err := os.Executable()
-	if err != nil {
-		execPath = "unknown"
-	}
-	fmt.Printf("  Installed At: %s\n", execPath)
-	fmt.Printf("  Built Go Version: %s\n", BuildGoVersion)
-	fmt.Printf("  Built Tea Version: %s\n", BuildTeaVersion)
-	fmt.Printf("  Git Commit: %s\n", BuildGitCommit)
-	fmt.Printf("  Built Time: %s\n", BuildTime)
-}
-
 // 显示帮助信息
 func showHelp() {
+	fmt.Println("当前版本:", BuildTeaVersion)
+	fmt.Println("")
 	fmt.Println("tf工具使用说明:")
 	fmt.Println("  tf version        显示工具版本号")
 	fmt.Println("  tf init <name>    初始化新项目")
@@ -228,13 +219,12 @@ func showHelp() {
 	fmt.Println("  --module, -m      Go模块路径（可选，默认为'example.com/' + 项目名称）")
 	fmt.Println()
 	fmt.Println("update命令参数:")
-	fmt.Println("  --tf              仅更新tf工具")
-	fmt.Println("  --framework       仅更新tea框架")
-	fmt.Println("  (默认同时更新tf工具和tea框架)")
+	fmt.Println("  --framework        更新tea框架")
+	fmt.Println("  (默认更新tf工具)")
 	fmt.Println()
 	fmt.Println("run命令参数:")
 	fmt.Println("  --port, -p        服务器端口（可选，默认为9106）")
-	fmt.Println("  --addr, -a        服务器地址（可选，默认为'localhost'）")
+	fmt.Println("  --addr, -a        服务器地址（可选，默认为'0.0.0.0'）")
 
 }
 
@@ -328,7 +318,7 @@ func initProject(projectName, destDir, modulePath string) error {
 // 复制目录内容并替换文件中的模块路径
 func copyDir(dest, modulePath string) error {
 	// 加载 examples 目录下的所有文件
-	loadExamples()
+	LoadExamples()
 
 	files := gres.ScanDir("examples", "*", true)
 	for _, file := range files {
@@ -402,47 +392,6 @@ func generateGoMod(dir, modulePath string) error {
 	return nil
 }
 
-// 复制文件并在必要时替换模块路径和import语句
-func copyFile(src, dest, modulePath string) error {
-	// 打开源文件
-	srcFile, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer srcFile.Close()
-
-	// 创建目标文件
-	destFile, err := os.Create(dest)
-	if err != nil {
-		return err
-	}
-	defer destFile.Close()
-
-	// 如果是go.mod文件，需要替换模块路径
-	if filepath.Base(src) == "go.mod" {
-		return replaceModulePath(srcFile, destFile, modulePath)
-	}
-
-	// 如果是Go文件，需要替换import语句中的"example/local"
-	if filepath.Ext(src) == ".go" {
-		return replaceImportPaths(srcFile, destFile, modulePath)
-	}
-
-	// 对于其他文件，直接复制内容
-	_, err = io.Copy(destFile, srcFile)
-	if err != nil {
-		return err
-	}
-
-	// 复制文件权限
-	srcInfo, err := srcFile.Stat()
-	if err != nil {
-		return err
-	}
-
-	return os.Chmod(dest, srcInfo.Mode())
-}
-
 // 替换Go文件中的import路径
 func replaceImportPaths(src, dest io.Reader, modulePath string) error {
 	scanner := bufio.NewScanner(src)
@@ -467,86 +416,32 @@ func replaceImportPaths(src, dest io.Reader, modulePath string) error {
 	return nil
 }
 
-// 替换go.mod文件中的模块路径
-func replaceModulePath(src, dest io.Reader, modulePath string) error {
-	scanner := bufio.NewScanner(src)
-	writer := bufio.NewWriter(dest.(*os.File))
-	defer writer.Flush()
-
-	// 标记是否已经替换了模块路径
-	replaced := false
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		trimmedLine := strings.TrimSpace(line)
-
-		// 查找模块声明行并替换
-		if strings.HasPrefix(trimmedLine, "module ") && !replaced {
-			// 确保替换的是"example/local"或其他默认模块路径
-			line = "module " + modulePath
-			replaced = true
-		}
-
-		// 写入修改后的行
-		if _, err := writer.WriteString(line + "\n"); err != nil {
-			return err
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // 处理update命令
-func handleUpdateCommand() {
+func HandleUpdateCommand() {
 	// 创建子命令的flag集
 	updateCmd := flag.NewFlagSet("update", flag.ExitOnError)
-	tfFlag := updateCmd.Bool("tf", false, "仅更新tf工具")
 	frameworkFlag := updateCmd.Bool("framework", false, "仅更新tea框架")
-
 	// 解析update命令的参数
 	updateCmd.Parse(os.Args[2:])
 
 	// 手动检查短参数
-	tfOnly := *tfFlag
-	frameworkOnly := *frameworkFlag
-	for _, arg := range os.Args {
-		switch arg {
-		case "--tf":
-			tfOnly = true
-		case "--framework":
-			frameworkOnly = true
-		}
-	}
-
-	// 如果既没有指定--tf也没有指定--framework，则同时更新两者
-	if !tfOnly && !frameworkOnly {
-		tfOnly = true
-		frameworkOnly = true
-	}
-
 	fmt.Println("开始更新...")
 
-	// 更新tf工具
-	if tfOnly {
-		fmt.Println("\n正在更新tf工具...")
-		if err := updateTF(); err != nil {
-			fmt.Printf("tf工具更新失败: %v\n", err)
-		} else {
-			fmt.Println("tf工具更新成功!")
-		}
-	}
-
 	// 更新tea框架
-	if frameworkOnly {
+	if *frameworkFlag {
 		fmt.Println("\n正在更新tea框架...")
 		if err := updateFramework(); err != nil {
 			fmt.Printf("tea框架更新失败: %v\n", err)
 		} else {
 			fmt.Println("tea框架更新成功!")
+		}
+	} else {
+		// 更新tf工具
+		fmt.Println("\n正在更新tf工具...")
+		if err := updateTF(); err != nil {
+			fmt.Printf("tf工具更新失败: %v\n", err)
+		} else {
+			fmt.Println("tf工具更新成功!")
 		}
 	}
 
@@ -562,8 +457,15 @@ func updateTF() error {
 
 	fmt.Println("使用go install安装最新版本的tf工具...")
 	// 使用go install安装最新版本
-	cmd := exec.Command("go", "install", "github.com/kearth/tea/cli/cmd/tf@latest")
+	fmt.Println("清除模块缓存...")
+	cmd := exec.Command("go", "clean", "-modcache")
 	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("清除模块缓存失败: %v\n输出: %s", err, output)
+	}
+
+	cmd = exec.Command("go", "install", "github.com/kearth/tea/cli/cmd/tf@latest")
+	output, err = cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("安装失败: %v\n输出: %s", err, output)
 	}
@@ -582,10 +484,17 @@ func updateFramework() error {
 		return fmt.Errorf("当前目录没有 go.mod 文件，无法更新tea框架")
 	}
 
+	fmt.Println("清除模块缓存...")
+	cmd := exec.Command("go", "clean", "-modcache")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("清除模块缓存失败: %v\n输出: %s", err, output)
+	}
+
 	// 使用go get更新tea框架到最新版本
 	fmt.Println("下载最新版本的tea框架...")
-	cmd := exec.Command("go", "get", "-u", "github.com/kearth/tea@latest")
-	output, err := cmd.CombinedOutput()
+	cmd = exec.Command("go", "get", "-u", "github.com/kearth/tea@latest")
+	output, err = cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("更新失败: %v\n输出: %s", err, output)
 	}
@@ -616,10 +525,14 @@ func PackExamples(path string) {
 	}
 }
 
-// UnpackExamples 解包 examples 目录下的所有文件
-func UnpackExamples() {
-	binContent := gfile.GetBytes("data.bin")
-	binContent, err := gaes.Decrypt(binContent, CryptoKey)
+// LoadExamples 加载 examples 目录下的所有文件
+func LoadExamples() {
+	dataBinContent, err := dataBinFS.ReadFile(DataBin)
+	if err != nil {
+		fmt.Printf("无法读取data.bin文件: %v\n", err)
+		return
+	}
+	binContent, err := gaes.Decrypt(dataBinContent, CryptoKey)
 	if err != nil {
 		panic(err)
 	}
